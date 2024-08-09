@@ -1,10 +1,10 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import LoginComponent from "./auth/Login";
+import Registration from "./auth/Registration";
 import AddPartyComponent from "./components/AddPartyComponent";
 import HeaderComponent from "./components/HeaderComponent";
 import PartyListComponent from "./components/PartyListComponent";
-import RegistrationComponent from "./components/RegistrationComponent";
 
 function App() {
   return (
@@ -14,11 +14,7 @@ function App() {
         <div className="container">
           <Routes>
             <Route exact path="/" element={<LoginComponent />}></Route>
-            <Route
-              exact
-              path="/register"
-              element={<RegistrationComponent />}
-            ></Route>
+            <Route exact path="/register" element={<Registration />}></Route>
             <Route path="/parties" element={<PartyListComponent />}></Route>
             <Route path="/add-party" element={<AddPartyComponent />}></Route>
             <Route

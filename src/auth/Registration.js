@@ -14,7 +14,7 @@ const RegistrationComponent = () => {
   const inputRef = useRef();
   const options = [
     { value: "Admin", label: "Admin" },
-    { value: "Student", label: "Student" },
+    { value: "User", label: "User" },
   ];
   const navigate = useNavigate();
   const user = { username, password, email, phone, name, businessTitle };
