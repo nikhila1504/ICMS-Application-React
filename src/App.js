@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import "./App.css";
+import LoginComponent from "./auth/Login";
+import AddPartyComponent from "./components/AddPartyComponent";
+import HeaderComponent from "./components/HeaderComponent";
+import PartyListComponent from "./components/PartyListComponent";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Router>
+        <HeaderComponent />
+        <div className="container">
+          <Routes>
+            <Route exact path="/" element={<LoginComponent />}></Route>
+            <Route path="/parties" element={<PartyListComponent />}></Route>
+            <Route path="/add-party" element={<AddPartyComponent />}></Route>
+            <Route
+              path="/edit-party/:id"
+              element={<AddPartyComponent />}
+            ></Route>
+          </Routes>
+        </div>
+      </Router>
     </div>
   );
 }
