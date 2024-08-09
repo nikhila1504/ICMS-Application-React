@@ -16,7 +16,7 @@ const AddPartyComponent = () => {
     { value: "Employer", label: "Employer" },
   ];
 
-  const saveOrUpdateStudent = (e) => {
+  const saveOrUpdateParty = (e) => {
     e.preventDefault();
     const party = { id, name, partyType, emailId };
     if (id) {
@@ -115,7 +115,7 @@ const AddPartyComponent = () => {
                 </div>
                 <button
                   className="btn btn-outline-success"
-                  onClick={(e) => saveOrUpdateStudent(e)}
+                  onClick={(e) => saveOrUpdateParty(e)}
                 >
                   Submit
                 </button>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
 const Login = () => {
@@ -68,7 +68,11 @@ const Login = () => {
                 >
                   Login
                 </button>
-                &nbsp;&nbsp;
+                <br></br>
+                &nbsp;
+                <div style={{ marginLeft: "130px" }}>
+                  Don't have an account? <Link to="/register">Register</Link>
+                </div>
               </form>
             </div>
           </div>

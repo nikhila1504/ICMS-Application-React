@@ -26,6 +26,7 @@ const PartyListComponent = () => {
     PartyService.getAllParties()
       .then((response) => {
         setPartys(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -42,14 +43,6 @@ const PartyListComponent = () => {
           return toast.error("Only admin have rights to delete party", {
             position: "top-center",
           });
-          // return (
-          //   <Alert variant="danger">
-          //     <Alert.Heading>
-          //       Only admin have rights to delete party
-          //     </Alert.Heading>
-          //   </Alert>
-          // );
-          //alert("Only admin have rights to delete party");
         }
         console.log(error);
       });

@@ -11,19 +11,17 @@ class AuthService {
       })
       .then((response) => {
         if (response.data.accessToken) {
-          localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem(JSON.stringify(response.data));
         }
 
         return response.data;
       });
   }
-
-  // logout() {
-  //   localStorage.removeItem("token");
-  // }
-
+  registerUser(user) {
+    return axios.post(BASE_URL + "/register", user);
+  }
   getCurrentUser() {
-    return JSON.parse(localStorage.getItem("user"));
+    return JSON.parse(localStorage.getItem("token"));
   }
 }
 
