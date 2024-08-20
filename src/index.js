@@ -1,6 +1,6 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import React from "react";
+import "react-bootstrap/dist/react-bootstrap.min.js";
 import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";

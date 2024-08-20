@@ -28,13 +28,13 @@ class PartyService {
     });
   }
 
-  updateParty(id, party, token) {
+  updateParty(id, party) {
     return axios.put(PARTY_API_URL + "/updateParty/" + id, party, {
       headers: authHeader(),
     });
   }
 
-  deleteParty(id, token) {
+  deleteParty(id) {
     return axios.delete(PARTY_API_URL + "/deleteParty/" + id, {
       headers: authHeader(),
     });

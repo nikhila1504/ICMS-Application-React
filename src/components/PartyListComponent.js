@@ -1,11 +1,16 @@
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import PartyService from "../services/party.service";
 
 const PartyListComponent = () => {
   const [Parties, setPartys] = useState([]);
+  const navigate = useNavigate();
+
+  const handleSelectId = (id) => {
+    navigate(`/calendar/${id}`);
+  };
 
   useEffect(() => {
     getAllParties();
@@ -69,10 +74,9 @@ const PartyListComponent = () => {
           {Parties.map((Party) => (
             <tr key={Party.id}>
               <td>{Party.id}</td>
-              <br></br>
-              <Link className="link" to={`/edit-Party/${Party.id}`}>
-                <td>{Party.name}</td>
-              </Link>
+              <td className="text-start">
+                <a href={`/edit-Party/${Party.id}`}>{Party.name}</a>
+              </td>
               <td>{Party.partyType}</td>
               <td>{Party.emailId}</td>
               <td>
@@ -92,6 +96,20 @@ const PartyListComponent = () => {
                   style={{ marginLeft: "10px" }}
                 >
                   Delete
+                </button>
+                {/* <button
+                  label="Calendar"
+                  className="btn btn-outline-info"
+                  style={{ marginLeft: "10px" }}
+                >
+                  Calendar
+                </button> */}
+                <button
+                  style={{ marginLeft: "10px" }}
+                  className="btn btn-outline-info"
+                  onClick={() => handleSelectId(Party.id)}
+                >
+                  Calendar
                 </button>
               </td>
             </tr>

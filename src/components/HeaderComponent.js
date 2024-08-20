@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const HeaderComponent = () => {
   const location = useLocation();
-  const path = location.pathname.includes("parties");
+  const path = location.pathname.includes("parties", "calendar");
   const navigate = useNavigate();
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -21,13 +21,13 @@ const HeaderComponent = () => {
       <header>
         <nav className="navbar navbar-expand-md">
           <div>
-            <h2>ICMS Application</h2>
+            <h3>ICMS Application Demo</h3>
           </div>
           <div className="float-right">
             {path ? (
               <button
                 className="btn btn-light"
-                style={{ marginLeft: "900px" }}
+                style={{ marginLeft: "1100px" }}
                 onClick={(e) => handleLogout(e)}
               >
                 logout
