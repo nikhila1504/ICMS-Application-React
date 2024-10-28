@@ -49,55 +49,57 @@ const PartyListComponent = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-center">Party List</h2>
-      <Link to="/add-Party" className="heading btn btn-outline-info mb-2">
-        Add Party
-      </Link>
-
-      <table className="table table-striped table-bordered">
-        <thead>
-          <tr>
-            <th>Party Id</th>
-            <th>Party Name</th>
-            <th>Party Type</th>
-            <th>Email Id</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Parties.map((Party) => (
-            <tr key={Party.id}>
-              <td>{Party.id}</td>
-              <br></br>
-              <Link className="link" to={`/edit-Party/${Party.id}`}>
-                <td>{Party.name}</td>
-              </Link>
-              <td>{Party.partyType}</td>
-              <td>{Party.emailId}</td>
-              <td>
-                {/* <Link
-                  className="btn btn-outline-info"
-                  to={`/edit-Party/${Party.id}`}
-                >
-                  Update
-                </Link> */}
-                <ToastContainer />
-                <ConfirmPopup />
-                <button
-                  onClick={(e) => confirmDelete(e, Party.id)}
-                  icon="pi pi-times"
-                  label="Delete"
-                  className="btn btn-outline-danger"
-                  style={{ marginLeft: "10px" }}
-                >
-                  Delete
-                </button>
-              </td>
+    <div style={{ textAlign: 'center' }}>
+      <h2>Party List</h2>
+      <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '10px',marginLeft:'131px' }}>
+        <Link to="/add-Party" className="heading btn btn-outline-info">
+          Add Party
+        </Link>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <table className="table table-striped table-bordered table-custom" style={{ width: '80%', maxWidth: '11000px' }}>
+          <thead>
+            <tr>
+              <th>Party Id</th>
+              <th>Party Name</th>
+              <th>Party Type</th>
+              <th>Email Id</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {Parties.map((Party) => (
+              <tr key={Party.id}>
+                <td>{Party.id}</td>
+                <td>
+                  <Link className="link" to={`/edit-Party/${Party.id}`}>
+                    {Party.name}
+                  </Link>
+                </td>
+                <td>{Party.partyType}</td>
+                <td>{Party.emailId}</td>
+                <td style={{ textAlign: 'left' }}>
+                  <Link
+                    className="btn btn-info"
+                    to={`/wc1/${Party.id}`}
+                    style={{ marginRight: '10px' }}
+                  >
+                    WC1-Form
+                  </Link>
+                  <button
+                    onClick={(e) => confirmDelete(e, Party.id)}
+                    className="btn btn-danger"
+                  >
+                    Delete
+                  </button>
+                  <ToastContainer />
+                  <ConfirmPopup />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

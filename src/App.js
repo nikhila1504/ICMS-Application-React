@@ -4,24 +4,29 @@ import LoginComponent from "./auth/Login";
 import Registration from "./auth/Registration";
 import AddPartyComponent from "./components/AddPartyComponent";
 import HeaderComponent from "./components/HeaderComponent";
+import FooterComponent from "./components/FooterComponent";
 import PartyListComponent from "./components/PartyListComponent";
-
+import Wc1FormComponent from "./components/Wc1FormComponent";
+import NewWc1 from "./components/NewWc1";
 function App() {
   return (
     <div>
       <Router>
-        <HeaderComponent />
-        <div className="container">
-          <Routes>
-            <Route exact path="/" element={<LoginComponent />}></Route>
-            <Route exact path="/register" element={<Registration />}></Route>
-            <Route path="/parties" element={<PartyListComponent />}></Route>
-            <Route path="/add-party" element={<AddPartyComponent />}></Route>
-            <Route
-              path="/edit-party/:id"
-              element={<AddPartyComponent />}
-            ></Route>
-          </Routes>
+        <div className="d-flex flex-column min-vh-100">
+          <HeaderComponent />
+          <div className="container flex-fill">
+            <Routes>
+              <Route exact path="/" element={<LoginComponent />} />
+              <Route exact path="/login" element={<LoginComponent />} />
+              <Route exact path="/register" element={<Registration />} />
+              <Route path="/parties" element={<PartyListComponent />} />
+              <Route path="/wc1" element={<Wc1FormComponent />} />
+              <Route path="/add-party" element={<AddPartyComponent />} />
+              <Route path="/edit-party/:id" element={<AddPartyComponent />} />
+              <Route path="/newWc1" element={<NewWc1 />} />
+            </Routes>
+          </div>
+          <FooterComponent />
         </div>
       </Router>
     </div>

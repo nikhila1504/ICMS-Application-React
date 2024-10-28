@@ -14,7 +14,7 @@ const Login = () => {
       const userData = await AuthService.login(username, password);
       if (userData.token) {
         localStorage.setItem("token", userData.token);
-        navigate("/parties");
+        navigate("/wc1");
       } else {
         setError(userData.message);
       }
@@ -61,16 +61,17 @@ const Login = () => {
                   ></input>
                 </div>
                 <br></br>
-                <button
-                  style={{ marginLeft: "190px" }}
-                  className="btn btn-outline-success"
-                  onClick={(e) => handleSubmit(e)}
-                >
-                  Login
-                </button>
+                <div className="text-center mb-3"> 
+                  <button
+                    className="btn btn-outline-success w-20" 
+                    onClick={handleSubmit} style={{fontSize:'15px' }}
+                  >
+                    Login
+                  </button>
+                </div>
                 <br></br>
                 &nbsp;
-                <div style={{ marginLeft: "130px" }}>
+                <div style={{ marginLeft: "130px",fontSize:'20px' }}>
                   Don't have an account? <Link to="/register">Register</Link>
                 </div>
               </form>

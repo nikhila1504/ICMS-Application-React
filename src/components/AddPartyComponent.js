@@ -79,11 +79,13 @@ const AddPartyComponent = () => {
                     className="form-control"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    style={{ width: '625px', height: '40px', fontSize: '16px' }} 
                   ></input>
                 </div>
                 <div className="pt form-group mb-2">
                   <label className="form-label"> Party Type :</label>
                   <Select
+                    className="select"
                     options={options}
                     value={options.filter((e) => {
                       return (
@@ -111,16 +113,18 @@ const AddPartyComponent = () => {
                     className="form-control"
                     value={emailId}
                     onChange={(e) => setEmailId(e.target.value)}
+                    style={{ width: '625px', height: '40px', fontSize: '16px' }} 
                   ></input>
                 </div>
                 <button
                   className="btn btn-outline-success"
                   onClick={(e) => saveOrUpdateParty(e)}
+                  style={{ marginTop: '10px' }}
                 >
                   Submit
                 </button>
                 &nbsp;&nbsp;
-                <Link to="/parties" className="btn btn-outline-danger">
+                <Link to="/parties" className="btn btn-outline-danger" style={{ marginTop: '10px' }}>
                   Cancel
                 </Link>
               </form>

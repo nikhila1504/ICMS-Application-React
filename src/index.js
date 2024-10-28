@@ -6,6 +6,12 @@ import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
+import 'primereact/resources/primereact.min.css'; 
+import 'primeicons/primeicons.css';
+import 'primereact/resources/themes/saga-blue/theme.css'; 
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
