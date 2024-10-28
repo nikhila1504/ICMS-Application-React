@@ -1,11 +1,16 @@
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup"; // To use <ConfirmPopup> tag
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import PartyService from "../services/party.service";
 
 const PartyListComponent = () => {
   const [Parties, setPartys] = useState([]);
+  const navigate = useNavigate();
+
+  const handleSelectId = (id) => {
+    navigate(`/calendar/${id}`);
+  };
 
   useEffect(() => {
     getAllParties();

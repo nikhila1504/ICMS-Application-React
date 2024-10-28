@@ -21,15 +21,13 @@ const RegistrationComponent = () => {
 
   const saveUser = (event) => {
     event.preventDefault();
-    console.log(event);
     AuthService.registerUser(user)
       .then((response) => {
         navigate("/");
       })
       .catch((error) => {
-        console.log(error);
         setError("User already exists,please add new username");
-      });
+      }, 5000);
   };
 
   return (
@@ -54,7 +52,12 @@ const RegistrationComponent = () => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   ></input>
-                  <span className="Error">{error}</span>
+                  {/* <span className="error-message">{error}</span> */}
+                  {error && (
+                    <p className="error-message">
+                      <i class="bi bi-exclamation-circle"></i> {error}
+                    </p>
+                  )}
                 </div>
                 <div className="form-group mb-2">
                   <label className="form-label"> Enter Password :</label>

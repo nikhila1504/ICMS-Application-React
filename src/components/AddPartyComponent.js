@@ -43,6 +43,7 @@ const AddPartyComponent = () => {
   useEffect(() => {
     PartyService.getPartyById(id)
       .then((response) => {
+        console.log(response);
         setName(response.data.name);
         setPartyType(response.data.partyType);
         setEmailId(response.data.emailId);

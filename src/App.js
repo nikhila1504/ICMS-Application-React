@@ -1,8 +1,11 @@
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "react-datepicker/dist/react-datepicker.module.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import LoginComponent from "./auth/Login";
 import Registration from "./auth/Registration";
 import AddPartyComponent from "./components/AddPartyComponent";
+import CalendarComponent from "./components/CalendarComponent";
 import HeaderComponent from "./components/HeaderComponent";
 import FooterComponent from "./components/FooterComponent";
 import PartyListComponent from "./components/PartyListComponent";

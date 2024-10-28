@@ -1,4 +1,4 @@
-.modalBackground {
+/* .modalBackground {
   width: 100vw;
   height: 100vh;
   background-color: rgba(200, 200, 200);
@@ -23,9 +23,9 @@
   display: inline-block;
   text-align: center;
   margin-top: 10px;
-}
+} */
 
-.titleCloseBtn {
+/* .titleCloseBtn {
   display: flex;
   justify-content: flex-end;
 }
@@ -44,7 +44,7 @@
   align-items: center;
   font-size: 1rem;
   text-align: center;
-}
+} */
 
 .navbar {
   color: white;

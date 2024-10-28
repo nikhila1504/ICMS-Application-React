@@ -20,10 +20,10 @@ const Login = () => {
       }
     } catch (error) {
       console.log(error);
-      setError(error.message);
+      setError("Incorrect username and password .Please Try again.");
       setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 1000);
     }
   };
 
@@ -36,7 +36,11 @@ const Login = () => {
           <div className="card col-md-6 offset-md-3 offset-md-3">
             <h2 className="text-center">User Login</h2>
             <div className="card-body">
-              {error && <p className="error-message">{error}</p>}
+              {error && (
+                <p className="error-message">
+                  <i class="bi bi-exclamation-circle"></i> {error}
+                </p>
+              )}
               <form>
                 <div className="form-group mb-2">
                   <label className="form-label"> User Name :</label>
