@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 const NewClaimComponent = () => {
     return (
         // <div>NewClaimComponent</div>
-        <nav className="navbar navbar-expand-md">
-            <ul className="navbar-nav">
+        <nav className="navbar navbar-expand-md mt-3 ml-0">
+            <ul className="navbar navbar-nav">
                 <li className="nav-item dropdown">
                     <h2> <Link
                         className="nav-link dropdown-toggle"
@@ -14,7 +14,7 @@ const NewClaimComponent = () => {
                         role="button"
                         data-toggle="dropdown"
                         aria-haspopup="true"
-                        aria-expanded="false" style={{ marginLeft: '10px' }}
+                        aria-expanded="false" 
                     >
                         Claim
                     </Link></h2>

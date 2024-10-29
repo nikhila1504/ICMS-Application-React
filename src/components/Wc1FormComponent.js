@@ -14,7 +14,7 @@ const Wc1FormComponent = () => {
   const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
     return (
       <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
-        <select className="form-select custom-select" style={{ width: '40px', fontSize: '10px' }}
+        <select className="form-select custom-select" style={{ width: '50px', fontSize: '14px', padding: '5px'  }}
           value={itemsPerPage} onChange={(e) => onItemsPerPageChange(Number(e.target.value))}>
           {[2, 4, 6, 8].map((num) => (
             <option key={num} value={num}>
@@ -24,7 +24,7 @@ const Wc1FormComponent = () => {
         </select>
 
         <button
-          className="btn btn-outline-info mx-1"
+          className="btn btn-outline-info btn-sm  mx-1"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -32,7 +32,7 @@ const Wc1FormComponent = () => {
         </button>
         <span style={{ marginTop: "5px" }}>{`Page ${currentPage} of ${totalPages}`}</span>
         <button
-          className="btn btn-outline-info mx-1"
+          className="btn btn-outline-info btn-sm mx-1"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
@@ -45,14 +45,14 @@ const Wc1FormComponent = () => {
     return (
       <div className="pagination-container d-flex justify-content-center mb-3">
         <button
-          className="btn btn-outline-primary mx-2"
+          className="btn btn-outline-primary btn-sm mx-2"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
         >
           First
         </button>
         <button
-          className="btn btn-primary mx-2"
+          className="btn-primary mx-2"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -392,13 +392,13 @@ const Wc1FormComponent = () => {
   return (
     <div className="form-container">
       <NewClaimComponent />
-      <h1 className="custom-h1 header">Claimant Information</h1>
+      <h1 className="custom-h1 header mt-3">Claimant Information</h1>
       <form onSubmit={handleSubmit} onInvalid={handleInvalid}>
         <div className="d-flex flex-wrap">
           <div className="form-section  flex-fill">
 
             <div className="form-group row mb-1">
-              <label htmlFor="firstName" className="col-md-3 col-form-label custom-label ">Employee First Name: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="firstName" className="col-md-4 col-form-label custom-label ">Employee First Name: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -412,7 +412,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="lastName" className="col-md-3 col-form-label custom-label">Employee Last Name: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="lastName" className="col-md-4 col-form-label custom-label">Employee Last Name: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -426,7 +426,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="middleInitial" className="col-md-3 col-form-label custom-label">M.I.:</label>
+              <label htmlFor="middleInitial" className="col-md-4 col-form-label custom-label">M.I.:</label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -439,7 +439,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="birthdate" className="col-md-3 col-form-label custom-label">Birthdate:</label>
+              <label htmlFor="birthdate" className="col-md-4 col-form-label custom-label">Birthdate:</label>
               <div className="col-md-3">
                 <input autoComplete="off"
                   type="date"
@@ -453,7 +453,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label className="col-md-3 col-form-label custom-label">Gender: <span style={{ color: 'red' }}>*</span></label>
+              <label className="col-md-4 col-form-label custom-label">Gender: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6 custom-radio">
                 <div>
                   <div className="form-check form-check-inline">
@@ -463,12 +463,12 @@ const Wc1FormComponent = () => {
                       name="gender"
                       id="genderMale"
                       value="Male"
-                      style={{ marginTop: "12px" }}
+                      style={{ marginTop: "14px" }}
                       checked={formData.gender === 'Male'}
                       onChange={handleChange}
                       required
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="genderMale">Male</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderMale">Male</label>
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
@@ -481,7 +481,7 @@ const Wc1FormComponent = () => {
                       checked={formData.gender === 'Female'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="genderFemale">Female</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderFemale">Female</label>
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
@@ -494,7 +494,7 @@ const Wc1FormComponent = () => {
                       checked={formData.gender === 'Unknown'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="genderUnknown">Unknown</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderUnknown">Unknown</label>
                   </div>
                 </div>
               </div>
@@ -504,7 +504,7 @@ const Wc1FormComponent = () => {
           <div className="form-section flex-fill pl-3">
             {/* <form onSubmit={handleSubmit}> */}
             <div className="form-group row mb-1">
-              <label htmlFor="outOfCountryAddress" className="col-md-3 col-form-label custom-label">Out of Country Address:</label>
+              <label htmlFor="outOfCountryAddress" className="col-md-4 col-form-label custom-label">Out of Country Address:</label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -517,7 +517,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="mailingAddress1" className="col-md-3 col-form-label custom-label">Mailing Address1: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="mailingAddress1" className="col-md-4 col-form-label custom-label">Mailing Address1: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -531,7 +531,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="mailingAddress2" className="col-md-3 col-form-label custom-label">Mailing Address2:</label>
+              <label htmlFor="mailingAddress2" className="col-md-4 col-form-label custom-label">Mailing Address2:</label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -545,7 +545,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="city" className="col-md-3 col-form-label custom-label">City: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="city" className="col-md-4 col-form-label custom-label">City: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -559,7 +559,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="state" className="col-md-3 col-form-label custom-label">State: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="state" className="col-md-4 col-form-label custom-label">State: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -573,7 +573,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="zip" className="col-md-3 col-form-label custom-label">Zip: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="zip" className="col-md-4 col-form-label custom-label">Zip: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -587,7 +587,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="email" className="col-md-3 col-form-label custom-label">Employee E-mail:</label>
+              <label htmlFor="email" className="col-md-4 col-form-label custom-label">Employee E-mail:</label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="email"
@@ -600,7 +600,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label htmlFor="phoneNumber" className="col-md-3 col-form-label custom-label">Phone Number:</label>
+              <label htmlFor="phoneNumber" className="col-md-4 col-form-label custom-label">Phone Number:</label>
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
@@ -660,7 +660,7 @@ const Wc1FormComponent = () => {
             <div className="form-section  flex-fill">
               {/* <form onSubmit={handleSubmit}> */}
               <div className="form-group row mb-1">
-                <label htmlFor="hiredDate" className="col-sm-4  custom-label">Date Hired by Employer :</label>
+                <label htmlFor="hiredDate" className="col-sm-4 col-form-label custom-label">Date Hired by Employer :</label>
                 <div className="col-md-4">
                   <input autoComplete="off"
                     type="date"
@@ -733,7 +733,7 @@ const Wc1FormComponent = () => {
                         onChange={handleChange}
                         required
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="daysOffYes">Yes</label>
+                      <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="daysOffYes">Yes</label>
                     </div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
@@ -747,7 +747,7 @@ const Wc1FormComponent = () => {
                         onChange={handleChange}
                         required
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="daysOffNo">No</label>
+                      <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="daysOffNo">No</label>
                     </div>
                   </div>
                 </div>
@@ -767,7 +767,7 @@ const Wc1FormComponent = () => {
               </div>
               <div className="form-group row mb-1 custom-radio">
                 <label className="col-md-5 col-form-label custom-label">Wage Rate Frequency:</label>
-                <div className="col-md-6">
+                <div className="col-md-7">
                   <div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
@@ -781,7 +781,7 @@ const Wc1FormComponent = () => {
                         onChange={handleChange}
 
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="perHour">Per Hour</label>
+                      <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="perHour">Per Hour</label>
                     </div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
@@ -794,7 +794,7 @@ const Wc1FormComponent = () => {
                         checked={formData.wageRateFrequency === 'perDay'}
                         onChange={handleChange}
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="perDay">Per Day</label>
+                      <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="perDay">Per Day</label>
                     </div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
@@ -807,7 +807,7 @@ const Wc1FormComponent = () => {
                         checked={formData.wageRateFrequency === 'perWeek'}
                         onChange={handleChange}
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="perWeek">Per Week</label>
+                      <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="perWeek">Per Week</label>
                     </div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
@@ -820,7 +820,7 @@ const Wc1FormComponent = () => {
                         checked={formData.wageRateFrequency === 'perMonth'}
                         onChange={handleChange}
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="perMonth">Per Month</label>
+                      <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="perMonth">Per Month</label>
                     </div>
                   </div>
                 </div>
@@ -837,7 +837,7 @@ const Wc1FormComponent = () => {
             Injury/Illness and Medical
             <span style={{ float: 'right', marginRight: '20px', fontSize: '25px' }}>
               {/* <FontAwesomeIcon icon={isActive ? faChevronUp : faChevronDown} className="fa-sm" /> */}
-              <i className={`pi ${isActive ? 'pi-sort-up-fill' : 'pi-sort-down-fill'}`} style={{ fontSize: '2rem' }}></i>
+              <i className={`pi ${isActive ? 'pi-sort-up-fill' : 'pi-sort-down-fill'}`} style={{ fontSize: '1rem'}}></i>
             </span>
           </h1>
           <div className={`collapsible-content ${isActive ? 'active' : ''}`}>
@@ -951,7 +951,7 @@ const Wc1FormComponent = () => {
                       onChange={handleChange}
                       required
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="Yes">Yes</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="Yes">Yes</label>
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
@@ -963,7 +963,7 @@ const Wc1FormComponent = () => {
                       checked={formData.fullPayOnDate === 'No'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="No">No</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="No">No</label>
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
@@ -975,7 +975,7 @@ const Wc1FormComponent = () => {
                       checked={formData.fullPayOnDate === 'None'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="None">None</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="None">None</label>
                   </div>
                 </div>
               </div>
@@ -996,7 +996,7 @@ const Wc1FormComponent = () => {
                       onChange={handleChange}
                       required
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="Yes">Yes</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="Yes">Yes</label>
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
@@ -1008,7 +1008,7 @@ const Wc1FormComponent = () => {
                       checked={formData.occurredOnPremises === 'No'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="No">No</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="No">No</label>
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
@@ -1020,7 +1020,7 @@ const Wc1FormComponent = () => {
                       checked={formData.occurredOnPremises === 'None'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: "8px" }} htmlFor="None">None</label>
+                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="None">None</label>
                   </div>
                 </div>
 
@@ -1049,7 +1049,7 @@ const Wc1FormComponent = () => {
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label className="col-sm-4 col-form-label custom-label">Body Part Affected: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-sm-6 picklist-container" style={{ width: '700px' }}>
+              <div className="col-sm-6 picklist-container" style={{ width: '800px' }}>
                 {/* <PickList
                   name='bodyPartAffected'
                   dataKey="id"
@@ -1065,12 +1065,12 @@ const Wc1FormComponent = () => {
                 {/* {errors.bodyPartAffected && <div className="error-message">
                   Please select at least one item.</div>} */}
                 {errors.bodyPartAffected && (
-                  <div className="error-message" style={{ color: 'red', marginTop: '5px' }}>
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px',fontSize:'12px' }}>
                     {errors.bodyPartAffected}
                   </div>
                 )}
                 <PickList dataKey="id" source={source} target={target} onChange={onChange} itemTemplate={itemTemplate} breakpoint="1280px"
-                  sourceHeader={<span style={{ fontSize: '1.5rem' }}>Available</span>} targetHeader={<span style={{ fontSize: '1.5rem' }}>Selected</span>} sourceStyle={{ height: '18rem' }} targetStyle={{ height: '18rem' }} />
+                  sourceHeader={<span style={{ fontSize: '1.0rem' }}>Available</span>} targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>} sourceStyle={{ height: '10rem' }} targetStyle={{ height: '10rem' }} />
 
                 {/* <PickList
                   name='bodyPartAffected'
@@ -1108,7 +1108,7 @@ const Wc1FormComponent = () => {
             {/* <hr style={{ color:'#b6dde5' }} /> */}
             <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
             <div className="d-flex flex-wrap">
-              <div className="form-section  flex-fill">
+              <div className=" flex-fill">
                 {/* <form onSubmit={handleSubmit}> */}
                 <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
                   <label htmlFor="tPhysicianName" className="col-md-4 col-form-label custom-label ">Treating Physician Name: </label>
@@ -1238,7 +1238,7 @@ const Wc1FormComponent = () => {
                 </div>
                 {/* </form> */}
               </div>
-              <div className="form-section flex-fill pl-3">
+              <div className=" flex-fill ">
                 {/* <form onSubmit={handleSubmit}> */}
                 <div className="form-group row mb-1">
                   <label htmlFor="initialTreatment" className="col-md-5 col-form-label custom-label">Initial Treatment: </label>
@@ -1387,7 +1387,7 @@ const Wc1FormComponent = () => {
             <div className="d-flex flex-wrap">
               <div className="form-section  flex-fill">
                 <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="RtwDate" className="col-md-2 col-form-label custom-label mt-0">If Returned to Work, Give Date: </label>
+                  <label htmlFor="RtwDate" className="col-md-3 col-form-label custom-label mt-0">If Returned to Work, Give Date: </label>
                   <div className="col-md-2">
                     <input autoComplete="off"
                       type="date"
@@ -1401,7 +1401,7 @@ const Wc1FormComponent = () => {
                   </div>
                 </div>
                 <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="ReturnedWagePerWeek" className="col-md-2 col-form-label custom-label">Returned at what wage per week:</label>
+                  <label htmlFor="ReturnedWagePerWeek" className="col-md-3 col-form-label custom-label">Returned at what wage per week:</label>
                   <div className="col-md-2 osition-relative">
                     <input autoComplete="off"
                       style={{ marginRight: '5px' }}
@@ -1416,7 +1416,7 @@ const Wc1FormComponent = () => {
                   </div>
                 </div>
                 <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="FatalDeathDate" className="col-md-2 col-form-label custom-label ">If Fatal, Enter Complete Date of Death:</label>
+                  <label htmlFor="FatalDeathDate" className="col-md-3 col-form-label custom-label ">If Fatal, Enter Complete Date of Death:</label>
                   <div className="col-md-2">
                     <input autoComplete="off"
                       type="date"
@@ -1435,7 +1435,7 @@ const Wc1FormComponent = () => {
             <div className="d-flex flex-wrap">
               <div className="form-section  flex-fill">
                 <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="reportPreparedBy" className="col-md-2 col-form-label custom-label ">Report Prepared By (Print or Type):</label>
+                  <label htmlFor="reportPreparedBy" className="col-md-3 col-form-label custom-label ">Report Prepared By (Print or Type):</label>
                   <div className="col-md-4">
                     <input autoComplete="off"
                       type="date"
@@ -1449,7 +1449,7 @@ const Wc1FormComponent = () => {
                   </div>
                 </div>
                 <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="telePhoneNumber" className="col-md-2 col-form-label custom-label">Telephone Number:</label>
+                  <label htmlFor="telePhoneNumber" className="col-md-3 col-form-label custom-label">Telephone Number:</label>
                   <div className="col-md-3">
                     <input autoComplete="off"
                       type="text"
@@ -1473,8 +1473,8 @@ const Wc1FormComponent = () => {
                     />
                   </div>
                   <div className="form-group row mb-1" >
-                    <label htmlFor="DateOfReport" className="col-md-2 col-form-label custom-label ">Date of Report:</label>
-                    <div className="col-md-2">
+                    <label htmlFor="DateOfReport" className="col-md-3 col-form-label custom-label ">Date of Report:</label>
+                    <div className="col-md-3 ml-3" style={{marginLeft:'4px'}}>
                       <input autoComplete="off"
                         type="date"
                         className="form-control"
@@ -1523,12 +1523,12 @@ const Wc1FormComponent = () => {
                       id="incomeBenifits"
                       value="incomeBenifits"
                       disabled={!formData.isIncomeBenefitsEnabled}
-                      style={{ marginTop: '14px' }}
+                      style={{ marginTop: '12px' }}
                       checked={formData.benifitsBeingPaid === 'incomeBenifits'}
                       onChange={handleChange}
                       required
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: '8px' }} htmlFor="incomeBenifits">
+                    <label className="form-check-label custom-label" style={{ marginTop: '10px' }} htmlFor="incomeBenifits">
                       Income benefits
                     </label>
                   </div>
@@ -1541,11 +1541,11 @@ const Wc1FormComponent = () => {
                       id="salaryInLieu"
                       value="salaryInLieu"
                       disabled={!formData.isIncomeBenefitsEnabled}
-                      style={{ marginTop: '14px' }}
+                      style={{ marginTop: '12px' }}
                       checked={formData.benifitsBeingPaid === 'salaryInLieu'}
                       onChange={handleChange}
                     />
-                    <label className="form-check-label custom-label" style={{ marginTop: '8px' }} htmlFor="salaryInLieu">
+                    <label className="form-check-label custom-label" style={{ marginTop: '10px' }} htmlFor="salaryInLieu">
                       Salary in Lieu
                     </label>
                   </div>
@@ -1846,13 +1846,13 @@ const Wc1FormComponent = () => {
           </div>
         </div>
         <div>
-          <h1 className="custom-h1  header">
+          <h1 className="custom-h1  header" style={{margingBottom:'10px'}}>
             <input autoComplete="off"
               type="checkbox"
               checked={formData.isControvertEnabled}
               onChange={() => setFormData((prev) => ({ ...prev, isControvertEnabled: !prev.isControvertEnabled }))}
               className="large-checkbox"
-              style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
+              style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px'}}
             />
             C. Notice To Convert Payment Of Compensation</h1>
           <div className="form-group row mb-1">
@@ -1884,8 +1884,8 @@ const Wc1FormComponent = () => {
                 value={formData.BenifitsNPReasons}
                 disabled={!formData.isControvertEnabled}
                 onChange={handleChange}
-                rows="4"
-                cols="150"
+                rows="8"
+                cols="100"
                 style={{ marginTop: '10px', resize: 'none' }}
               />
             </div>
@@ -1949,7 +1949,7 @@ const Wc1FormComponent = () => {
             header={<span style={{ fontSize: '15px' }}>Confirmation</span>}
             visible={deleteVisible}
             onHide={() => setDeleteVisible(false)}
-            style={{ width: '300px', height: '160px' }}
+            style={{ width: '400px', height: '200px' }}
             modal
           >
             <p style={{ fontSize: '15px' }}>Are you sure you want to delete this document?</p>
@@ -2027,7 +2027,7 @@ const Wc1FormComponent = () => {
           {/* <Link
             className="btn btn-secondary mx-2 mb-10  custom-label"
             to={`/parties`}
-            style={{ marginLeft: "10px" }}
+            style={{ marginLeft: "12px" }}
           >
             Back
           </Link> */}

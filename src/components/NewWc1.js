@@ -14,11 +14,12 @@ const NewWc1 = () => {
         <div className="form-container-ncc">
             <NewClaimComponent />
             <div className="container d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-                <div className="card p-4" style={{ width: '600px', height: '300px' }}>
+                <div className="card p-4" style={{ width: '600px', height: '350px' }}>
                     <h2 className="text-center mb-4">WC-1 Form</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label className="form-label">Filer Type</label>
+                            <label className="form-label" style={{fontSize:'12px',paddingLeft:'10px'}}><b>Attorney for Employee/Claimant cannot file a WC-1.<br/>
+                                This WC-1 has been filed on behalf of the</b></label>
                             <ul className="list-group">
                                 <li className="list-group-item">
                                     <input
@@ -56,7 +57,8 @@ const NewWc1 = () => {
                             </ul>
                         </div>
                         <div className="text-center mb-3">
-                            <button type="submit" className="btn btn-info" style={{ fontSize: '15px' }}>Continue</button></div>
+                            <button type="submit" className="btn btn-info" style={{ fontSize: '15px' }}>Continue</button>
+                        </div>
                     </form>
                 </div>
             </div>
