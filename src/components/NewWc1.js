@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NewClaimComponent from "./NewClaimComponent.js";
+import { useNavigate } from "react-router-dom";
 
 const NewWc1 = () => {
     const [filerType, setFilerType] = useState('');
-
+    const navigate = useNavigate();
+    
     const handleSubmit = (e) => {
         e.preventDefault();
-        alert(`Form submitted: ${filerType}`);
+        navigate("/manageMatchingClaims");
     };
 
     return (
-        <div className="form-container-ncc">
+        <div className="form-container-ncc" style={{ position: 'relative', minHeight: '100vh' }}>
             <NewClaimComponent />
-            <div className="container d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-                <div className="card p-4" style={{ width: '600px', height: '350px' }}>
+            <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', maxWidth: '600px' }}>
+                <div className="card p-4" style={{ width: '100%' }}>
                     <h2 className="text-center mb-4">WC-1 Form</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label className="form-label" style={{fontSize:'12px',paddingLeft:'10px'}}><b>Attorney for Employee/Claimant cannot file a WC-1.<br/>
-                                This WC-1 has been filed on behalf of the</b></label>
+                            <label className="form-label" style={{ fontSize: '12px', paddingLeft: '10px' }}>
+                                <b>Attorney for Employee/Claimant cannot file a WC-1.<br />
+                                This WC-1 has been filed on behalf of the</b>
+                            </label>
                             <ul className="list-group">
                                 <li className="list-group-item">
                                     <input

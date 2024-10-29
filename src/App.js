@@ -11,6 +11,9 @@ import FooterComponent from "./components/FooterComponent";
 import PartyListComponent from "./components/PartyListComponent";
 import Wc1FormComponent from "./components/Wc1FormComponent";
 import NewWc1 from "./components/NewWc1";
+import manageMatchingClaims from "./components/manageMatchingClaims";
+
+
 function App() {
   return (
     <div>
@@ -27,6 +30,7 @@ function App() {
               <Route path="/add-party" element={<AddPartyComponent />} />
               <Route path="/edit-party/:id" element={<AddPartyComponent />} />
               <Route path="/newWc1" element={<NewWc1 />} />
+              <Route path="/manageMatchingClaims" element={<manageMatchingClaims />} />
             </Routes>
           </div>
           <FooterComponent />
