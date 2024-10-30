@@ -221,7 +221,7 @@
 
 .custom-radio .form-check-input {
   transform: scale(1.0);
-  accent-color: #b6dde5;
+  accent-color: #b8dee5;
   border-color: #b6dde5;
 }
 
@@ -230,12 +230,26 @@
   font-size: 15px;
 }
 
-.form-control {
+/* .custom-input {
+  border: 2px solid #b6dde5;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+} */
+ .form-control {
   font-size: 14px !important;
-  height: 30px;
-  color:black;
+  /* height: 35px !important; */
+  border: 2px solid #b6dde5 !important;
+  border-radius: 5px !important;
+} 
+.custom-input{
+  font-size: 14px !important;
+  height: 35px !important;
+  border: 2px solid #b6dde5 !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
 }
-
 .picklist-container {
   width: 250px;
   height: 300px;
@@ -261,7 +275,7 @@
 .custom-label {
   margin-top: 0.25rem;
   font-size: 13px;
-  font-weight:1500px;
+  font-weight:bold;
 }
 
 .container {
@@ -461,11 +475,33 @@ custom-input:invalid {
   border-color: red;
 }
 
-.custom-input:focus:invalid {
-  outline: none;
-  box-shadow: 0 0 0 2px red;
+.p-invalid {
+  border-color: red !important; 
+}
+.p-invalid:focus {
+  outline: none; 
+  box-shadow: none; 
+}
+.custom-input:focus {
+  outline: none; 
+  box-shadow: none; 
 }
 
 .custom-input[type="radio"] {
   margin-top: 12px;
+}
+.custom-datatable {
+  max-width: 2000px; 
+  th, td {
+    padding: 0px; 
+  }
+
+  tr {
+    margin-bottom: 0px; 
+  }
+}
+@media (max-width: 768px) {
+  .custom-datatable {
+    max-width: 100%; 
+  }
 }

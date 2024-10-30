@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { PickList } from 'primereact/picklist';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { Link } from "react-router-dom";
 import NewClaimComponent from "./NewClaimComponent.js";
 import Modal from './Modal.js';
 
@@ -14,7 +12,7 @@ const Wc1FormComponent = () => {
   const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
     return (
       <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
-        <select className="form-select custom-select" style={{ width: '50px', fontSize: '14px', padding: '5px'  }}
+        <select className="form-select custom-select" style={{ width: '50px', fontSize: '14px', padding: '5px' }}
           value={itemsPerPage} onChange={(e) => onItemsPerPageChange(Number(e.target.value))}>
           {[2, 4, 6, 8].map((num) => (
             <option key={num} value={num}>
@@ -93,6 +91,9 @@ const Wc1FormComponent = () => {
   const [clicked, setClicked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedParty, setSelectedParty] = useState(null);
+  const fieldRefs = useRef({});
+  const bodyPartRef = useRef(null);
+  const attachmentsRef = useRef(null);
 
   const openModal = (party) => {
     console.log("Opening modal for party:", party);
@@ -179,7 +180,7 @@ const Wc1FormComponent = () => {
     dateEmployerKnowledge: '',
     firstDateFailed: '',
     fullPayOnDate: 'Yes',
-    occurredOnPremises: 'Yes',
+    occurredOnPremises: '',
     injuryType: '',
     bodyPartAffected: [],
     howOccurred: '',
@@ -218,6 +219,14 @@ const Wc1FormComponent = () => {
     isMedicalInjuryEnabled: false,
     indemnityEnabaled: false,
     document: null,
+    payBenefitUntil: '',
+    benefitsPayableFor: '',
+    benefitsPayableFromDate: '',
+    dateSalaryPaid: '',
+    dateOfDisability: '',
+    weeklyBenefitAmount: '',
+    averageWeeklyWage: '',
+    previouslyMedicalOnly: ''
   });
 
   const [parties, setParties] = useState([
@@ -244,6 +253,8 @@ const Wc1FormComponent = () => {
           BenifitsPayableByDate: '',
           BenifitsPAyableFor: '',
           payBenifitUntil: '',
+          DateOfDisablity: '',
+
         };
       } else {
         return { ...prev, isIncomeBenefitsEnabled: true };
@@ -256,7 +267,9 @@ const Wc1FormComponent = () => {
     // setFormData({ ...formData, [name]: value });
     // setAmount(e.target.value.replace(/[^0-9.]/g, '');
     setFormData({ ...formData, [name]: name === 'ReturnedWagePerWeek' ? value.replace(/[^0-9.]/g, '') : value });
-    setErrors({ ...errors, [name]: '' });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
   };
 
   const handleBlur = () => {
@@ -292,92 +305,135 @@ const Wc1FormComponent = () => {
   };
 
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log('Form Submitted:', formData);
-
-  //   const allRequiredFieldsFilled = checkRequiredFields(formData);
-  //   const isBodyPartAffectedEmpty = !formData.bodyPartAffected || formData.bodyPartAffected.length === 0;
-
-  //   console.log("isBodyPartAffectedEmpty", isBodyPartAffectedEmpty);
-
-  //   if (allRequiredFieldsFilled || isBodyPartAffectedEmpty) {
-  //     console.log("in If - Form Not Submitted");
-  //     setErrors((prev) => ({
-  //       ...prev,
-  //       bodyPartAffected: 'Please select at least one body part affected.',
-  //     }));
-  //     setIsActive(true);
-  //     return;
-  //   }
-
-  //   console.log("Form is valid. Proceeding with submission...");
-  //   setIsActive(false);
-  //   // Add submission logic (API call)
-  //   setFormData({});
-  // };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
-    handleInvalid();
-    if (Object.keys(errors).some((key) => errors[key])) {
-      console.log("Form not submitted due to errors");
+    console.log('Form to be Submitted:', formData);
+    const requiredFields = [
+      'firstName', 'lastName', 'mailingAddress1', 'city', 'state',
+      'zip', 'gender', 'NoOfDays', 'daysOff', 'dateOfInjury',
+      'countyOfInjury', 'fullPayOnDate', 'occurredOnPremises',
+      'howOccurred', 'injuryType', 'bodyPartAffected'
+    ];
+    const newErrors = validateRequiredFields(formData, requiredFields);
+    const isBodyPartAffectedEmpty = !formData.bodyPartAffected || formData.bodyPartAffected.length === 0;
+    console.log('formData.isIncomeBenefitsEnabled', formData.isIncomeBenefitsEnabled)
+    if (formData.isIncomeBenefitsEnabled) {
+      if (formData.benifitsBeingPaid === 'incomeBenifits') {
+        const incomeBenefitsRequiredFields = [
+          'averageWeeklyWage', 'weeklyBenifit', 'DateOFFirstPayment', 'CompensationPaid',
+          'BenifitsPayableByDate', 'BenifitsPAyableFor'
+        ];
+        const incomeErrors = validateRequiredFields(formData, incomeBenefitsRequiredFields);
+        Object.assign(newErrors, incomeErrors);
+      }
+      if (formData.benifitsBeingPaid === 'salaryInLieu') {
+        const salaryInLieuRequiredFields = [
+          'dateSalaryPaid', 'benefitsPayableFromDate', 'benefitsPayableFor'
+        ];
+        const salaryErrors = validateRequiredFields(formData, salaryInLieuRequiredFields);
+        Object.assign(newErrors, salaryErrors);
+      }
+    }
+    if (formData.isControvertEnabled) {
+      const isControvertRequiredFields = [
+        'convertType'
+      ];
+      const incomeErrors = validateRequiredFields(formData, isControvertRequiredFields);
+      Object.assign(newErrors, incomeErrors);
+    }
+    if (formData.isControvertEnabled) {
+      const isControvertRequiredFields = [
+        'convertType'
+      ];
+      const incomeErrors = validateRequiredFields(formData, isControvertRequiredFields);
+      Object.assign(newErrors, incomeErrors);
+    }
+    if (formData.isMedicalInjuryEnabled) {
+      const indemnityRequiredFields = [
+        'indemnityEnabaled'
+      ];
+      const incomeErrors = validateRequiredFields(formData, indemnityRequiredFields);
+      Object.assign(newErrors, incomeErrors);
+    }
+    if (isBodyPartAffectedEmpty) {
+      // setIsActive(true);
+      newErrors.bodyPartAffected = 'Please select at least one body part affected.';
+    }
+    if (bodyPartRef.current) {
+      bodyPartRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setIsActive(true);
+      const firstErrorField = Object.keys(newErrors)[0];
+      if (fieldRefs.current[firstErrorField]) {
+        const ref = fieldRefs.current[firstErrorField].current;
+        console.log('newErrors', newErrors)
+        console.log('firstErrorField', firstErrorField);
+        if (ref && ref instanceof HTMLElement) {
+          ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          ref.focus();
+        } else {
+          console.error(`Ref for ${firstErrorField} is not a valid DOM element.`);
+        }
+      }
       return;
     }
     setIsActive(false);
     console.log("Form is valid. Proceeding with submission...");
-    setFormData({});
+    setFormData(prev => ({
+      ...prev,
+    }));
   };
 
-  // const onChange = (event) => {
-  //   setSource(event.source);
-  //   setTarget(event.target);
-  //   if (event.target.length > 0) {
-  //     setErrors(prev => ({ ...prev, bodyPartAffected: false }));
+  const validateRequiredFields = (data, requiredFields) => {
+    const newErrors = {};
+    requiredFields.forEach(field => {
+      if (!data[field]) {
+        newErrors[field] = `${field.replace(/([A-Z])/g, ' $1')} is required.`; // Format error message
+      }
+    });
+    return newErrors;
+  };
+
+  // const handleInvalid = () => {
+  //   const requiredFields = [
+  //     'firstName',
+  //     'lastName',
+  //     'mailingAddress1',
+  //     'city',
+  //     'state',
+  //     'zip',
+  //     'gender',
+  //     'NoOfDays',
+  //     'daysOff', 'dateOfInjury', 'countyOfInjury', 'fullPayOnDate', 'occurredOnPremises', 'howOccurred', 'injuryType'
+  //   ];
+  //   const allRequiredFieldsFilled = checkRequiredFields(formData);
+  //   const newErrors = validateRequiredFields(formData, requiredFields);
+  //   const isBodyPartAffectedEmpty = !formData.bodyPartAffected || formData.bodyPartAffected.length === 0;
+  //   if (isBodyPartAffectedEmpty) {
+  //     setIsActive(true);
+  //     newErrors.bodyPartAffected = 'Please select at least one body part affected.';
+  //   }
+  //   Object.keys(newErrors).forEach((key) => {
+  //     if (!newErrors[key]) {
+  //       delete newErrors[key];
+  //     }
+  //   });
+  //   const hasErrors = Object.keys(newErrors).length > 0;
+  //   if (hasErrors) {
+  //     setErrors(newErrors);
+  //     setIsActive(true);
+  //     const firstErrorField = Object.keys(newErrors).find((key) => newErrors[key]);
+  //     if (firstErrorField && fieldRefs.current[firstErrorField]) {
+  //       fieldRefs.current[firstErrorField].current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  //       fieldRefs.current[firstErrorField].current.focus();
+  //     }
+  //   } else {
+  //     setErrors({});
   //   }
   // };
 
-  const onChange = (event) => {
-    const { source, target } = event;
-    const { name, value } = event.target;
-    setSource(event.source);
-    setTarget(event.target);
-
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-      bodyPartAffected: target,
-    }));
-    console.log('Source:', source);
-    console.log('Target:', target);
-
-    if (target.length > 0) {
-      setErrors(prev => ({ ...prev, bodyPartAffected: false }));
-    } else {
-      setErrors(prev => ({ ...prev, bodyPartAffected: true }));
-    }
-  };
-  const [errors, setErrors] = useState({
-    bodyPartAffected: false,
-  });
-
-
-  const handleInvalid = () => {
-    const allRequiredFieldsFilled = checkRequiredFields(formData);
-    const isBodyPartAffectedEmpty = !formData.bodyPartAffected || formData.bodyPartAffected.length === 0;
-
-    // Open the collapsible if any required fields are empty or bodyPartAffected is empty
-    if (!allRequiredFieldsFilled || isBodyPartAffectedEmpty) {
-      if (isBodyPartAffectedEmpty) {
-        setErrors((prev) => ({
-          ...prev,
-          bodyPartAffected: 'Please select at least one body part affected.',
-        }));
-      }
-      setIsActive(true); // Open the collapsible
-    }
-  };
   const checkRequiredFields = (data) => {
     return (
       data.dateOfInjury &&
@@ -386,6 +442,49 @@ const Wc1FormComponent = () => {
       data.howOccurred
     );
   };
+
+  const getFieldRef = (fieldName) => {
+    if (!fieldRefs.current[fieldName]) {
+      fieldRefs.current[fieldName] = React.createRef();
+    }
+    return fieldRefs.current[fieldName];
+  };
+
+  const onChange = (event) => {
+    const { source, target } = event;
+    setSource(source);
+    setTarget(target);
+    setFormData((prevState) => ({
+      ...prevState,
+      bodyPartAffected: target,
+    }));
+    console.log('Source:', source);
+    console.log('Target:', target);
+    if (target.length > 0) {
+      setErrors(prev => ({ ...prev, bodyPartAffected: false }));
+    } else {
+      setErrors(prev => ({ ...prev, bodyPartAffected: 'Please select at least one body part affected.' }));
+    }
+  };
+
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    mailingAddress1: '',
+    city: '',
+    state: '',
+    zip: '',
+    gender: '',
+    NoOfDays: '', dateOfInjury: '', countyOfInjury: '', fullPayOnDate: '', occurredOnPremises: '', howOccurred: '', injuryType: '',
+    bodyPartAffected: false, averageWeeklyWage: '',
+    weeklyBenifit: '', DateOFFirstPayment: '', CompensationPaid: '',
+    BenifitsPayableByDate: '', BenifitsPAyableFor: ''
+    , benefitsPayableFromDate: '',
+    dateSalaryPaid: '', benefitsPayableFor: '', occurredOnPremises: '', fullPayOnDate: '', convertType: '', indemnityEnabaled: ''
+  });
+
+
+
   const totalPages = Math.ceil(parties.length / itemsPerPage);
   const paginatedParties = parties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -393,7 +492,7 @@ const Wc1FormComponent = () => {
     <div className="form-container">
       <NewClaimComponent />
       <h1 className="custom-h1 header mt-3">Claimant Information</h1>
-      <form onSubmit={handleSubmit} onInvalid={handleInvalid}>
+      <form onSubmit={handleSubmit} noValidate>
         <div className="d-flex flex-wrap">
           <div className="form-section  flex-fill">
 
@@ -402,13 +501,19 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('firstName')}
+                  className={`form-control custom-input ${errors.firstName ? 'p-invalid' : ''}`}
                   id="firstName"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
                   required
                 />
+                {errors.firstName && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.firstName}
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group row mb-1">
@@ -416,13 +521,19 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('lastName')}
+                  className={`form-control custom-input ${errors.lastName ? 'p-invalid' : ''}`}
                   id="lastName"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
                   required
                 />
+                {errors.lastName && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.lastName}
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group row mb-1">
@@ -430,7 +541,7 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="middleInitial"
                   name="middleInitial"
                   value={formData.middleInitial}
@@ -443,22 +554,22 @@ const Wc1FormComponent = () => {
               <div className="col-md-3">
                 <input autoComplete="off"
                   type="date"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="birthdate"
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleChange}
-                  onFocus={(e) => e.target.showPicker()}
+                  onClick={(e) => e.target.showPicker()}
                 />
               </div>
             </div>
             <div className="form-group row mb-1">
-              <label className="col-md-4 col-form-label custom-label">Gender: <span style={{ color: 'red' }}>*</span></label>
+              <label className="col-md-4 col-form-label custom-label" ref={fieldRefs.current.gender} >Gender: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-md-6 custom-radio">
                 <div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input "
+                      className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
                       type="radio"
                       name="gender"
                       id="genderMale"
@@ -472,7 +583,7 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
                       type="radio"
                       name="gender"
                       id="genderFemale"
@@ -485,7 +596,7 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
                       type="radio"
                       name="gender"
                       id="genderUnknown"
@@ -497,6 +608,11 @@ const Wc1FormComponent = () => {
                     <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderUnknown">Unknown</label>
                   </div>
                 </div>
+                {errors.gender && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.gender}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -508,7 +624,7 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="outOfCountryAddress"
                   name="outOfCountryAddress"
                   value={formData.outOfCountryAddress}
@@ -521,13 +637,19 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('mailingAddress1')}
+                  className={`form-control custom-input ${errors.mailingAddress1 ? 'p-invalid' : ''}`}
                   id="mailingAddress1"
                   name="mailingAddress1"
                   value={formData.mailingAddress1}
                   onChange={handleChange}
                   required
                 />
+                {errors.mailingAddress1 && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.mailingAddress1}
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group row mb-1">
@@ -535,7 +657,7 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="mailingAddress2"
                   name="mailingAddress2"
                   value={formData.mailingAddress2}
@@ -549,13 +671,19 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('city')}
+                  className={`form-control custom-input ${errors.city ? 'p-invalid' : ''}`}
                   id="city"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
                   required
                 />
+                {errors.city && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.city}
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group row mb-1">
@@ -563,13 +691,19 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('state')}
+                  className={`form-control custom-input ${errors.state ? 'p-invalid' : ''}`}
                   id="state"
                   name="state"
                   value={formData.state}
                   onChange={handleChange}
                   required
                 />
+                {errors.state && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.state}
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group row mb-1">
@@ -577,13 +711,19 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('zip')}
+                  className={`form-control custom-input ${errors.zip ? 'p-invalid' : ''}`}
                   id="zip"
                   name="zip"
                   value={formData.zip}
                   onChange={handleChange}
                   required
                 />
+                {errors.zip && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.zip}
+                  </div>
+                )}
               </div>
             </div>
             <div className="form-group row mb-1">
@@ -591,7 +731,7 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="email"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="email"
                   name="email"
                   value={formData.email}
@@ -604,7 +744,7 @@ const Wc1FormComponent = () => {
               <div className="col-md-6">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="phoneNumber"
                   name="phoneNumber"
                   value={formData.phoneNumber}
@@ -664,12 +804,12 @@ const Wc1FormComponent = () => {
                 <div className="col-md-4">
                   <input autoComplete="off"
                     type="date"
-                    className="form-control"
+                    className="form-control custom-input"
                     id="hiredDate"
                     name="hiredDate"
                     value={formData.hiredDate}
                     onChange={handleChange}
-                    onFocus={(e) => e.target.showPicker()}
+                    onClick={(e) => e.target.showPicker()}
                   />
                 </div>
               </div>
@@ -678,7 +818,7 @@ const Wc1FormComponent = () => {
                 <div className="col-md-4">
                   <input autoComplete="off"
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     id="jobClssifiedCodeNo"
                     name="jobClssifiedCodeNo"
                     value={formData.jobClssifiedCodeNo}
@@ -691,7 +831,7 @@ const Wc1FormComponent = () => {
                 <div className="col-md-4">
                   <input autoComplete="off"
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     id="insurerFile"
                     name="insurerFile"
                     value={formData.insurerFile}
@@ -708,26 +848,32 @@ const Wc1FormComponent = () => {
                 <div className="col-md-4">
                   <input autoComplete="off"
                     type="text"
-                    className="form-control"
+                    ref={getFieldRef('NoOfDays')}
+                    className={`form-control custom-input ${errors.NoOfDays ? 'p-invalid' : ''}`}
                     id="NoOfDays"
                     name="NoOfDays"
                     value={formData.NoOfDays}
                     onChange={handleChange}
                     required
                   />
+                  {errors.NoOfDays && (
+                    <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                      {errors.NoOfDays}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="form-group row mb-1 custom-radio">
                 <label className="col-md-5 col-form-label custom-label">Do you have any days Off?<span style={{ color: 'red' }}>*</span></label>
-                <div className="col-md-6">
+                <div ref={fieldRefs.current.daysOff} className="col-md-6">
                   <div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
-                        className="form-check-input"
+                        className={`form-check-input ${errors.daysOff ? 'p-invalid' : ''}`}
                         type="radio"
                         name="daysOff"
                         id="daysOffYes"
-                        value="Yes"
+                        value={formData.daysOff}
                         style={{ marginTop: "14px" }}
                         checked={formData.daysOff === 'Yes'}
                         onChange={handleChange}
@@ -737,11 +883,11 @@ const Wc1FormComponent = () => {
                     </div>
                     <div className="form-check form-check-inline">
                       <input autoComplete="off"
-                        className="form-check-input"
+                        className={`form-check-input ${errors.daysOff ? 'p-invalid' : ''}`}
                         type="radio"
                         name="daysOff"
                         id="daysOffNo"
-                        value="No"
+                        value={formData.daysOff}
                         style={{ marginTop: "14px" }}
                         checked={formData.daysOff === 'No'}
                         onChange={handleChange}
@@ -750,6 +896,11 @@ const Wc1FormComponent = () => {
                       <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="daysOffNo">No</label>
                     </div>
                   </div>
+                  {errors.daysOff && (
+                    <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                      {errors.daysOff}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="form-group row mb-1">
@@ -757,7 +908,7 @@ const Wc1FormComponent = () => {
                 <div className="col-md-4">
                   <input autoComplete="off"
                     type="text"
-                    className="form-control"
+                    className="form-control custom-input"
                     id="wageRate"
                     name="wageRate"
                     value={formData.wageRate}
@@ -837,7 +988,7 @@ const Wc1FormComponent = () => {
             Injury/Illness and Medical
             <span style={{ float: 'right', marginRight: '20px', fontSize: '25px' }}>
               {/* <FontAwesomeIcon icon={isActive ? faChevronUp : faChevronDown} className="fa-sm" /> */}
-              <i className={`pi ${isActive ? 'pi-sort-up-fill' : 'pi-sort-down-fill'}`} style={{ fontSize: '1rem'}}></i>
+              <i className={`pi ${isActive ? 'pi-sort-up-fill' : 'pi-sort-down-fill'}`} style={{ fontSize: '1rem' }}></i>
             </span>
           </h1>
           <div className={`collapsible-content ${isActive ? 'active' : ''}`}>
@@ -847,7 +998,7 @@ const Wc1FormComponent = () => {
                 <select
                   id="naicsCode"
                   name="naicsCode"
-                  className="form-control "
+                  className="form-control custom-input "
                   value={formData.naicsCode}
                   onChange={handleChange}
                 >
@@ -865,14 +1016,20 @@ const Wc1FormComponent = () => {
               <div className="col-sm-8">
                 <input autoComplete="off"
                   type="date"
-                  className="form-control"
+                  ref={getFieldRef('dateOfInjury')}
+                  className={`form-control custom-input ${errors.dateOfInjury ? 'p-invalid' : ''}`}
                   id="dateOfInjury"
                   name="dateOfInjury"
                   value={formData.dateOfInjury}
                   onChange={handleChange}
-                  onFocus={(e) => e.target.showPicker()}
+                  onClick={(e) => e.target.showPicker()}
                   required
                 />
+                {errors.dateOfInjury && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.dateOfInjury}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -881,12 +1038,12 @@ const Wc1FormComponent = () => {
               <div className="col-sm-8">
                 <input autoComplete="off"
                   type="time"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="timeOfInjury"
                   name="timeOfInjury"
                   value={formData.timeOfInjury}
                   onChange={handleChange}
-                  onFocus={(e) => e.target.showPicker()}
+                  onClick={(e) => e.target.showPicker()}
                 />
               </div>
             </div>
@@ -896,13 +1053,19 @@ const Wc1FormComponent = () => {
               <div className="col-sm-8">
                 <input autoComplete="off"
                   type="text"
-                  className="form-control"
+                  ref={getFieldRef('countyOfInjury')}
+                  className={`form-control custom-input ${errors.countyOfInjury ? 'p-invalid' : ''}`}
                   id="countyOfInjury"
                   name="countyOfInjury"
                   value={formData.countyOfInjury}
                   onChange={handleChange}
                   required
                 />
+                {errors.countyOfInjury && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.countyOfInjury}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -911,12 +1074,12 @@ const Wc1FormComponent = () => {
               <div className="col-sm-8">
                 <input autoComplete="off"
                   type="date"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="dateEmployerKnowledge"
                   name="dateEmployerKnowledge"
                   value={formData.dateEmployerKnowledge}
                   onChange={handleChange}
-                  onFocus={(e) => e.target.showPicker()}
+                  onClick={(e) => e.target.showPicker()}
                 />
               </div>
             </div>
@@ -926,11 +1089,11 @@ const Wc1FormComponent = () => {
               <div className="col-sm-8">
                 <input autoComplete="off"
                   type="date"
-                  className="form-control"
+                  className="form-control custom-input"
                   id="firstDateFailed"
                   name="firstDateFailed"
                   value={formData.firstDateFailed}
-                  onFocus={(e) => e.target.showPicker()}
+                  onClick={(e) => e.target.showPicker()}
                   onChange={handleChange}
                 />
               </div>
@@ -942,7 +1105,8 @@ const Wc1FormComponent = () => {
                 <div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      ref={getFieldRef('fullPayOnDate')}
+                      className={`form-check-input ${errors.fullPayOnDate ? 'p-invalid' : ''}`}
                       type="radio"
                       name="fullPayOnDate"
                       value="Yes"
@@ -955,7 +1119,8 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      ref={getFieldRef('fullPayOnDate')}
+                      className={`form-check-input ${errors.fullPayOnDate ? 'p-invalid' : ''}`}
                       type="radio"
                       name="fullPayOnDate"
                       value="No"
@@ -967,7 +1132,8 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      ref={getFieldRef('fullPayOnDate')}
+                      className={`form-check-input ${errors.fullPayOnDate ? 'p-invalid' : ''}`}
                       type="radio"
                       name="fullPayOnDate"
                       value="None"
@@ -976,6 +1142,11 @@ const Wc1FormComponent = () => {
                       onChange={handleChange}
                     />
                     <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="None">None</label>
+                    {errors.fullPayOnDate && (
+                      <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                        {errors.fullPayOnDate}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -987,7 +1158,8 @@ const Wc1FormComponent = () => {
                 <div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      ref={getFieldRef('occurredOnPremises')}
+                      className={`form-check-input ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
                       type="radio"
                       name="occurredOnPremises"
                       value="Yes"
@@ -1000,7 +1172,8 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      ref={getFieldRef('occurredOnPremises')}
+                      className={`form-check-input ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
                       type="radio"
                       name="occurredOnPremises"
                       value="No"
@@ -1012,7 +1185,8 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-check form-check-inline">
                     <input autoComplete="off"
-                      className="form-check-input"
+                      ref={getFieldRef('occurredOnPremises')}
+                      className={`form-check-input ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
                       type="radio"
                       name="occurredOnPremises"
                       value="None"
@@ -1022,6 +1196,11 @@ const Wc1FormComponent = () => {
                     />
                     <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="None">None</label>
                   </div>
+                  {errors.occurredOnPremises && (
+                    <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                      {errors.occurredOnPremises}
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -1034,16 +1213,22 @@ const Wc1FormComponent = () => {
                   required
                   id="injuryType"
                   name="injuryType"
-                  className="form-control "
+                  ref={getFieldRef('injuryType')}
+                  className={`form-control custom-input ${errors.injuryType ? 'p-invalid' : ''}`}
                   value={formData.injuryType}
                   onChange={handleChange}
 
                 >
-                  <option value="" disabled>--Select One--</option>
+                  <option value="">--Select One--</option>
                   <option value="AIDS">AIDS</option>
                   <option value="Adverse reaction to a vaccination or inoculation">Adverse reaction to a vaccination or inoculation</option>
                   <option value="Cancer">Cancer</option>
                 </select>
+                {errors.injuryType && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.injuryType}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1064,14 +1249,28 @@ const Wc1FormComponent = () => {
                   targetStyle={{ height: '0px' }} required /> */}
                 {/* {errors.bodyPartAffected && <div className="error-message">
                   Please select at least one item.</div>} */}
-                {errors.bodyPartAffected && (
-                  <div className="error-message" style={{ color: 'red', marginTop: '5px',fontSize:'12px' }}>
-                    {errors.bodyPartAffected}
-                  </div>
-                )}
-                <PickList dataKey="id" source={source} target={target} onChange={onChange} itemTemplate={itemTemplate} breakpoint="1280px"
-                  sourceHeader={<span style={{ fontSize: '1.0rem' }}>Available</span>} targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>} sourceStyle={{ height: '10rem' }} targetStyle={{ height: '10rem' }} />
-
+                <div className="col-md-14" >
+                  {errors.bodyPartAffected && (
+                    <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                      {errors.bodyPartAffected}
+                    </div>
+                  )}
+                  <PickList
+                    dataKey="id"
+                    ref={getFieldRef('bodyPartAffected')}
+                    name='bodyPartAffected'
+                    value={formData.bodyPartAffected}
+                    source={source}
+                    target={formData.bodyPartAffected}
+                    onChange={onChange}
+                    itemTemplate={itemTemplate}
+                    breakpoint="1280px"
+                    sourceHeader={<span style={{ fontSize: '1.0rem' }}>Available</span>}
+                    targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>}
+                    sourceStyle={{ height: '12rem' }}
+                    targetStyle={{ height: '12rem' }}
+                  />
+                </div>
                 {/* <PickList
                   name='bodyPartAffected'
                   source={source}
@@ -1082,7 +1281,7 @@ const Wc1FormComponent = () => {
                   sourceHeader={<span style={{ fontSize: '20px' }}>Available</span>}
                   targetHeader={<span style={{ fontSize: '20px' }}>Selected</span>}
                   className={errors.bodyPartAffected ? 'error-highlight' : ''}
-                  data-tip={errors.bodyPartAffected || ''}
+                  data-tip={errors.bodyPartAffected  }
                 />  */}
               </div>
             </div>
@@ -1092,16 +1291,22 @@ const Wc1FormComponent = () => {
                 <select
                   id="howOccurred"
                   name="howOccurred"
-                  className="form-control"
+                  ref={getFieldRef('howOccurred')}
+                  className={`form-control custom-input ${errors.howOccurred ? 'p-invalid' : ''}`}
                   value={formData.howOccurred}
                   onChange={handleChange}
                   required
                 >
-                  <option value="" disabled>--Select One--</option>
+                  <option value="">--Select One--</option>
                   <option value="Abnormal Air Pressure">Abnormal Air Pressure</option>
                   <option value="Absorption, Ingestion or Inhalation, NOC">Absorption, Ingestion or Inhalation, NOC</option>
                   <option value="Broken Glass">Broken Glass</option>
                 </select>
+                {errors.howOccurred && (
+                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                    {errors.howOccurred}
+                  </div>
+                )}
               </div>
             </div>
             {/* </form> */}
@@ -1115,7 +1320,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianName"
                       name="tPhysicianName"
                       value={formData.tPhysicianName}
@@ -1129,7 +1334,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianAddress1"
                       name="tPhysicianAddress1"
                       value={formData.tPhysicianAddress1}
@@ -1143,7 +1348,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianAddress2"
                       name="tPhysicianAddress2"
                       value={formData.tPhysicianAddress2}
@@ -1157,7 +1362,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianCity"
                       name="tPhysicianCity"
                       value={formData.tPhysicianCity}
@@ -1172,7 +1377,7 @@ const Wc1FormComponent = () => {
                     <select
                       id="tPhysicianState"
                       name="tPhysicianState"
-                      className="form-control"
+                      className="form-control custom-input"
                       value={formData.tPhysicianState}
                       onChange={handleChange}
 
@@ -1189,7 +1394,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-3">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianZIP"
                       name="tPhysicianZIP"
                       value={formData.tPhysicianZIP}
@@ -1201,7 +1406,7 @@ const Wc1FormComponent = () => {
                     {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianZIPExt"
                       name="tPhysicianZIPExt"
                       value={formData.tPhysicianZIPExt}
@@ -1215,7 +1420,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-3">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianPhone"
                       name="tPhysicianPhone"
                       value={formData.tPhysicianPhone}
@@ -1227,7 +1432,7 @@ const Wc1FormComponent = () => {
                     {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="tPhysicianPhoneExt"
                       name="tPhysicianPhoneExt"
                       value={formData.tPhysicianPhoneExt}
@@ -1245,7 +1450,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="initialTreatment"
                       name="initialTreatment"
                       value={formData.initialTreatment}
@@ -1259,7 +1464,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="treatingFacility"
                       name="treatingFacility"
                       value={formData.treatingFacility}
@@ -1273,7 +1478,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="treatingFacilityAddress1"
                       name="treatingFacilityAddress1"
                       value={formData.treatingFacilityAddress1}
@@ -1287,7 +1492,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="treatingFacilityAddress2"
                       name="treatingFacilityAddress2"
                       value={formData.treatingFacilityAddress2}
@@ -1301,7 +1506,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-6">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="treatingFacilityCity"
                       name="treatingFacilityCity"
                       value={formData.treatingFacilityCity}
@@ -1316,7 +1521,7 @@ const Wc1FormComponent = () => {
                     <select
                       id="treatingFacilityState"
                       name="treatingFacilityState"
-                      className="form-control"
+                      className="form-control custom-input"
                       value={formData.treatingFacilityState}
                       onChange={handleChange}
 
@@ -1333,7 +1538,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-3">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="treatingFacilityZIP"
                       name="treatingFacilityZIP"
                       value={formData.treatingFacilityZIP}
@@ -1345,7 +1550,7 @@ const Wc1FormComponent = () => {
                     {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="treatingFacilityZIPExt"
                       name="treatingFacilityZIPExt"
                       value={formData.treatingFacilityZIPExt}
@@ -1359,7 +1564,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-3">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="hospitalPhone"
                       name="hospitalPhone"
                       value={formData.hospitalPhone}
@@ -1371,7 +1576,7 @@ const Wc1FormComponent = () => {
                     {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="hospitalPhoneExt"
                       name="hospitalPhoneExt"
                       value={formData.hospitalPhoneExt}
@@ -1391,12 +1596,12 @@ const Wc1FormComponent = () => {
                   <div className="col-md-2">
                     <input autoComplete="off"
                       type="date"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="RtwDate"
                       name="RtwDate"
                       value={formData.RtwDate}
                       onChange={handleChange}
-                      onFocus={(e) => e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
                     />
                   </div>
                 </div>
@@ -1406,7 +1611,7 @@ const Wc1FormComponent = () => {
                     <input autoComplete="off"
                       style={{ marginRight: '5px' }}
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="ReturnedWagePerWeek"
                       name="ReturnedWagePerWeek"
                       value={formData.ReturnedWagePerWeek ? `$${formData.ReturnedWagePerWeek}` : ''}
@@ -1420,12 +1625,12 @@ const Wc1FormComponent = () => {
                   <div className="col-md-2">
                     <input autoComplete="off"
                       type="date"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="FatalDeathDate"
                       name="FatalDeathDate"
                       value={formData.FatalDeathDate}
                       onChange={handleChange}
-                      onFocus={(e) => e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
                     />
                   </div>
                 </div>
@@ -1439,12 +1644,12 @@ const Wc1FormComponent = () => {
                   <div className="col-md-4">
                     <input autoComplete="off"
                       type="date"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="reportPreparedBy"
                       name="reportPreparedBy"
                       value={formData.reportPreparedBy}
                       onChange={handleChange}
-                      onFocus={(e) => e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
                     />
                   </div>
                 </div>
@@ -1453,7 +1658,7 @@ const Wc1FormComponent = () => {
                   <div className="col-md-3">
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="telePhoneNumber"
                       name="telePhoneNumber"
                       value={formData.telePhoneNumber}
@@ -1464,7 +1669,7 @@ const Wc1FormComponent = () => {
                     <label htmlFor="telePhoneExt" className="col-sm col-form-label custom-label">Ext:</label>
                     <input autoComplete="off"
                       type="text"
-                      className="form-control"
+                      className="form-control custom-input"
                       id="telePhoneExt"
                       name="telePhoneExt"
                       value={formData.telePhoneExt}
@@ -1474,15 +1679,15 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="form-group row mb-1" >
                     <label htmlFor="DateOfReport" className="col-md-3 col-form-label custom-label ">Date of Report:</label>
-                    <div className="col-md-3 ml-3" style={{marginLeft:'4px'}}>
+                    <div className="col-md-3 ml-3" style={{ marginLeft: '4px' }}>
                       <input autoComplete="off"
                         type="date"
-                        className="form-control"
+                        className="form-control custom-input"
                         id="DateOfReport"
                         name="DateOfReport"
                         value={formData.DateOfReport}
                         onChange={handleChange}
-                        onFocus={(e) => e.target.showPicker()}
+                        onClick={(e) => e.target.showPicker()}
                       />
                     </div>
                   </div>
@@ -1559,19 +1764,25 @@ const Wc1FormComponent = () => {
                   <div className="form-section  flex-fill">
                     <div className="form-group row mb-1">
                       <label htmlFor="averageWeeklyWage" className="col-md-4 col-form-label custom-label">
-                        Average Weekly Wage: $* <span style={{ color: 'red' }}>*</span>
+                        Average Weekly Wage: $<span style={{ color: 'red' }}>*</span>
                       </label>
                       <div className="col-md-6">
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          ref={getFieldRef('averageWeeklyWage')}
+                          className={`form-control custom-input ${errors.averageWeeklyWage ? 'p-invalid' : ''}`}
                           id="averageWeeklyWage"
                           name="averageWeeklyWage"
                           value={formData.averageWeeklyWage}
                           onChange={handleChange}
                           required
                         />
+                        {errors.averageWeeklyWage && (
+                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                            {errors.averageWeeklyWage}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -1582,13 +1793,19 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          ref={getFieldRef('weeklyBenifit')}
+                          className={`form-control custom-input ${errors.weeklyBenifit ? 'p-invalid' : ''}`}
                           id="weeklyBenifit"
                           name="weeklyBenifit"
                           value={formData.weeklyBenifit}
                           onChange={handleChange}
                           required
                         />
+                        {errors.weeklyBenifit && (
+                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                            {errors.weeklyBenifit}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -1599,7 +1816,7 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          className="form-control custom-input"
                           id="DateOfDisablity"
                           name="DateOfDisablity"
                           value={formData.DateOfDisablity}
@@ -1616,13 +1833,19 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          ref={getFieldRef('DateOFFirstPayment')}
+                          className={`form-control custom-input ${errors.DateOFFirstPayment ? 'p-invalid' : ''}`}
                           id="DateOFFirstPayment"
                           name="DateOFFirstPayment"
                           value={formData.DateOFFirstPayment}
                           onChange={handleChange}
                           required
                         />
+                        {errors.DateOFFirstPayment && (
+                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                            {errors.DateOFFirstPayment}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -1633,13 +1856,19 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          ref={getFieldRef('CompensationPaid')}
+                          className={`form-control custom-input ${errors.CompensationPaid ? 'p-invalid' : ''}`}
                           id="CompensationPaid"
                           name="CompensationPaid"
                           value={formData.CompensationPaid}
                           onChange={handleChange}
                           required
                         />
+                        {errors.CompensationPaid && (
+                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                            {errors.CompensationPaid}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -1650,7 +1879,7 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          className="form-control custom-input"
                           id="penalityPaid"
                           name="penalityPaid"
                           value={formData.penalityPaid}
@@ -1668,13 +1897,20 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="date"
-                          className="form-control"
+                          ref={getFieldRef('BenifitsPayableByDate')}
+                          className={`form-control custom-input ${errors.BenifitsPayableByDate ? 'p-invalid' : ''}`}
                           id="BenifitsPayableByDate"
                           name="BenifitsPayableByDate"
                           value={formData.BenifitsPayableByDate}
                           onChange={handleChange}
+                          onClick={(e) => e.target.showPicker()}
                           required
                         />
+                        {errors.BenifitsPayableByDate && (
+                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                            {errors.BenifitsPayableByDate}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -1685,13 +1921,19 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          ref={getFieldRef('BenifitsPAyableFor')}
+                          className={`form-control custom-input ${errors.BenifitsPAyableFor ? 'p-invalid' : ''}`}
                           id="BenifitsPAyableFor"
                           name="BenifitsPAyableFor"
                           value={formData.BenifitsPAyableFor}
                           onChange={handleChange}
                           required
                         />
+                        {errors.BenifitsPAyableFor && (
+                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                            {errors.BenifitsPAyableFor}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -1702,7 +1944,7 @@ const Wc1FormComponent = () => {
                         <input
                           autoComplete="off"
                           type="text"
-                          className="form-control"
+                          className="form-control custom-input"
                           id="payBenifitUntil"
                           name="payBenifitUntil"
                           value={formData.payBenifitUntil}
@@ -1717,7 +1959,7 @@ const Wc1FormComponent = () => {
             {formData.benifitsBeingPaid === 'salaryInLieu' && (
               <div className="d-flex flex-wrap">
                 <div className="form-section  flex-fill">
-                  <div className="form-group row mb-1 custom-radio">
+                  <div className="form-group row mb-1 ">
                     <label className="col-md-4 col-form-label custom-label">Previously Medical Only:</label>
                     <div className="col-md-6 d-flex flex-wrap ">
                       <div className="form-check form-check-inline">
@@ -1727,6 +1969,7 @@ const Wc1FormComponent = () => {
                           name="previouslyMedicalOnly"
                           id="previouslyMedicalYes"
                           value="Yes"
+                          onChange={handleChange}
                           style={{ fontSize: '10px', color: 'black', marginTop: '10px' }}
                         />
                         <label className="form-check-label custom-label" htmlFor="previouslyMedicalYes">Yes</label>
@@ -1737,6 +1980,7 @@ const Wc1FormComponent = () => {
                           className="form-check-input "
                           name="previouslyMedicalOnly"
                           id="previouslyMedicalNo"
+                          onChange={handleChange}
                           value="No"
                           style={{ fontSize: '10px', color: 'black', marginTop: '10px' }}
                         />
@@ -1748,6 +1992,7 @@ const Wc1FormComponent = () => {
                           className="form-check-input"
                           name="previouslyMedicalOnly"
                           id="previouslyMedicalNone"
+                          onChange={handleChange}
                           value="None"
                           style={{ fontSize: '10px', color: 'black', marginTop: '10px' }}
                         />
@@ -1760,9 +2005,10 @@ const Wc1FormComponent = () => {
                     <div className="col-md-6">
                       <input
                         type="text"
-                        className="form-control"
+                        className="form-control custom-input"
                         id="averageWeeklyWage"
                         name="averageWeeklyWage"
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
@@ -1771,9 +2017,10 @@ const Wc1FormComponent = () => {
                     <div className="col-md-6">
                       <input
                         type="text"
-                        className="form-control"
+                        className="form-control custom-input"
                         id="weeklyBenefitAmount"
                         name="weeklyBenefitAmount"
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
@@ -1782,9 +2029,11 @@ const Wc1FormComponent = () => {
                     <div className="col-md-6">
                       <input
                         type="date"
-                        className="form-control"
+                        className="form-control custom-input"
                         id="dateOfDisability"
                         name="dateOfDisability"
+                        onChange={handleChange}
+                        onClick={(e) => e.target.showPicker()}
                       />
                     </div>
                   </div>
@@ -1796,11 +2045,19 @@ const Wc1FormComponent = () => {
                     <div className="col-md-6">
                       <input
                         type="date"
-                        className="form-control"
+                        ref={getFieldRef('dateSalaryPaid')}
+                        className={`form-control custom-input ${errors.dateSalaryPaid ? 'p-invalid' : ''}`}
                         id="dateSalaryPaid"
                         name="dateSalaryPaid"
+                        onClick={(e) => e.target.showPicker()}
+                        onChange={handleChange}
                         required
                       />
+                      {errors.dateSalaryPaid && (
+                        <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                          {errors.dateSalaryPaid}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="form-group row mb-1">
@@ -1808,25 +2065,40 @@ const Wc1FormComponent = () => {
                     <div className="col-md-6">
                       <input
                         type="date"
-                        className="form-control"
+                        ref={getFieldRef('benefitsPayableFromDate')}
+                        className={`form-control custom-input ${errors.benefitsPayableFromDate ? 'p-invalid' : ''}`}
                         id="benefitsPayableFromDate"
                         name="benefitsPayableFromDate"
+                        onClick={(e) => e.target.showPicker()}
+                        onChange={handleChange}
                         required
                       />
+                      {errors.benefitsPayableFromDate && (
+                        <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                          {errors.benefitsPayableFromDate}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="form-group row mb-1">
                     <label htmlFor="benefitsPayableFor" className="col-md-4 col-form-label custom-label">Benefits Payable For:<span style={{ color: 'red' }}>*</span></label>
                     <div className="col-md-6">
                       <select
-                        className="form-control"
+                        ref={getFieldRef('benefitsPayableFor')}
+                        className={`form-control custom-input ${errors.benefitsPayableFor ? 'p-invalid' : ''}`}
                         id="benefitsPayableFor"
                         name="benefitsPayableFor"
+                        onChange={handleChange}
                         required
                       >
                         <option value="">Select</option>
                         <option value="Total Disability">TOTAL DISABILITY</option>
                       </select>
+                      {errors.benefitsPayableFor && (
+                        <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                          {errors.benefitsPayableFor}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="form-group row mb-1">
@@ -1834,9 +2106,10 @@ const Wc1FormComponent = () => {
                     <div className="col-md-6">
                       <input
                         type="date"
-                        className="form-control"
+                        className="form-control custom-input"
                         id="payBenefitUntil"
                         name="payBenefitUntil"
+                        onClick={(e) => e.target.showPicker()}
                       />
                     </div>
                   </div>
@@ -1846,13 +2119,13 @@ const Wc1FormComponent = () => {
           </div>
         </div>
         <div>
-          <h1 className="custom-h1  header" style={{margingBottom:'10px'}}>
+          <h1 className="custom-h1  header" style={{ margingBottom: '10px' }}>
             <input autoComplete="off"
               type="checkbox"
               checked={formData.isControvertEnabled}
               onChange={() => setFormData((prev) => ({ ...prev, isControvertEnabled: !prev.isControvertEnabled }))}
               className="large-checkbox"
-              style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px'}}
+              style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
             />
             C. Notice To Convert Payment Of Compensation</h1>
           <div className="form-group row mb-1">
@@ -1861,18 +2134,24 @@ const Wc1FormComponent = () => {
               <select
                 id="convertType"
                 name="convertType"
-                className="form-control"
+                ref={getFieldRef('convertType')}
+                className={`form-control custom-input ${errors.convertType ? 'p-invalid' : ''}`}
                 value={formData.convertType}
                 disabled={!formData.isControvertEnabled}
                 onChange={handleChange}
                 required
               >
-                <option value="" disabled>--Select One--</option>
+                <option value="">--Select One--</option>
                 <option value="ALL THE ENTIRE CASE IS CONTROVERTED">ALL THE ENTIRE CASE IS CONTROVERTED</option>
                 <option value="LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED">LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED</option>
                 <option value="MEDICAL IS DENIED">MEDICAL IS DENIED</option>
                 <option value="PARTIAL DENIAL OF MEDICAL">PARTIAL DENIAL OF MEDICAL</option>
               </select>
+              {errors.convertType && (
+                <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                  {errors.convertType}
+                </div>
+              )}
             </div>
           </div>
           <div className="form-group row mb-1">
@@ -1884,8 +2163,8 @@ const Wc1FormComponent = () => {
                 value={formData.BenifitsNPReasons}
                 disabled={!formData.isControvertEnabled}
                 onChange={handleChange}
-                rows="8"
-                cols="100"
+                rows="5"
+                cols="30"
                 style={{ marginTop: '10px', resize: 'none' }}
               />
             </div>
@@ -1915,22 +2194,30 @@ const Wc1FormComponent = () => {
               style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
             />
             D. Medical Only Injury</h1>
-          <div className="form-group mb-1" style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ color: 'red', marginRight: '10px', marginLeft: '10px', fontSize: '20px', marginBottom: '20px', marginTop: '10px' }}>*</span>
-            <input autoComplete="off"
+          <div className="form-group mb-1 d-flex align-items-center">
+            <span className="text-danger me-2" style={{ fontSize: '20px' }}>*</span>
+
+            <input
+              autoComplete="off"
               type="checkbox"
               name="indemnityEnabaled"
               checked={formData.indemnityEnabaled}
               onChange={() => setFormData((prev) => ({ ...prev, indemnityEnabaled: !prev.indemnityEnabaled }))}
               disabled={!formData.isMedicalInjuryEnabled}
-              className="large-checkbox"
-              style={{ marginLeft: '0px', marginRight: '5px', marginBottom: '20px', marginTop: '10px' }} required
+              ref={getFieldRef('convertType')}
+              className={`large-checkbox ${errors.convertType ? 'p-invalid' : ''} me-1`} 
             />
-            <label style={{ marginBottom: '20px', marginTop: '10px' }} className="custom-label">No indemnity benefits are due and/or have NOT been controverted.</label>
+
+            <label className="custom-label">No indemnity benefits are due and/or have NOT been controverted.</label>
           </div>
 
+          {errors.indemnityEnabaled && (
+            <div className="error-message" style={{ fontSize: '12px', marginTop: '5px',marginLeft:'20px' }}>
+              {errors.indemnityEnabaled}
+            </div>
+          )}
         </div>
-        <div>
+        <div ref={attachmentsRef}>
           <h1 className="custom-h1 header">Attachments</h1>
           <Toast ref={toast} />
           <label className="custom-file-upload">
@@ -1938,7 +2225,8 @@ const Wc1FormComponent = () => {
             Choose File
           </label>
           <div className="card">
-            <DataTable value={documents} paginator rows={5} className="datatable custom-label" tableStyle={{ minWidth: '100rem' }} >
+            <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable"
+             style={{ minWidth: '600px' }} >
               <Column field="id" header="#" />
               <Column field="name" header="Document Name" />
               <Column body={actionBodyTemplate} header="Actions" />
@@ -1948,20 +2236,36 @@ const Wc1FormComponent = () => {
           <Dialog
             header={<span style={{ fontSize: '15px' }}>Confirmation</span>}
             visible={deleteVisible}
-            onHide={() => setDeleteVisible(false)}
+            onHide={() => {
+              setDeleteVisible(false);
+              attachmentsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
             style={{ width: '400px', height: '200px' }}
             modal
           >
             <p style={{ fontSize: '15px' }}>Are you sure you want to delete this document?</p>
-            <Button label="Yes" onClick={confirmDelete} className="p-button-info" style={{ marginRight: '10px', fontSize: '12px' }} />
-            <Button label="No" onClick={() => setDeleteVisible(false)} className="p-button-danger" style={{ marginRight: '10px', fontSize: '12px' }} />
+            <Button label="Yes" 
+             onClick={() => {
+              confirmDelete();
+              attachmentsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }} 
+            className="p-button-info" style={{ marginRight: '10px', fontSize: '12px' }} />
+            <Button label="No" 
+             onClick={() => {
+              setDeleteVisible(false);
+              attachmentsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }} 
+            className="p-button-danger" style={{ marginRight: '10px', fontSize: '12px' }} />
           </Dialog>
 
 
           <Dialog
             header="View Document"
             visible={viewVisible}
-            onHide={hideViewModal}
+            onHide={() => {
+              hideViewModal();
+              attachmentsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
             modal
           >
             {fileUrl && (
@@ -1978,21 +2282,21 @@ const Wc1FormComponent = () => {
           <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Submitter Information</h1>
           <div className="d-flex flex-wrap">
             <div className="form-section  flex-fill">
-              <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                <label className="col-sm-7 col-form-label custom-label custom-label-no-padding">Insurer/Self-Insurer: Type or Print Name of Person Filing Form:</label>
-                <div className="col-sm-2  mt-2 ml-2">
+              <div className="form-group row mb-1" >
+                <label className="col-sm-8 col-form-label custom-label custom-label-no-padding">Insurer/Self-Insurer: Type or Print Name of Person Filing Form:</label>
+                <div className="col-sm-2  mt-2 ">
                   <span style={{ fontSize: '15px' }} className='value'>Nikhila D</span>
                 </div>
               </div>
-              <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                <label htmlFor="submittedDate" className="col-sm-7 col-form-label custom-label ">Date:</label>
-                <div className="col-2  mt-2 ml-">
+              <div className="form-group row mb-1" >
+                <label htmlFor="submittedDate" className="col-sm-8 col-form-label custom-label ">Date:</label>
+                <div className="col-2  mt-2 ">
                   <span style={{ fontSize: '15px' }} className='value'>10/20/2024</span>
                 </div>
               </div>
             </div>
             <div className="form-section flex-fill pl-3">
-              <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
+              <div className="form-group row mb-1" >
                 <label className="col-sm-3 col-form-label custom-label custom-label-no-padding">Phone Number:</label>
                 <div className="col-sm-3  mt-2">
                   <span style={{ fontSize: '15px' }} >(404) 657-2995</span>
@@ -2002,7 +2306,7 @@ const Wc1FormComponent = () => {
                   <span style={{ fontSize: '15px' }}>ext</span>
                 </div>
               </div>
-              <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
+              <div className="form-group row mb-1" >
                 <label className="col-sm-3 col-form-label custom-label custom-label-no-padding"> E-mail:</label>
                 <div className="col-sm-3  mt-2 ml-2">
                   <span style={{ fontSize: '15px' }}>nikhila@myequitek.com</span>
