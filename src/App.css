@@ -505,3 +505,14 @@ custom-input:invalid {
     max-width: 100%; 
   }
 }
+.custom-toast {
+  text-align: center; 
+  font-size: 1.2rem; 
+  padding: 1rem; 
+}
+
+/* .p-toast {
+  left: 50%; 
+  transform: translateX(-50%); 
+  top: 20px; 
+} */
