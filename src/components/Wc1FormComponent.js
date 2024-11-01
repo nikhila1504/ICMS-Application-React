@@ -8,6 +8,7 @@ import { Dialog } from 'primereact/dialog';
 import NewClaimComponent from "./NewClaimComponent.js";
 import Modal from './Modal.js';
 import ClaimService from "../services/claim.service";
+import { Dropdown } from 'primereact/dropdown';
 
 const Wc1FormComponent = () => {
   const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
@@ -23,7 +24,7 @@ const Wc1FormComponent = () => {
         </select>
 
         <button
-          className="btn btn-outline-info btn-sm  mx-1"
+          className="btn btn-outline-info  btn-sm mx-1"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -87,15 +88,15 @@ const Wc1FormComponent = () => {
   const [docToDelete, setDocToDelete] = useState(null);
   const [viewVisible, setViewVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
-  const [hasToggledMedicalInjury, setHasToggledMedicalInjury] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedParty, setSelectedParty] = useState(null);
   const fieldRefs = useRef({});
-  const bodyPartRef = useRef(null);
   const attachmentsRef = useRef(null);
   const toastRef = React.useRef(null);
   const toast = React.useRef(null);
+  const pickListRef = useRef(null);
+  //const [isHovering, setIsHovering] = useState(false);
 
 
   const openModal = (party) => {
@@ -118,6 +119,7 @@ const Wc1FormComponent = () => {
   useEffect(() => {
     console.log("Selected party:", selectedParty);
   }, [selectedParty]);
+
 
   // useEffect(() => {
   //   // const handleWc1 = async (e) => {
@@ -181,6 +183,7 @@ const Wc1FormComponent = () => {
       </>
     );
   };
+
 
   const [formData, setFormData] = useState({
     claimant: {
@@ -261,7 +264,7 @@ const Wc1FormComponent = () => {
     dateOfDisability: '',
     weeklyBenefitAmount: '',
     averageWeeklyWage: '',
-    previouslyMedicalOnly: ''
+    previouslyMedicalOnly: '',
   });
 
   const [parties, setParties] = useState([
@@ -271,7 +274,29 @@ const Wc1FormComponent = () => {
     { partyType: 'AParty', partyName: 'Party D', parentParty: 'Parent 4', selfInsured: 'No', selfAdministered: 'No', groupFundMember: 'Yes' },
 
   ]);
-
+  const naicsOptions = [
+    // { label: '---Select One---', value: ' ' },
+    { label: 'Abrasive Product Manufacturing', value: 'Abrasive Product Manufacturing' },
+    { label: 'Adhesive Manufacturing', value: 'Adhesive Manufacturing' },
+    { label: 'Administration of Education Programs', value: 'Administration of Education Programs' },
+    { label: 'Administration of Housing Programs', value: 'Administration of Housing Programs' }
+  ];
+  const injuryTypes = [
+    { label: 'AIDS', value: 'AIDS' },
+    { label: 'Adverse reaction to a vaccination or inoculation', value: 'Adverse reaction to a vaccination or inoculation' },
+    { label: 'Cancer', value: 'Cancer' },
+  ]
+  const howOccurred = [
+    { label: 'Abnormal Air Pressure', value: 'Abnormal Air Pressure' },
+    { label: 'Absorption, Ingestion or Inhalation, NOC', value: '"Absorption, Ingestion or Inhalation, NOC' },
+    { label: 'Broken Glass', value: 'Broken Glass' }
+  ]
+  const convertTypes = [
+    { label: 'ALL THE ENTIRE CASE IS CONTROVERTED', value: 'ALL THE ENTIRE CASE IS CONTROVERTED' },
+    { label: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED', value: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED' },
+    { label: 'MEDICAL IS DENIED', value: 'MEDICAL IS DENIED' },
+    { label: 'PARTIAL DENIAL OF MEDICAL', value: 'PARTIAL DENIAL OF MEDICAL' }
+  ]
   const handleCheckboxChange = () => {
     setFormData((prev) => {
       if (prev.isIncomeBenefitsEnabled) {
@@ -376,8 +401,8 @@ const Wc1FormComponent = () => {
       if (formData.isIncomeBenefitsEnabled) {
         if (formData.benifitsBeingPaid === 'incomeBenifits') {
           const incomeBenefitsRequiredFields = [
-            'averageWeeklyWage', 'weeklyBenefitAmount', 'DateOFFirstPayment',
-            'CompensationPaid', 'BenifitsPayableByDate', 'BenifitsPayableFor'
+            'averageWeeklyWage', 'DateOFFirstPayment',
+            'CompensationPaid', 'BenifitsPayableByDate', 'BenifitsPAyableFor', 'weeklyBenifit'
           ];
           Object.assign(newErrors, validateRequiredFields(formData, incomeBenefitsRequiredFields));
         }
@@ -414,21 +439,29 @@ const Wc1FormComponent = () => {
         }
       }
     };
+    const errorFieldsToCheck = requiredFields.filter(field =>
+      ['injuryType', 'fullPayOnDate', 'bodyPartAffected', 'occurredOnPremises'].includes(field)
+    );
+    const hasRelevantErrors = errorFieldsToCheck.some(field => newErrors[field]);
     if (Object.keys(newErrors).length > 0) {
       console.log('Errors found:', newErrors);
       setErrors(newErrors);
-      setIsActive(true);
+      console.log("newError", newErrors);
+      if (hasRelevantErrors) {
+        setIsActive(true);
+      }
       scrollToFirstError();
       return;
     }
-    else{
+    else {
       toastRef.current.show({
         severity: 'success',
         summary: 'Submission Successful',
         detail: 'Your form has been successfully submitted!',
-        life: 3000, 
-      }); 
+        life: 3000,
+      });
       console.log('Submitting form with data:', formData);
+      setIsActive(false);
     }
     setIsActive(false);
     console.log("Form is valid. Proceeding with submission...");
@@ -452,6 +485,7 @@ const Wc1FormComponent = () => {
     });
     return newErrors;
   };
+
   const formatDateForInput = (date) => {
     if (!date) return '';
     const d = new Date(date);
@@ -479,21 +513,30 @@ const Wc1FormComponent = () => {
   const onChange = (event) => {
     const { source, target } = event;
     if (!Array.isArray(source) || !Array.isArray(target)) {
-        console.error('Source or target is not an array:', source, target);
-        return;
+      console.error('Source or target is not an array:', source, target);
+      return;
     }
     setSource(source);
     setTarget(target);
     console.log('Previous formData:', formData);
     setFormData((prevState) => {
-        const updatedFormData = {
-            ...prevState,
-            bodyPartAffected: target, 
-        };
-        console.log('Updated formData:', updatedFormData); 
-        return updatedFormData;
+      const updatedFormData = {
+        ...prevState,
+        bodyPartAffected: target,
+      };
+      console.log('Updated formData:', updatedFormData);
+      if (target.length > 0) {
+        setErrors((prevErrors) => {
+          const { bodyPartAffected, ...rest } = prevErrors;
+          return rest;
+        });
+        if (Object.keys(errors).length === 1 && errors.bodyPartAffected) {
+          setIsActive(false);
+        }
+      }
+      return updatedFormData;
     });
-};
+  };
 
   const [errors, setErrors] = useState({
     firstName: '',
@@ -653,13 +696,17 @@ const Wc1FormComponent = () => {
             <div className="form-group row mb-1">
               <label htmlFor="outOfCountryAddress" className="col-md-4 col-form-label custom-label">Out of Country Address:</label>
               <div className="col-md-6">
-                <input autoComplete="off"
-                  type="text"
-                  className="form-control custom-input"
+                <div
+                  className={`custom-checkbox ${formData.outOfCountryAddress ? 'checked' : ''}`}
+                  onClick={() => handleChange({ target: { name: 'outOfCountryAddress', value: !formData.outOfCountryAddress } })}
+                />
+                <input
+                  type="checkbox"
                   id="outOfCountryAddress"
                   name="outOfCountryAddress"
                   value={formData.outOfCountryAddress}
                   onChange={handleChange}
+                  style={{ display: 'none' }}
                 />
               </div>
             </div>
@@ -1013,7 +1060,11 @@ const Wc1FormComponent = () => {
             </div>
           </div>
         </div>
-        <div ref={headerRef} className='collapsible-container'>
+        <div ref={headerRef}
+          className='collapsible-container'
+          onMouseEnter={() => setIsActive(true)}
+          onMouseLeave={() => setIsActive(false)}
+        >
           <h1 className="custom-h1  header" style={{ cursor: 'pointer' }} onClick={() => setIsActive(prev => !prev)}
             ref={headerRef}
             tabIndex={0}>
@@ -1027,7 +1078,7 @@ const Wc1FormComponent = () => {
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="naicsCode" className="col-sm-4 col-form-label custom-label">NAICS Code:</label>
               <div className="col-sm-8">
-                <select
+                {/* <select
                   id="naicsCode"
                   name="naicsCode"
                   className="form-control custom-input "
@@ -1039,7 +1090,15 @@ const Wc1FormComponent = () => {
                   <option>Adhesive Manufacturing</option>
                   <option>Administration of Education Programs</option>
                   <option>Administration of Housing Programs</option>
-                </select>
+                </select> */}
+                <Dropdown
+                  value={formData.naicsCode}
+                  name="naicsCode"
+                  onChange={handleChange}
+                  options={naicsOptions}
+                  placeholder="---Select One---"
+                  filter
+                  className="select-dropdown" />
               </div>
             </div>
 
@@ -1075,6 +1134,7 @@ const Wc1FormComponent = () => {
                   id="timeOfInjury"
                   name="timeOfInjury"
                   value={formData.timeOfInjury}
+                  onBlur={(e) => e.target.blur()}
                   onChange={handleChange}
                   onClick={(e) => e.target.showPicker()}
                 />
@@ -1243,7 +1303,7 @@ const Wc1FormComponent = () => {
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="injuryType" className="col-sm-4 col-form-label custom-label">Type of Injury/Illness: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-sm-8">
-                <select
+                {/* <select
                   required
                   id="injuryType"
                   name="injuryType"
@@ -1257,7 +1317,17 @@ const Wc1FormComponent = () => {
                   <option value="AIDS">AIDS</option>
                   <option value="Adverse reaction to a vaccination or inoculation">Adverse reaction to a vaccination or inoculation</option>
                   <option value="Cancer">Cancer</option>
-                </select>
+                </select> */}
+                <Dropdown
+                  value={formData.injuryType}
+                  name="injuryType"
+                  onChange={handleChange}
+                  options={injuryTypes}
+                  placeholder="---Select One---"
+                  filter
+                  inputRef={getFieldRef('howOccurred')}
+                  className={`select-dropdown ${errors.howOccurred ? 'p-invalid' : ''}`}
+                />
                 {errors.injuryType && (
                   <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
                     {errors.injuryType}
@@ -1291,7 +1361,7 @@ const Wc1FormComponent = () => {
                   )}
                   <PickList
                     dataKey="id"
-                    ref={getFieldRef('bodyPartAffected')}
+                    inputRef={pickListRef}
                     name='bodyPartAffected'
                     value={formData.bodyPartAffected}
                     source={source}
@@ -1303,6 +1373,8 @@ const Wc1FormComponent = () => {
                     targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>}
                     sourceStyle={{ height: '12rem' }}
                     targetStyle={{ height: '12rem' }}
+                    filter
+                    responsive
                   />
                 </div>
                 {/* <PickList
@@ -1322,7 +1394,7 @@ const Wc1FormComponent = () => {
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="howOccurred" className="col-sm-4 col-form-label custom-label">How Injury or Illness Occurred: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-sm-8">
-                <select
+                {/* <select
                   id="howOccurred"
                   name="howOccurred"
                   ref={getFieldRef('howOccurred')}
@@ -1335,7 +1407,17 @@ const Wc1FormComponent = () => {
                   <option value="Abnormal Air Pressure">Abnormal Air Pressure</option>
                   <option value="Absorption, Ingestion or Inhalation, NOC">Absorption, Ingestion or Inhalation, NOC</option>
                   <option value="Broken Glass">Broken Glass</option>
-                </select>
+                </select> */}
+                <Dropdown
+                  value={formData.howOccurred}
+                  name="howOccurred"
+                  onChange={handleChange}
+                  options={howOccurred}
+                  placeholder="---Select One---"
+                  filter
+                  inputRef={getFieldRef('howOccurred')}
+                  className={`select-dropdown ${errors.howOccurred ? 'p-invalid' : ''}`}
+                />
                 {errors.howOccurred && (
                   <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
                     {errors.howOccurred}
@@ -1747,11 +1829,11 @@ const Wc1FormComponent = () => {
             B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum
           </h1>
           <div>
-            <div className="form-group row mb-1">
-              <label className="col-md-3 col-form-label custom-label">
+            <div className="form-group row mb-1 col-md-11">
+              <label className="col-3 col-form-label custom-label mr-0">
                 Check which benefits are being paid:<span style={{ color: 'red' }}>*</span>
               </label>
-              <div className="col-md-3 custom-radio d-flex align-items-center">
+              <div className="col-3 custom-radio d-flex  mt-0 ml-0">
                 <div className="d-flex flex-wrap">
                   <div className="form-check form-check-inline mb-0">
                     <input
@@ -1791,7 +1873,6 @@ const Wc1FormComponent = () => {
                 </div>
               </div>
             </div>
-
             {formData.benifitsBeingPaid === 'incomeBenifits' && (
               <div className="form-group Income-Benifits-Form">
                 <div className="d-flex flex-wrap">
@@ -1961,6 +2042,7 @@ const Wc1FormComponent = () => {
                           name="BenifitsPAyableFor"
                           value={formData.BenifitsPAyableFor}
                           onChange={handleChange}
+                          onClick={(e) => e.target.showPicker()}
                           required
                         />
                         {errors.BenifitsPAyableFor && (
@@ -1977,7 +2059,7 @@ const Wc1FormComponent = () => {
                       <div className="col-md-6">
                         <input
                           autoComplete="off"
-                          type="text"
+                          type="date"
                           className="form-control custom-input"
                           id="payBenifitUntil"
                           name="payBenifitUntil"
@@ -2165,7 +2247,7 @@ const Wc1FormComponent = () => {
           <div className="form-group row mb-1">
             <label htmlFor="convertType" className="col-md-2 col-form-label custom-label">Controvert Type:<span style={{ color: 'red' }}>*</span></label>
             <div className="col-md-3">
-              <select
+              {/* <select
                 id="convertType"
                 name="convertType"
                 ref={getFieldRef('convertType')}
@@ -2180,7 +2262,18 @@ const Wc1FormComponent = () => {
                 <option value="LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED">LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED</option>
                 <option value="MEDICAL IS DENIED">MEDICAL IS DENIED</option>
                 <option value="PARTIAL DENIAL OF MEDICAL">PARTIAL DENIAL OF MEDICAL</option>
-              </select>
+              </select> */}
+              <Dropdown
+                value={formData.convertType}
+                id="convertType"
+                name="convertType"
+                onChange={handleChange}
+                options={convertTypes}
+                placeholder="---Select One---"
+                disabled={!formData.isControvertEnabled}
+                filter
+                className={`select-dropdown-ct ${errors.convertType ? 'p-invalid' : ''}`}
+             />
               {errors.convertType && (
                 <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
                   {errors.convertType}
@@ -2193,12 +2286,12 @@ const Wc1FormComponent = () => {
             <div className="col-md-5">
               <textarea
                 name="BenifitsNPReasons"
-                className="form-control"
+                className="form-control-nr"
                 value={formData.BenifitsNPReasons}
                 disabled={!formData.isControvertEnabled}
                 onChange={handleChange}
                 rows="5"
-                cols="30"
+                cols="70"
                 style={{ marginTop: '10px', resize: 'none' }}
               />
             </div>
@@ -2361,7 +2454,7 @@ const Wc1FormComponent = () => {
               backgroundColor: clicked ? '#b6dde5' : '#b6dde5', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Submit</button>
-           
+
           {/* <button type="button" className="btn btn-secondary mx-2 mb-10  custom-label">Back</button> */}
           {/* <Link
             className="btn btn-secondary mx-2 mb-10  custom-label"
