@@ -10,9 +10,13 @@ import Modal from './Modal.js';
 import ClaimService from "../services/claim.service";
 import { Dropdown } from 'primereact/dropdown';
 import NaicsTypeService from "../services/naics.type.service";
+import InjuryTypeService from "../services/injury.type.service";
+import InjuryCauseTypeService from "../services/injury.cause.type.service";
 
 const Wc1FormComponent = () => {
   const [naicsTypes, setNaicsTypes] = useState([]);
+  const [injuryTypes, setInjuryTypes] = useState([]);
+  const [injuryCauseTypes, setInjuryCauseTypes] = useState([]);
   const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
     return (
       <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
@@ -161,6 +165,31 @@ const Wc1FormComponent = () => {
         console.log(error);
       });
   }, []);
+
+  useEffect(() => {
+    InjuryTypeService.getAllInjuryTypes()
+      .then((response) => {
+        console.log(response);
+        setInjuryTypes(response.data);
+        console.log("injuryTypes", injuryTypes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    InjuryCauseTypeService.getAllInjuryCauseTypes()
+      .then((response) => {
+        console.log(response);
+        setInjuryCauseTypes(response.data);
+        console.log("injuryCauseTypes", injuryCauseTypes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -225,6 +254,8 @@ const Wc1FormComponent = () => {
     wageRateFrequency: 'perHour',
     outOfCountryAddress: '',
     naicsTypes: [],
+    injuryTypes: [],
+    injuryCauseTypes: [],
     dateOfInjury: '',
     timeOfInjury: '',
     countyOfInjury: '',
@@ -296,11 +327,11 @@ const Wc1FormComponent = () => {
     { label: 'Administration of Education Programs', value: 'Administration of Education Programs' },
     { label: 'Administration of Housing Programs', value: 'Administration of Housing Programs' }
   ];
-  const injuryTypes = [
-    { label: 'AIDS', value: 'AIDS' },
-    { label: 'Adverse reaction to a vaccination or inoculation', value: 'Adverse reaction to a vaccination or inoculation' },
-    { label: 'Cancer', value: 'Cancer' },
-  ]
+  // const injuryTypes = [
+  //   { label: 'AIDS', value: 'AIDS' },
+  //   { label: 'Adverse reaction to a vaccination or inoculation', value: 'Adverse reaction to a vaccination or inoculation' },
+  //   { label: 'Cancer', value: 'Cancer' },
+  // ]
   const howOccurred = [
     { label: 'Abnormal Air Pressure', value: 'Abnormal Air Pressure' },
     { label: 'Absorption, Ingestion or Inhalation, NOC', value: '"Absorption, Ingestion or Inhalation, NOC' },
@@ -1117,19 +1148,6 @@ const Wc1FormComponent = () => {
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="naicsTypes" className="col-sm-4 col-form-label custom-label">NAICS Code:</label>
               <div className="col-sm-8">
-                {/* <select
-                  id="naicsCode"
-                  name="naicsCode"
-                  className="form-control custom-input "
-                  value={formData.naicsCode}
-                  onChange={handleChange}
-                >
-                  <option>--Select One--</option>
-                  <option>Abrasive Product Manufacturing</option>
-                  <option>Adhesive Manufacturing</option>
-                  <option>Administration of Education Programs</option>
-                  <option>Administration of Housing Programs</option>
-                </select> */}
                 <Dropdown
                   value={formData.naicsTypes}
                   name="naicsTypes"
@@ -1344,36 +1362,25 @@ const Wc1FormComponent = () => {
             </div>
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-              <label htmlFor="injuryType" className="col-sm-4 col-form-label custom-label">Type of Injury/Illness: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="injuryTypes" className="col-sm-4 col-form-label custom-label">Type of Injury/Illness: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-sm-8">
-                {/* <select
-                  required
-                  id="injuryType"
-                  name="injuryType"
-                  ref={getFieldRef('injuryType')}
-                  className={`form-control custom-input ${errors.injuryType ? 'p-invalid' : ''}`}
-                  value={formData.injuryType}
+              <Dropdown
+                  value={formData.injuryTypes}
+                  name="injuryTypes"
                   onChange={handleChange}
-
-                >
-                  <option value="">--Select One--</option>
-                  <option value="AIDS">AIDS</option>
-                  <option value="Adverse reaction to a vaccination or inoculation">Adverse reaction to a vaccination or inoculation</option>
-                  <option value="Cancer">Cancer</option>
-                </select> */}
-                <Dropdown
-                  value={formData.injuryType}
-                  name="injuryType"
-                  onChange={handleChange}
-                  options={injuryTypes}
+                  // options={naicsTypes}
+                  options={injuryTypes.map(type => ({
+                    label: type.description, // Displayed in the dropdown
+                    value: type.value // Value sent on change
+                }))}
                   placeholder="---Select One---"
                   filter
-                  inputRef={getFieldRef('howOccurred')}
-                  className={`select-dropdown ${errors.howOccurred ? 'p-invalid' : ''}`}
+                  inputRef={getFieldRef('injuryTypes')}
+                  className={`select-dropdown ${errors.injuryTypes ? 'p-invalid' : ''}`}
                 />
-                {errors.injuryType && (
+                {errors.injuryTypes && (
                   <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                    {errors.injuryType}
+                    {errors.injuryTypes}
                   </div>
                 )}
               </div>
@@ -1435,35 +1442,24 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-              <label htmlFor="howOccurred" className="col-sm-4 col-form-label custom-label">How Injury or Illness Occurred: <span style={{ color: 'red' }}>*</span></label>
+              <label htmlFor="injuryCauseTypes" className="col-sm-4 col-form-label custom-label">How Injury or Illness Occurred: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-sm-8">
-                {/* <select
-                  id="howOccurred"
-                  name="howOccurred"
-                  ref={getFieldRef('howOccurred')}
-                  className={`form-control custom-input ${errors.howOccurred ? 'p-invalid' : ''}`}
-                  value={formData.howOccurred}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">--Select One--</option>
-                  <option value="Abnormal Air Pressure">Abnormal Air Pressure</option>
-                  <option value="Absorption, Ingestion or Inhalation, NOC">Absorption, Ingestion or Inhalation, NOC</option>
-                  <option value="Broken Glass">Broken Glass</option>
-                </select> */}
                 <Dropdown
-                  value={formData.howOccurred}
-                  name="howOccurred"
+                  value={formData.injuryCauseTypes}
+                  name="injuryCauseTypes"
                   onChange={handleChange}
-                  options={howOccurred}
+                  options={injuryCauseTypes.map(type => ({
+                    label: type.description, // Displayed in the dropdown
+                    value: type.value // Value sent on change
+                }))}
                   placeholder="---Select One---"
                   filter
-                  inputRef={getFieldRef('howOccurred')}
-                  className={`select-dropdown ${errors.howOccurred ? 'p-invalid' : ''}`}
+                  inputRef={getFieldRef('injuryCauseTypes')}
+                  className={`select-dropdown ${errors.injuryCauseTypes ? 'p-invalid' : ''}`}
                 />
-                {errors.howOccurred && (
+                {errors.injuryCauseTypes && (
                   <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                    {errors.howOccurred}
+                    {errors.injuryCauseTypes}
                   </div>
                 )}
               </div>
