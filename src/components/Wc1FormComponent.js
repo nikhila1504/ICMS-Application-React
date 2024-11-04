@@ -154,7 +154,7 @@ const Wc1FormComponent = () => {
       const url = URL.createObjectURL(file);
       const newDocument = { id: documents.length + 1, name: file.name, fileUrl: url };
       setDocuments([...documents, newDocument]);
-      toast.current.show({ severity: 'success', summary: 'File Uploaded', detail: file.name, life: 3000, style: { backgroundColor: '#b6dde5', color: '#FFFFFF', color: 'black' }, });
+      toast.current.show({ severity: 'success', summary: 'File Uploaded', detail: file.name, life: 3000, style: { backgroundColor: '#4baaf5', color: '#FFFFFF', color: 'black' }, });
       event.target.value = null;
     }
   };
@@ -248,6 +248,7 @@ const Wc1FormComponent = () => {
     reportPreparedBy: '',
     telePhoneNumber: '',
     telePhoneExt: '',
+    weeklyBenifit: '',
     DateOfReport: '',
     benifitsBeingPaid: '',
     convertType: '',
@@ -265,6 +266,7 @@ const Wc1FormComponent = () => {
     weeklyBenefitAmount: '',
     averageWeeklyWage: '',
     previouslyMedicalOnly: '',
+    averageWeeklyWage:'',weeklyBenefitAmount:'',averageWeeklyWageAmount:''
   });
 
   const [parties, setParties] = useState([
@@ -338,6 +340,7 @@ const Wc1FormComponent = () => {
       ...prevErrors,
       [name]: undefined,
     }));
+
     if (nameParts.length > 1) {
       setFormData((prevData) => ({
         ...prevData,
@@ -346,19 +349,43 @@ const Wc1FormComponent = () => {
           [nameParts[1]]: value
         }
       }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value
-      }));
+    }else {
+      const numericFields = ['ReturnedWagePerWeek', 'averageWeeklyWage', 'weeklyBenefitAmount','averageWeeklyWageAmount', 'CompensationPaid', 'penalityPaid', 'weeklyBenifit'];
+  
+      if (numericFields.includes(name)) {
+        if (/^\d*\.?\d*$/.test(value) || value === '') {
+          setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+          }));
+        }
+        //  else {
+        //   setFormData((prevData) => ({
+        //     ...prevData,
+        //     [name]: '', 
+        //   }));
+        // }
+      } else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
     }
   };
 
-  const handleBlur = () => {
-    setFormData((prev) => ({
-      ...prev,
-      ReturnedWagePerWeek: prev.ReturnedWagePerWeek ? parseFloat(prev.ReturnedWagePerWeek).toFixed(2) : '',
-    }));
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setFormData((prev) => {
+      const newValue = prev[name] && prev[name] !== ''
+        ? `$${parseFloat(prev[name]).toFixed(2)}`
+        : '';
+  
+      return {
+        ...prev,
+        [name]: newValue,
+      };
+    });
   };
 
   useEffect(() => {
@@ -478,7 +505,6 @@ const Wc1FormComponent = () => {
       for (const part of fieldParts) {
         value = value[part];
       }
-      //console.log(`Validating field: ${field}, value:`, value, 'type:', typeof value);
       if (typeof value !== 'string' || value.trim() === '') {
         newErrors[field] = `${field.replace('claimant.', '')} is required.`;
       }
@@ -1426,7 +1452,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             {/* </form> */}
-            {/* <hr style={{ color:'#b6dde5' }} /> */}
+            {/* <hr style={{ color:'#4baaf5' }} /> */}
             <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
             <div className="d-flex flex-wrap">
               <div className=" flex-fill">
@@ -1725,14 +1751,15 @@ const Wc1FormComponent = () => {
                   <label htmlFor="ReturnedWagePerWeek" className="col-md-3 col-form-label custom-label">Returned at what wage per week:</label>
                   <div className="col-md-2 osition-relative">
                     <input autoComplete="off"
-                      style={{ marginRight: '5px' }}
                       type="text"
                       className="form-control custom-input"
                       id="ReturnedWagePerWeek"
                       name="ReturnedWagePerWeek"
-                      value={formData.ReturnedWagePerWeek ? `$${formData.ReturnedWagePerWeek}` : ''}
+                      value={formData.ReturnedWagePerWeek ? formData.ReturnedWagePerWeek : ''}
                       onBlur={handleBlur}
                       onChange={handleChange}
+                      //onFocus={handleFocus}
+                      style={{ marginRight: '5px' }}
                     />
                   </div>
                 </div>
@@ -1890,7 +1917,9 @@ const Wc1FormComponent = () => {
                           id="averageWeeklyWage"
                           name="averageWeeklyWage"
                           value={formData.averageWeeklyWage}
+                          onBlur={handleBlur}
                           onChange={handleChange}
+                          //onFocus={handleFocus}
                           required
                         />
                         {errors.averageWeeklyWage && (
@@ -1913,6 +1942,7 @@ const Wc1FormComponent = () => {
                           id="weeklyBenifit"
                           name="weeklyBenifit"
                           value={formData.weeklyBenifit}
+                          onBlur={handleBlur}
                           onChange={handleChange}
                           required
                         />
@@ -1930,12 +1960,13 @@ const Wc1FormComponent = () => {
                       <div className="col-md-6">
                         <input
                           autoComplete="off"
-                          type="text"
+                          type="date"
                           className="form-control custom-input"
                           id="DateOfDisablity"
                           name="DateOfDisablity"
                           value={formData.DateOfDisablity}
                           onChange={handleChange}
+                          onClick={(e) => e.target.showPicker()}
                           required
                         />
                       </div>
@@ -1947,13 +1978,14 @@ const Wc1FormComponent = () => {
                       <div className="col-md-6">
                         <input
                           autoComplete="off"
-                          type="text"
+                          type="date"
                           ref={getFieldRef('DateOFFirstPayment')}
                           className={`form-control custom-input ${errors.DateOFFirstPayment ? 'p-invalid' : ''}`}
                           id="DateOFFirstPayment"
                           name="DateOFFirstPayment"
                           value={formData.DateOFFirstPayment}
                           onChange={handleChange}
+                          onClick={(e) => e.target.showPicker()}
                           required
                         />
                         {errors.DateOFFirstPayment && (
@@ -1976,6 +2008,7 @@ const Wc1FormComponent = () => {
                           id="CompensationPaid"
                           name="CompensationPaid"
                           value={formData.CompensationPaid}
+                          onBlur={handleBlur}
                           onChange={handleChange}
                           required
                         />
@@ -1998,7 +2031,9 @@ const Wc1FormComponent = () => {
                           id="penalityPaid"
                           name="penalityPaid"
                           value={formData.penalityPaid}
+                          onBlur={handleBlur}
                           onChange={handleChange}
+                        //onFocus={handleFocus}
                         />
                       </div>
                     </div>
@@ -2076,9 +2111,9 @@ const Wc1FormComponent = () => {
               <div className="d-flex flex-wrap">
                 <div className="form-section  flex-fill">
                   <div className="form-group row mb-1 ">
-                    <label className="col-md-4 col-form-label custom-label">Previously Medical Only:</label>
-                    <div className="col-md-6 d-flex flex-wrap ">
-                      <div className="form-check form-check-inline">
+                    <label className="col-md-4 col-form-label  custom-label">Previously Medical Only:</label>
+                    <div className="col-md-6 d-flex  flex-wrap ">
+                      <div className="form-check custom-radio form-check-inline">
                         <input
                           type="radio"
                           className="form-check-input"
@@ -2090,7 +2125,7 @@ const Wc1FormComponent = () => {
                         />
                         <label className="form-check-label custom-label" htmlFor="previouslyMedicalYes">Yes</label>
                       </div>
-                      <div className="form-check form-check-inline">
+                      <div className="form-check custom-radio form-check-inline">
                         <input
                           type="radio"
                           className="form-check-input "
@@ -2117,14 +2152,17 @@ const Wc1FormComponent = () => {
                     </div>
                   </div>
                   <div className="form-group row mb-1">
-                    <label htmlFor="averageWeeklyWage" className="col-md-4 col-form-label custom-label">Average Weekly Wage Amount: $</label>
+                    <label htmlFor="averageWeeklyWageAmount" className="col-md-4 col-form-label custom-label">Average Weekly Wage Amount: $</label>
                     <div className="col-md-6">
                       <input
                         type="text"
                         className="form-control custom-input"
-                        id="averageWeeklyWage"
-                        name="averageWeeklyWage"
+                        id="averageWeeklyWageAmount"
+                        name="averageWeeklyWageAmount"
+                        value={formData.averageWeeklyWageAmount}
+                        onBlur={handleBlur}
                         onChange={handleChange}
+                      //onFocus={handleFocus}
                       />
                     </div>
                   </div>
@@ -2136,7 +2174,10 @@ const Wc1FormComponent = () => {
                         className="form-control custom-input"
                         id="weeklyBenefitAmount"
                         name="weeklyBenefitAmount"
+                        value={formData.weeklyBenefitAmount}
+                        onBlur={handleBlur}
                         onChange={handleChange}
+                      //onFocus={handleFocus}
                       />
                     </div>
                   </div>
@@ -2273,7 +2314,7 @@ const Wc1FormComponent = () => {
                 disabled={!formData.isControvertEnabled}
                 filter
                 className={`select-dropdown-ct ${errors.convertType ? 'p-invalid' : ''}`}
-             />
+              />
               {errors.convertType && (
                 <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
                   {errors.convertType}
@@ -2444,14 +2485,14 @@ const Wc1FormComponent = () => {
         </div>
         <div className="d-flex justify-content-center mt-5 mb-10">
           <button type="reset" className="btn btn-secondary mx-2 mb-10 custom-label">Reset</button>
-          <button type="button" className="btn btn-success mx-2 mb-10  custom-label"
+          <button type="button" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#b6dde5' : '#b6dde5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Save</button>
-          <button type="submit" className="btn btn-success mx-2 mb-10  custom-label"
+          <button type="submit" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#b6dde5' : '#b6dde5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Submit</button>
 
