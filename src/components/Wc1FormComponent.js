@@ -9,8 +9,10 @@ import NewClaimComponent from "./NewClaimComponent.js";
 import Modal from './Modal.js';
 import ClaimService from "../services/claim.service";
 import { Dropdown } from 'primereact/dropdown';
+import NaicsTypeService from "../services/naics.type.service";
 
 const Wc1FormComponent = () => {
+  const [naicsTypes, setNaicsTypes] = useState([]);
   const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
     return (
       <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
@@ -148,6 +150,17 @@ const Wc1FormComponent = () => {
       });
   }, []);
 
+  useEffect(() => {
+    NaicsTypeService.getAllNaicsTypes()
+      .then((response) => {
+        console.log(response);
+        setNaicsTypes(response.data);
+        console.log("naicsTypes", naicsTypes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -211,7 +224,7 @@ const Wc1FormComponent = () => {
     daysOff: '',
     wageRateFrequency: 'perHour',
     outOfCountryAddress: '',
-    naicsCode: '',
+    naicsTypes: [],
     dateOfInjury: '',
     timeOfInjury: '',
     countyOfInjury: '',
@@ -1102,7 +1115,7 @@ const Wc1FormComponent = () => {
           </h1>
           <div className={`collapsible-content ${isActive ? 'active' : ''}`}>
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-              <label htmlFor="naicsCode" className="col-sm-4 col-form-label custom-label">NAICS Code:</label>
+              <label htmlFor="naicsTypes" className="col-sm-4 col-form-label custom-label">NAICS Code:</label>
               <div className="col-sm-8">
                 {/* <select
                   id="naicsCode"
@@ -1118,10 +1131,14 @@ const Wc1FormComponent = () => {
                   <option>Administration of Housing Programs</option>
                 </select> */}
                 <Dropdown
-                  value={formData.naicsCode}
-                  name="naicsCode"
+                  value={formData.naicsTypes}
+                  name="naicsTypes"
                   onChange={handleChange}
-                  options={naicsOptions}
+                  // options={naicsTypes}
+                  options={naicsTypes.map(type => ({
+                    label: type.description, // Displayed in the dropdown
+                    value: type.value // Value sent on change
+                }))}
                   placeholder="---Select One---"
                   filter
                   className="select-dropdown" />
