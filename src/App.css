@@ -1,3 +1,56 @@
+/* Tabs container styling */
+.tabs {
+  width: 100%;
+  max-width: 100%;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Tab titles styling */
+.tab-titles {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.tab-titles button {
+  flex: 1;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  background: #4babf55e;
+  color: #333;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+/* Active tab styling */
+.tab-titles .active {
+  background: #5d8aa8;
+  color: white;
+}
+
+/* Tab content styling */
+.tab-content {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.tab-pane{
+  display: block;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.tab-pane input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .modalBackground {
   width: 100vw;
   height: 100vh;
@@ -132,7 +185,7 @@
 }
 
 .header {
-  background-color: #4baaf5;
+  background-color: #4babf55e;
   padding: 3px;
   border-radius: 5px;
   cursor: pointer;
@@ -255,7 +308,7 @@
   font-size: 14px !important; 
   border: 2px solid #4baaf5 !important; 
   border-radius: 5px !important; 
-  width: 960px; 
+  width: 660px; 
   height: 35px;
   padding: 10px 8px; 
   line-height: 1.5; 
@@ -335,10 +388,12 @@
 }
 
 .container {
-  padding-right: 0px !important;
+  padding-right: 4px !important;
   padding-left: 4px  !important;
-  margin-right: 0px !important;
-  margin-left: 0px !important;
+  margin-right: 6px !important;
+  margin-left: 2px !important;
+  max-width: 100% !important;
+  width: 100%;
 }
 .dropdown-item:focus, 
 .dropdown-item:hover, 
@@ -355,6 +410,7 @@
 .table-custom th {
   font-size: 14px;
 }
+
 
 .form-container {
   text-align: left;
@@ -478,15 +534,15 @@
 }
 
 .file-upload {
-  background-color: #4baaf5;
-  color: #4baaf5;
+  background-color: #4babf55e;
+  color: #4babf55e;
 }
 
 .custom-file-upload {
   display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
-  background-color: #4baaf5;
+  background-color: #4babf55e;
   color: black;
   border-radius: 5px;
   text-align: center;
@@ -509,7 +565,7 @@
 }
 
 .custom-label .p-datatable-thead>tr>th {
-  background-color: #4baaf5;
+  background-color: #4babf55e;
   color: black;
   font-size: 1.2em;
   padding: 12px;

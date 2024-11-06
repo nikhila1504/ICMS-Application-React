@@ -17,6 +17,12 @@ const Wc1FormComponent = () => {
   const [naicsTypes, setNaicsTypes] = useState([]);
   const [injuryTypes, setInjuryTypes] = useState([]);
   const [injuryCauseTypes, setInjuryCauseTypes] = useState([]);
+  const [activeTab, setActiveTab] = useState('tab1');
+
+  // Handle tab switch
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
   const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
     return (
       <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
@@ -310,7 +316,7 @@ const Wc1FormComponent = () => {
     weeklyBenefitAmount: '',
     averageWeeklyWage: '',
     previouslyMedicalOnly: '',
-    averageWeeklyWage:'',weeklyBenefitAmount:'',averageWeeklyWageAmount:''
+    averageWeeklyWage: '', weeklyBenefitAmount: '', averageWeeklyWageAmount: ''
   });
 
   const [parties, setParties] = useState([
@@ -393,9 +399,9 @@ const Wc1FormComponent = () => {
           [nameParts[1]]: value
         }
       }));
-    }else {
-      const numericFields = ['ReturnedWagePerWeek', 'averageWeeklyWage', 'weeklyBenefitAmount','averageWeeklyWageAmount', 'CompensationPaid', 'penalityPaid', 'weeklyBenifit'];
-  
+    } else {
+      const numericFields = ['ReturnedWagePerWeek', 'averageWeeklyWage', 'weeklyBenefitAmount', 'averageWeeklyWageAmount', 'CompensationPaid', 'penalityPaid', 'weeklyBenifit'];
+
       if (numericFields.includes(name)) {
         if (/^\d*\.?\d*$/.test(value) || value === '') {
           setFormData((prevData) => ({
@@ -424,7 +430,7 @@ const Wc1FormComponent = () => {
       const newValue = prev[name] && prev[name] !== ''
         ? `$${parseFloat(prev[name]).toFixed(2)}`
         : '';
-  
+
       return {
         ...prev,
         [name]: newValue,
@@ -630,137 +636,162 @@ const Wc1FormComponent = () => {
   const paginatedParties = parties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="form-container">
+    <div className="tabs container">
+      <form onSubmit={handleSubmit} noValidate>
       <Toast ref={toastRef} />
       <NewClaimComponent />
-      <h1 className="custom-h1 header mt-3">Claimant Information</h1>
-      {/* <Toast ref={toastRef} /> */}
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="d-flex flex-wrap">
+      <div className="tab-titles">
+        <button
+          className={activeTab === 'tab1' ? 'active' : ''}
+          onClick={() => handleTabClick('tab1')}
+        >
+          Claimant Information
+        </button>
+        <button
+          className={activeTab === 'tab2' ? 'active' : ''}
+          onClick={() => handleTabClick('tab2')}
+        >
+          Party Information
+        </button>
+        <button
+          className={activeTab === 'tab3' ? 'active' : ''}
+          onClick={() => handleTabClick('tab3')}
+        >
+          EMPLOYMENT/WAGE
+        </button>
+        <button
+          className={activeTab === 'tab4' ? 'active' : ''}
+          onClick={() => handleTabClick('tab4')}
+        >
+          INJURY/ILLNESS AND MEDICAL
+        </button>
+      </div>
+      <div className="tab-content">
+        {activeTab === 'tab1' && (
+           <div className="d-flex flex-wrap">
           <div className="form-section  flex-fill">
 
-            <div className="form-group row mb-1">
-              <label htmlFor="firstName" className="col-md-4 col-form-label custom-label ">Employee First Name: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-md-6">
-                <input autoComplete="off"
-                  type="text"
-                  ref={getFieldRef('claimant.firstName')}
-                  className={`form-control custom-input ${errors.firstName ? 'p-invalid' : ''}`}
-                  id="firstName"
-                  name="firstName"
-                  value={formData.claimant.firstName || ''}
-                  onChange={handleChange}
-                  required disabled='true'
-                />
-                {errors.firstName && (
-                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                    {errors.firstName}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="form-group row mb-1">
-              <label htmlFor="lastName" className="col-md-4 col-form-label custom-label">Employee Last Name: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-md-6">
-                <input autoComplete="off"
-                  type="text"
-                  ref={getFieldRef('claimant.lastName')}
-                  className={`form-control custom-input ${errors.lastName ? 'p-invalid' : ''}`}
-                  id="lastName"
-                  name="lastName"
-                  value={formData.claimant.lastName || ''}
-                  onChange={handleChange}
-                  required disabled='true'
-                />
-                {errors.lastName && (
-                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                    {errors.lastName}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="form-group row mb-1">
-              <label htmlFor="middleIntial" className="col-md-4 col-form-label custom-label">M.I.:</label>
-              <div className="col-md-6">
-                <input autoComplete="off"
-                  type="text"
-                  className="form-control custom-input"
-                  id="middleIntial"
-                  name="middleIntial"
-                  value={formData.claimant.middleIntial || ''}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div className="form-group row mb-1">
-              <label htmlFor="dateOfBirth" className="col-md-4 col-form-label custom-label">Birthdate:</label>
-              <div className="col-md-3">
-                <input autoComplete="off"
-                  type="date"
-                  className="form-control custom-input"
-                  id="dateOfBirth"
-                  name="dateOfBirth"
-                  value={formatDateForInput(formData.claimant.dateOfBirth) || ''}
-                  onChange={handleChange}
-                  onClick={(e) => e.target.showPicker()}
-                  disabled='true'
-                />
-              </div>
-            </div>
-            <div className="form-group row mb-1">
-              <label className="col-md-4 col-form-label custom-label" ref={fieldRefs.current.gender} >Gender: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-md-6 custom-radio">
-                <div>
-                  <div className="form-check form-check-inline">
-                    <input autoComplete="off"
-                      className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
-                      type="radio"
-                      name="gender"
-                      id="genderMale"
-                      value="M"
-                      style={{ marginTop: "14px" }}
-                      checked={formData.claimant.gender === 'M' || ''}
-                      onChange={handleChange}
-                      required
-                    />
-                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderMale">Male</label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input autoComplete="off"
-                      className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
-                      type="radio"
-                      name="gender"
-                      id="genderFemale"
-                      value="F"
-                      style={{ marginTop: "14px" }}
-                      checked={formData.claimant.gender === '' || ''}
-                      onChange={handleChange}
-                    />
-                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderFemale">Female</label>
-                  </div>
-                  <div className="form-check form-check-inline">
-                    <input autoComplete="off"
-                      className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
-                      type="radio"
-                      name="gender"
-                      id="genderUnknown"
-                      style={{ marginTop: "14px" }}
-                      value="Unknown"
-                      checked={formData.claimant.gender === 'Unknown' || ''}
-                      onChange={handleChange}
-                    />
-                    <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderUnknown">Unknown</label>
-                  </div>
+          <div className="form-group row mb-1">
+            <label htmlFor="firstName" className="col-md-4 col-form-label custom-label ">Employee First Name: <span style={{ color: 'red' }}>*</span></label>
+            <div className="col-md-6">
+              <input autoComplete="off"
+                type="text"
+                ref={getFieldRef('claimant.firstName')}
+                className={`form-control custom-input ${errors.firstName ? 'p-invalid' : ''}`}
+                id="firstName"
+                name="firstName"
+                value={formData.claimant.firstName || ''}
+                onChange={handleChange}
+                required disabled='true'
+              />
+              {errors.firstName && (
+                <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                  {errors.firstName}
                 </div>
-                {errors.gender && (
-                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                    {errors.gender}
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
-
+          <div className="form-group row mb-1">
+            <label htmlFor="lastName" className="col-md-4 col-form-label custom-label">Employee Last Name: <span style={{ color: 'red' }}>*</span></label>
+            <div className="col-md-6">
+              <input autoComplete="off"
+                type="text"
+                ref={getFieldRef('claimant.lastName')}
+                className={`form-control custom-input ${errors.lastName ? 'p-invalid' : ''}`}
+                id="lastName"
+                name="lastName"
+                value={formData.claimant.lastName || ''}
+                onChange={handleChange}
+                required disabled='true'
+              />
+              {errors.lastName && (
+                <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                  {errors.lastName}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="form-group row mb-1">
+            <label htmlFor="middleIntial" className="col-md-4 col-form-label custom-label">M.I.:</label>
+            <div className="col-md-6">
+              <input autoComplete="off"
+                type="text"
+                className="form-control custom-input"
+                id="middleIntial"
+                name="middleIntial"
+                value={formData.claimant.middleIntial || ''}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="form-group row mb-1">
+            <label htmlFor="dateOfBirth" className="col-md-4 col-form-label custom-label">Birthdate:</label>
+            <div className="col-md-3">
+              <input autoComplete="off"
+                type="date"
+                className="form-control custom-input"
+                id="dateOfBirth"
+                name="dateOfBirth"
+                value={formatDateForInput(formData.claimant.dateOfBirth) || ''}
+                onChange={handleChange}
+                onClick={(e) => e.target.showPicker()}
+                disabled='true'
+              />
+            </div>
+          </div>
+          <div className="form-group row mb-1">
+            <label className="col-md-4 col-form-label custom-label" ref={fieldRefs.current.gender} >Gender: <span style={{ color: 'red' }}>*</span></label>
+            <div className="col-md-6 custom-radio">
+              <div>
+                <div className="form-check form-check-inline">
+                  <input autoComplete="off"
+                    className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
+                    type="radio"
+                    name="gender"
+                    id="genderMale"
+                    value="M"
+                    style={{ marginTop: "14px" }}
+                    checked={formData.claimant.gender === 'M' || ''}
+                    onChange={handleChange}
+                    required
+                  />
+                  <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderMale">Male</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input autoComplete="off"
+                    className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
+                    type="radio"
+                    name="gender"
+                    id="genderFemale"
+                    value="F"
+                    style={{ marginTop: "14px" }}
+                    checked={formData.claimant.gender === '' || ''}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderFemale">Female</label>
+                </div>
+                <div className="form-check form-check-inline">
+                  <input autoComplete="off"
+                    className={`form-check-input ${errors.gender ? 'p-invalid' : ''}`}
+                    type="radio"
+                    name="gender"
+                    id="genderUnknown"
+                    style={{ marginTop: "14px" }}
+                    value="Unknown"
+                    checked={formData.claimant.gender === 'Unknown' || ''}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="genderUnknown">Unknown</label>
+                </div>
+              </div>
+              {errors.gender && (
+                <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                  {errors.gender}
+                </div>
+              )}
+            </div>
+          </div>
+          </div>
           <div className="form-section flex-fill pl-3">
             {/* <form onSubmit={handleSubmit}> */}
             <div className="form-group row mb-1">
@@ -906,10 +937,12 @@ const Wc1FormComponent = () => {
             </div> */}
             {/* </form> */}
           </div>
+        
         </div>
-        <div>
-          <h1 className="custom-h1  header ">Party Information</h1>
-          <table className="table table-custom table-striped table-bordered w-100">
+        )}
+        {activeTab === 'tab2' && (
+          <div>
+             <table className="table table-custom table-striped table-bordered w-100">
             <thead className="thead-light">
               <tr>
                 <th>Party Type</th>
@@ -942,10 +975,11 @@ const Wc1FormComponent = () => {
             itemsPerPage={itemsPerPage}
             onItemsPerPageChange={setItemsPerPage}
           />
-        </div>
-        <div>
-          <h1 className="custom-h1  header">Employment/Wage</h1>
-          <div className="d-flex flex-wrap">
+          </div>
+        )}
+        {activeTab === 'tab3' && (
+          <div>
+           <div className="d-flex flex-wrap">
             <div className="form-section  flex-fill">
               {/* <form onSubmit={handleSubmit}> */}
               <div className="form-group row mb-1">
@@ -1129,22 +1163,11 @@ const Wc1FormComponent = () => {
               {/* </form> */}
             </div>
           </div>
-        </div>
-        <div ref={headerRef}
-          className='collapsible-container'
-          onMouseEnter={() => setIsActive(true)}
-          onMouseLeave={() => setIsActive(false)}
-        >
-          <h1 className="custom-h1  header" style={{ cursor: 'pointer' }} onClick={() => setIsActive(prev => !prev)}
-            ref={headerRef}
-            tabIndex={0}>
-            Injury/Illness and Medical
-            <span style={{ float: 'right', marginRight: '20px', fontSize: '25px' }}>
-              {/* <FontAwesomeIcon icon={isActive ? faChevronUp : faChevronDown} className="fa-sm" /> */}
-              <i className={`pi ${isActive ? 'pi-sort-up-fill' : 'pi-sort-down-fill'}`} style={{ fontSize: '1rem' }}></i>
-            </span>
-          </h1>
-          <div className={`collapsible-content ${isActive ? 'active' : ''}`}>
+          </div>
+        )}
+        {activeTab === 'tab4' && (
+          <div className="d-flex flex-wrap">
+            <div className="form-section  flex-fill">
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="naicsTypes" className="col-sm-4 col-form-label custom-label">NAICS Code:</label>
               <div className="col-sm-8">
@@ -1156,7 +1179,7 @@ const Wc1FormComponent = () => {
                   options={naicsTypes.map(type => ({
                     label: type.description, // Displayed in the dropdown
                     value: type.value // Value sent on change
-                }))}
+                  }))}
                   placeholder="---Select One---"
                   filter
                   className="select-dropdown" />
@@ -1165,7 +1188,7 @@ const Wc1FormComponent = () => {
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="dateOfInjury" className="col-sm-4 col-form-label custom-label">Date Of Injury: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-sm-8">
+              <div className="col-sm-3">
                 <input autoComplete="off"
                   type="date"
                   ref={getFieldRef('dateOfInjury')}
@@ -1188,7 +1211,7 @@ const Wc1FormComponent = () => {
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="timeOfInjury" className="col-sm-4 col-form-label custom-label">Time of Injury:</label>
-              <div className="col-sm-8">
+              <div className="col-sm-3">
                 <input autoComplete="off"
                   type="time"
                   className="form-control custom-input"
@@ -1204,7 +1227,7 @@ const Wc1FormComponent = () => {
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="countyOfInjury" className="col-sm-4 col-form-label custom-label">County Of Injury: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-sm-8">
+              <div className="col-sm-3">
                 <input autoComplete="off"
                   type="text"
                   ref={getFieldRef('countyOfInjury.description')}
@@ -1226,7 +1249,7 @@ const Wc1FormComponent = () => {
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="dateEmployerKnowledge" className="col-sm-4 col-form-label custom-label">Date Employer had knowledge of Injury:</label>
-              <div className="col-sm-8">
+              <div className="col-sm-3">
                 <input autoComplete="off"
                   type="date"
                   className="form-control custom-input"
@@ -1241,7 +1264,7 @@ const Wc1FormComponent = () => {
 
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="firstDateFailed" className="col-sm-4 col-form-label custom-label">Enter First Date Employee Failed to Work a Full Day:</label>
-              <div className="col-sm-8">
+              <div className="col-sm-3">
                 <input autoComplete="off"
                   type="date"
                   className="form-control custom-input"
@@ -1364,7 +1387,7 @@ const Wc1FormComponent = () => {
             <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
               <label htmlFor="injuryTypes" className="col-sm-4 col-form-label custom-label">Type of Injury/Illness: <span style={{ color: 'red' }}>*</span></label>
               <div className="col-sm-8">
-              <Dropdown
+                <Dropdown
                   value={formData.injuryTypes}
                   name="injuryTypes"
                   onChange={handleChange}
@@ -1372,7 +1395,7 @@ const Wc1FormComponent = () => {
                   options={injuryTypes.map(type => ({
                     label: type.description, // Displayed in the dropdown
                     value: type.value // Value sent on change
-                }))}
+                  }))}
                   placeholder="---Select One---"
                   filter
                   inputRef={getFieldRef('injuryTypes')}
@@ -1451,7 +1474,7 @@ const Wc1FormComponent = () => {
                   options={injuryCauseTypes.map(type => ({
                     label: type.description, // Displayed in the dropdown
                     value: type.value // Value sent on change
-                }))}
+                  }))}
                   placeholder="---Select One---"
                   filter
                   inputRef={getFieldRef('injuryCauseTypes')}
@@ -1854,6 +1877,27 @@ const Wc1FormComponent = () => {
 
             </div>
           </div>
+          </div>
+        )}
+      </div>
+      
+      
+       
+        <div ref={headerRef}
+          className='collapsible-container'
+          onMouseEnter={() => setIsActive(true)}
+          onMouseLeave={() => setIsActive(false)}
+        >
+          <h1 className="custom-h1  header" style={{ cursor: 'pointer' }} onClick={() => setIsActive(prev => !prev)}
+            ref={headerRef}
+            tabIndex={0}>
+            Injury/Illness and Medical
+            <span style={{ float: 'right', marginRight: '20px', fontSize: '25px' }}>
+              {/* <FontAwesomeIcon icon={isActive ? faChevronUp : faChevronDown} className="fa-sm" /> */}
+              <i className={`pi ${isActive ? 'pi-sort-up-fill' : 'pi-sort-down-fill'}`} style={{ fontSize: '1rem' }}></i>
+            </span>
+          </h1>
+          
 
         </div>
         <div>
@@ -2500,12 +2544,12 @@ const Wc1FormComponent = () => {
           <button type="reset" className="btn btn-secondary mx-2 mb-10 custom-label">Reset</button>
           <button type="button" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Save</button>
           <button type="submit" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Submit</button>
 
