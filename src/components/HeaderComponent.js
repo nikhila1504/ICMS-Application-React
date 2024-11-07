@@ -1,5 +1,7 @@
 import { React } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import logo from '../sbwc_logo.gif'; // Tell webpack this JS file uses this image
+import icmslogo from '../icms_logo.gif'; // Tell webpack this JS file uses this image
 
 const HeaderComponent = () => {
   const location = useLocation();
@@ -18,12 +20,11 @@ const HeaderComponent = () => {
   };
   return (
 <div>
+<img src={logo} alt="Logo" /><img src={icmslogo} alt="Logo" style={{ marginLeft: '1200px'}}/>
   <header>
     <nav className="navbar navbar-expand-md">
       <div className="container-fluid">
-        <h2 className="navbar-brand" style={{ color: 'black', fontSize: '20px', paddingTop: '15px' }}>
-          WC-1, Employers First Report of Injury
-        </h2>
+        
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <div className="ms-auto">

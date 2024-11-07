@@ -1,3 +1,54 @@
+/* Tabs container styling */
+.tabs {
+  width: 100%;
+  max-width: 100%;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+}
+
+/* Tab titles styling */
+.tab-titles {
+   display: flex;
+  justify-content: space-around;
+  margin-bottom: 10px;
+}
+
+.tab-titles button {
+  flex: 1;
+  padding: 7px;
+  border: 1px solid #969494;
+  background: #4babf55e;
+  color: #333;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+/* Active tab styling */
+.tab-titles .active {
+  background: #5d8aa8;
+  color: white;
+}
+
+/* Tab content styling */
+.tab-content {
+  border: 0px solid #ddd;
+  background: #f9f9f9;
+}
+
+.tab-pane{
+  display: block;
+  margin: 10px 0;
+  font-weight: bold;
+}
+
+.tab-pane input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
 .modalBackground {
   width: 100vw;
   height: 100vh;
@@ -134,7 +185,7 @@
 }
 
 .header {
-  background-color: skyblue;
+  background-color: #4babf55e;
   padding: 3px;
   border-radius: 5px;
   cursor: pointer;
@@ -199,7 +250,7 @@
 
 .modal-content h2,
 .modal-content h5 {
-  background-color: skyblue;
+  background-color: #4babf55e;
   padding: 10px;
   border-radius: 5px;
   margin: 0 0 10px 0;
@@ -300,18 +351,36 @@
   border: 2px solid skyblue !important;
   border-radius: 5px !important;
 }
+.form-control-nr:active {
+  border: 2px solid #4baaf5 !important;
+  border-radius: 5px !important;
+}
 
-.select-dropdown {
+.dropdown-select {
   font-size: 14px !important; 
   /* border: 2px solid skyblue !important;  */
   border-radius: 5px !important; 
   width: 101%; 
   height: 45px;
+  /* width: 70%;
+  height: 35px; */
   padding: 10px 8px; 
   line-height: 1.5; 
   outline: none; 
   box-shadow: none; 
-  display: flex; 
+  align-items: center;
+}
+
+.select-dropdown {
+  font-size: 14px !important; 
+  border: 2px solid #4baaf5 !important; 
+  border-radius: 5px !important; 
+  height: 35px;
+  padding: 10px 8px; 
+  line-height: 1.5; 
+  outline: none; 
+  box-shadow: none; 
+  
   align-items: center;
 }
 .select-dropdown option:focus,
@@ -370,6 +439,12 @@
   padding: 10px 15px; 
 }
 
+.col-form-label {
+  margin-bottom: 0;
+  font-size: 13px !important;
+  line-height: 1.5;
+}
+
 .list-group-item input[type="radio"] {
   margin-top: 0.3em; 
 }
@@ -395,10 +470,12 @@
 }
 
 .container {
-  padding-right: 0px !important;
+  padding-right: 4px !important;
   padding-left: 4px  !important;
-  margin-right: 0px !important;
-  margin-left: 0px !important;
+  margin-right: 6px !important;
+  margin-left: 2px !important;
+  max-width: 100% !important;
+  width: 100%;
 }
 .dropdown-item:focus, 
 .dropdown-item:hover, 
@@ -418,6 +495,7 @@
 .table-custom th {
   font-size: 14px;
 }
+
 
 .form-container {
   text-align: left;
@@ -554,15 +632,15 @@
 }
 
 .file-upload {
-  background-color: skyblue;
-  color: skyblue;
+  background-color: #4babf55e;
+  color: #4babf55e;
 }
 
 .custom-file-upload {
   display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
-  background-color: skyblue;
+  background-color: #4babf55e;
   color: black;
   border-radius: 5px;
   text-align: center;
@@ -585,7 +663,7 @@
 }
 
 .custom-label .p-datatable-thead>tr>th {
-  background-color: skyblue;
+  background-color: #4babf55e;
   color: black;
   font-size: 1.2em;
   padding: 12px;
