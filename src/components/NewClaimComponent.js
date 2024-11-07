@@ -11,7 +11,7 @@ const NewClaimComponent = () => {
                         className="nav-link dropdown-toggle"
                         to="#"
                         id="claimDropdown"
-                        role="button"
+                        // role="button"
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false" 

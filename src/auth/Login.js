@@ -14,7 +14,7 @@ const Login = () => {
       const userData = await AuthService.login(username, password);
       if (userData.token) {
         localStorage.setItem("token", userData.token);
-        navigate("/wc1");
+        navigate("/Wc1poc");
       } else {
         setError(userData.message);
       }

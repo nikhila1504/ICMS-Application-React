@@ -196,7 +196,7 @@ const Wc1FormComponent = () => {
       const url = URL.createObjectURL(file);
       const newDocument = { id: documents.length + 1, name: file.name, fileUrl: url };
       setDocuments([...documents, newDocument]);
-      toast.current.show({ severity: 'success', summary: 'File Uploaded', detail: file.name, life: 3000, style: { backgroundColor: '#4baaf5', color: '#FFFFFF', color: 'black' }, });
+      toast.current.show({ severity: 'success', summary: 'File Uploaded', detail: file.name, life: 3000, style: { backgroundColor: '#b6dde5', color: '#FFFFFF', color: 'black' }, });
       event.target.value = null;
     }
   };
@@ -1423,6 +1423,7 @@ const Wc1FormComponent = () => {
                     targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>}
                     sourceStyle={{ height: '12rem' }}
                     targetStyle={{ height: '12rem' }}
+                    className="custom-picklist"
                     filter
                     responsive
                   />
@@ -1465,7 +1466,7 @@ const Wc1FormComponent = () => {
               </div>
             </div>
             {/* </form> */}
-            {/* <hr style={{ color:'#4baaf5' }} /> */}
+            {/* <hr style={{ color:'#b6dde5' }} /> */}
             <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
             <div className="d-flex flex-wrap">
               <div className=" flex-fill">
@@ -2500,12 +2501,12 @@ const Wc1FormComponent = () => {
           <button type="reset" className="btn btn-secondary mx-2 mb-10 custom-label">Reset</button>
           <button type="button" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#b6dde5' : '#b6dde5', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Save</button>
           <button type="submit" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#b6dde5' : '#b6dde5', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Submit</button>
 
