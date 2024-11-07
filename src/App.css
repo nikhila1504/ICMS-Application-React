@@ -8,16 +8,15 @@
 
 /* Tab titles styling */
 .tab-titles {
-  display: flex;
+   display: flex;
   justify-content: space-around;
   margin-bottom: 10px;
 }
 
 .tab-titles button {
   flex: 1;
-  padding: 10px;
-  cursor: pointer;
-  border: none;
+  padding: 7px;
+  border: 1px solid #969494;
   background: #4babf55e;
   color: #333;
   font-weight: bold;
@@ -32,8 +31,7 @@
 
 /* Tab content styling */
 .tab-content {
-  border: 1px solid #ddd;
-  padding: 20px;
+  border: 0px solid #ddd;
   background: #f9f9f9;
 }
 
@@ -247,7 +245,7 @@
 
 .modal-content h2,
 .modal-content h5 {
-  background-color: #4baaf5;
+  background-color: #4babf55e;
   padding: 10px;
   border-radius: 5px;
   margin: 0 0 10px 0;
@@ -303,18 +301,34 @@
   border: 2px solid #4baaf5 !important;
   border-radius: 5px !important;
 }
+.form-control-nr:active {
+  border: 2px solid #4baaf5 !important;
+  border-radius: 5px !important;
+}
 
-.select-dropdown {
+.dropdown-select {
   font-size: 14px !important; 
   border: 2px solid #4baaf5 !important; 
   border-radius: 5px !important; 
-  width: 660px; 
+  width: 70%;
   height: 35px;
   padding: 10px 8px; 
   line-height: 1.5; 
   outline: none; 
   box-shadow: none; 
-  display: flex; 
+  align-items: center;
+}
+
+.select-dropdown {
+  font-size: 14px !important; 
+  border: 2px solid #4baaf5 !important; 
+  border-radius: 5px !important; 
+  height: 35px;
+  padding: 10px 8px; 
+  line-height: 1.5; 
+  outline: none; 
+  box-shadow: none; 
+  
   align-items: center;
 }
 .select-dropdown option:focus,
@@ -367,6 +381,12 @@
 .list-group-item {
   border: none !important; 
   padding: 10px 15px; 
+}
+
+.col-form-label {
+  margin-bottom: 0;
+  font-size: 13px !important;
+  line-height: 1.5;
 }
 
 .list-group-item input[type="radio"] {
