@@ -285,7 +285,7 @@
 }
 
  .custom-input {
-  border: 2px solid skyblue;
+  /* border: 2px solid skyblue; */
   border-radius: 5px;
   padding: 10px;
   font-size: 16px;
@@ -343,7 +343,7 @@
   padding: 10px 12px !important;
 } 
 .form-control-nr{
-  border: 2px solid skyblue !important;
+  /* border: 2px solid skyblue !important; */
   border-radius: 5px !important;
   margin-top: 0px !important;
 }
@@ -373,9 +373,9 @@
 
 .select-dropdown {
   font-size: 14px !important; 
-  border: 2px solid #4baaf5 !important; 
+  /* border: 2px solid #4baaf5 !important;  */
   border-radius: 5px !important; 
-  height: 35px;
+  height: 45px;
   padding: 10px 8px; 
   line-height: 1.5; 
   outline: none; 
@@ -554,7 +554,7 @@
   border: 1px solid black !important;
   resize: none; 
 }
-/* .collapsible-container {
+ .collapsible-container {
   padding-right: 0px;
   margin: 0px;
 }
@@ -569,11 +569,11 @@
 
  .collapsible-content.active {
   max-height: 1800px;
-}  */
+}  
 
- /* .collapsible-container:hover .collapsible-content {
+.collapsible-container:hover .collapsible-content {
  max-height: 1800px;
-}  */
+}  
 .collapsible-container.error {
   border-color: red;
 }

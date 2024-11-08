@@ -12,12 +12,19 @@ import { Dropdown } from 'primereact/dropdown';
 import NaicsTypeService from "../services/naics.type.service";
 import InjuryTypeService from "../services/injury.type.service";
 import InjuryCauseTypeService from "../services/injury.cause.type.service";
+import StateTypeService from "../services/state.type.service";
 import { MDBInput, MDBDropdown, MDBDropdownMenu, MDBDropdownItem, MDBDropdownToggle, MDBRadio } from 'mdb-react-ui-kit';
 import { FloatLabel } from 'primereact/floatlabel';
+
+
 const Wc1Component = () => {
     const [naicsTypes, setNaicsTypes] = useState([]);
     const [injuryTypes, setInjuryTypes] = useState([]);
     const [injuryCauseTypes, setInjuryCauseTypes] = useState([]);
+    const [physicianStateTypes, setPhysicianStateTypes] = useState([]);
+    const [hospitalStateTypes, setHospitalStateTypes] = useState([]);
+    const [stateTypes, setStateTypes] = useState([]);
+
     const Pagination = ({ className, currentPage, totalPages, onPageChange, itemsPerPage, onItemsPerPageChange }) => {
         return (
             <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
@@ -154,7 +161,17 @@ const Wc1Component = () => {
                 console.log(error);
             });
     }, []);
-
+    useEffect(() => {
+        StateTypeService.getAllStateTypes()
+            .then((response) => {
+                console.log(response);
+                setPhysicianStateTypes(response.data);
+                console.log("physicianStateTypes", stateTypes);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
     useEffect(() => {
         NaicsTypeService.getAllNaicsTypes()
             .then((response) => {
@@ -166,7 +183,17 @@ const Wc1Component = () => {
                 console.log(error);
             });
     }, []);
-
+    useEffect(() => {
+        StateTypeService.getAllStateTypes()
+            .then((response) => {
+                console.log(response);
+                setHospitalStateTypes(response.data);
+                console.log("hospitalStateTypes", stateTypes);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, []);
     useEffect(() => {
         InjuryTypeService.getAllInjuryTypes()
             .then((response) => {
@@ -328,11 +355,9 @@ const Wc1Component = () => {
         { label: 'Administration of Education Programs', value: 'Administration of Education Programs' },
         { label: 'Administration of Housing Programs', value: 'Administration of Housing Programs' }
     ];
-    // const injuryTypes = [
-    //   { label: 'AIDS', value: 'AIDS' },
-    //   { label: 'Adverse reaction to a vaccination or inoculation', value: 'Adverse reaction to a vaccination or inoculation' },
-    //   { label: 'Cancer', value: 'Cancer' },
-    // ]
+    const [benefitsPayableFor, setBenefitsPayableFor] = useState([
+        { label: 'Total Disability', value: 'Total Disability' },
+    ]);
     const howOccurred = [
         { label: 'Abnormal Air Pressure', value: 'Abnormal Air Pressure' },
         { label: 'Absorption, Ingestion or Inhalation, NOC', value: '"Absorption, Ingestion or Inhalation, NOC' },
@@ -1068,9 +1093,8 @@ const Wc1Component = () => {
                             </div>
                         </div>
 
-                        {/* Fourth Row */}
                         <div className="form-section">
-                            <div className="form-group row mb-2 custom-radio"> {/* Reduced mb-3 to mb-2 */}
+                            <div className="form-group row mb-2 custom-radio">
                                 <label className="col-md-8 col-form-label custom-label">Wage Rate Frequency:</label>
                                 <div className="col-md-12">
                                     <div className="form-check form-check-inline">
@@ -1147,10 +1171,9 @@ const Wc1Component = () => {
                         Injury/Illness and Medical
                     </h1>
                     <div className={`collapsible-content ${isActive ? 'active' : ''}`}>
-
-                        {/* First Row: NAICS Code, Date of Injury, Time of Injury, County of Injury */}
+                        {/* First Row: NAICS Code, Date of Injury, Time of Injury */}
                         <div className="row">
-                            <div className="col-md-3 mb-3 mt-4">
+                            <div className="col-md-4 mb-3 mt-4">
                                 <div className="p-fluid">
                                     <FloatLabel className="w-full md:w-14rem">
                                         <Dropdown
@@ -1163,7 +1186,7 @@ const Wc1Component = () => {
                                             }))}
                                             placeholder="---Select One---"
                                             filter
-                                            className="select-dropdown custom-input"
+                                            className="select-dropdown custom-input col-md-12"
                                             label="NAICS Type"
                                         />
                                         <label htmlFor="naicsTypes">NAICS Code:</label>
@@ -1171,10 +1194,10 @@ const Wc1Component = () => {
                                 </div>
                             </div>
 
-                            <div className="col-md-3 mb-3 mt-4">
+                            <div className="col-md-4 mb-3 mt-4">
                                 <MDBInput
                                     type="date"
-                                    label="Date of Injury"
+                                    label={<>Date of Injury<span style={{ color: 'red' }}>*</span> </>}
                                     id="dateOfInjury"
                                     name="dateOfInjury"
                                     value={formatDateForInput(formData.dateOfInjury)}
@@ -1190,7 +1213,7 @@ const Wc1Component = () => {
                                 )}
                             </div>
 
-                            <div className="col-md-3 mb-3 mt-4">
+                            <div className="col-md-4 mb-3 mt-4">
                                 <MDBInput
                                     type="time"
                                     label="Time of Injury"
@@ -1201,11 +1224,14 @@ const Wc1Component = () => {
                                     floating
                                 />
                             </div>
+                        </div>
 
-                            <div className="col-md-3 mb-3 mt-4">
+                        {/* Second Row: County of Injury, Date Employer Knowledge, First Date Employee Failed to Work */}
+                        <div className="row">
+                            <div className="col-md-4 mb-3 mt-4">
                                 <MDBInput
                                     type="text"
-                                    label="County Of Injury"
+                                    label={<>County Of Injury<span style={{ color: 'red' }}>*</span> </>}
                                     id="countyOfInjury"
                                     className="custom-input"
                                     name="countyOfInjury.description"
@@ -1219,11 +1245,8 @@ const Wc1Component = () => {
                                     <div className="invalid-feedback">{errors['countyOfInjury.description']}</div>
                                 )}
                             </div>
-                        </div>
 
-                        {/* Second Row: Date Employer Knowledge, First Date Employee Failed to Work, Full Pay on Date of Injury, Occurred on Premises */}
-                        <div className="row">
-                            <div className="col-md-3 mb-3 mt-4">
+                            <div className="col-md-4 mb-3 mt-4">
                                 <MDBInput
                                     type="date"
                                     label="Date Employer had Knowledge of Injury"
@@ -1235,7 +1258,7 @@ const Wc1Component = () => {
                                 />
                             </div>
 
-                            <div className="col-md-3 mb-3 mt-4">
+                            <div className="col-md-4 mb-3 mt-4">
                                 <MDBInput
                                     type="date"
                                     label="First Date Employee Failed to Work"
@@ -1246,9 +1269,12 @@ const Wc1Component = () => {
                                     floating
                                 />
                             </div>
+                        </div>
 
-                            <div className="col-md-3 mb-3 ">
-                                <label className="col-sm-12 col-form-label custom-label">
+                        {/* Third Row: Full Pay on Date of Injury, Occurred on Premises */}
+                        <div className="row">
+                            <div className="col-md-4 mb-3  mt-3">
+                                <label className="col-sm-8 col-form-label custom-label">
                                     Did Employee Receive Full Pay on Date of Injury: <span style={{ color: 'red' }}>*</span>
                                 </label>
                                 <div className="col-sm-8 custom-radio">
@@ -1299,7 +1325,8 @@ const Wc1Component = () => {
                                     )}
                                 </div>
                             </div>
-                            <div className="col-md-3 mb-3  ">
+
+                            <div className="col-md-4 mb-3  mt-3">
                                 <label className="col-sm-12 col-form-label custom-label mt-0">
                                     Did Injury/Illness Occur on Employer's premises?: <span style={{ color: 'red' }}>*</span>
                                 </label>
@@ -1351,14 +1378,8 @@ const Wc1Component = () => {
                                     )}
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="row">
-                            <div className="col-md-3 mb-3">
+                            <div className="col-md-4 mb-3 mt-3">
                                 <div className="form-group">
-                                    <label htmlFor="injuryTypes" className="col-form-label custom-label">
-                                        Type of Injury/Illness: <span style={{ color: 'red' }}>*</span>
-                                    </label>
                                     <FloatLabel>
                                         <Dropdown
                                             value={formData.injuryTypes}
@@ -1370,59 +1391,58 @@ const Wc1Component = () => {
                                             }))}
                                             placeholder="---Select One---"
                                             filter
-                                            className="select-dropdown custom-input"
-                                            label="Type of Injury/Illness: "
+                                            className="select-dropdown custom-input col-md-12"
+                                            label="Type of Injury/Illness"
                                         />
+                                        <label htmlFor="naicsTypes">Type of Injury/Illness<span style={{ color: 'red' }}>*</span></label>
                                     </FloatLabel>
                                 </div>
                             </div>
-
-                            {/* How Injury or Illness Occurred */}
-                            <div className="col-md-4 mb-3">
+                        </div>
+                        {/* Fourth Row: Injury Type and Body Part Affected */}
+                        <div className="row">
+                            <div className="col-md-4 mb-3 mt-3">
                                 <div className="form-group">
-                                    <label htmlFor="injuryType" className="col-md-9 col-form-label custom-label">
-                                        How Injury or Illness Occurred: <span style={{ color: 'red' }}>*</span>
+                                    <label htmlFor="injuryType" className="col-md-12 col-form-label custom-label">
+                                        How Injury or Illness / Abnormal Health Condition Occurred: <span style={{ color: 'red' }}>*</span>
                                     </label>
-                                    <div className='col-md-8'>
-                                        <textarea
-                                            name="injuryType"
-                                            value={formData.injuryType}
-                                            onChange={handleChange}
-                                            rows="3"
-                                            cols='60'
-                                            style={{ marginTop: '10px', resize: 'none' }}
-                                            className={`form-control-nr ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
-                                        />
-                                        {errors.injuryTypes && (
-                                            <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                                                {errors.injuryTypes}
-                                            </div>
-                                        )}
-                                        <Dropdown
-                                            value={formData.injuryTypes}
-                                            name="injuryTypes"
-                                            className='col-md-12'
-                                            onChange={handleChange}
-                                            options={injuryTypes.map(type => ({
-                                                label: type.description,
-                                                value: type.value
-                                            }))}
-                                            placeholder="---Select One---"
-                                            filter
-                                            inputRef={getFieldRef('injuryTypes')}
-                                        />
-                                    </div>
+                                    <textarea
+                                        name="injuryType"
+                                        value={formData.injuryType}
+                                        onChange={handleChange}
+                                        rows="3"
+                                        className={`form-control-nr col-md-12 ${errors.injuryType ? 'p-invalid' : ''}`}
+                                    />
+                                    {errors.injuryType && (
+                                        <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
+                                            {errors.injuryType}
+                                        </div>
+                                    )}
+                                    <Dropdown
+                                        value={formData.injuryTypes}
+                                        name="injuryTypes"
+                                        className='col-md-12'
+                                        onChange={handleChange}
+                                        options={injuryTypes.map(type => ({
+                                            label: type.description,
+                                            value: type.value
+                                        }))}
+                                        placeholder="---Select One---"
+                                        filter
+                                        inputRef={getFieldRef('injuryTypes')}
+                                    />
                                 </div>
                             </div>
                             {/* </div> */}
+
                             {/* Body Part Affected */}
-                            {/* <div className='row'> */}
-                            <div className="col-md-5">
+                            {/* <div className="row"> */}
+                            <div className="col-md-7 mt-3">
                                 <div className="form-group row">
-                                    <label className="col-sm-4 col-form-label custom-label" style={{ marginLeft: '20px' }}>
+                                    <label className="col-sm-4 col-form-label custom-label" style={{ marginLeft: '30px' }}>
                                         Body Part Affected: <span style={{ color: 'red' }}>*</span>
                                     </label>
-                                    <div className="col-sm-8 picklist-container" style={{ width: '100%' }}>
+                                    <div className="col-sm-2 picklist-container" style={{ width: '100%' }}>                      
                                         <PickList
                                             dataKey="id"
                                             inputRef={pickListRef}
@@ -1440,12 +1460,273 @@ const Wc1Component = () => {
                                             filter
                                             responsive
                                         />
-                                    </div>
-                                    {errors.bodyPartAffected && (
-                                        <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
+                                        {errors.bodyPartAffected && (
+                                        <div className="error-message" style={{ color: 'red', fontSize: '12px',marginLeft:'70px' }}>
                                             {errors.bodyPartAffected}
                                         </div>
                                     )}
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
+
+                        <div className="d-flex flex-wrap">
+                            {/* First Column - Treating Physician Information */}
+                            <div className="flex-fill">
+                                <div className="form-group row mb-1">
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Treating Physician Name"
+                                            id="tPhysicianName"
+                                            name="tPhysicianName"
+                                            value={formData.tPhysicianName}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Treating Physician Address 1"
+                                            id="tPhysicianAddress1"
+                                            name="tPhysicianAddress1"
+                                            value={formData.tPhysicianAddress1}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Treating Physician Address 2"
+                                            id="tPhysicianAddress2"
+                                            name="tPhysicianAddress2"
+                                            value={formData.tPhysicianAddress2}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Treating Physician City"
+                                            id="tPhysicianCity"
+                                            name="tPhysicianCity"
+                                            value={formData.tPhysicianCity}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group row mb-1">
+                                    <div className="col-md-3">
+                                        <Dropdown
+                                            value={formData.physicianStateTypes}
+                                            name="physicianStateTypes"
+                                            onChange={handleChange}
+                                            options={physicianStateTypes.map(type => ({
+                                                label: type.description,
+                                                value: type.value
+                                            }))}
+                                            filter
+                                            className="dropdown-select"
+                                            placeholder="State"
+                                        />
+                                    </div>
+                                    <div className="col-md-2">
+                                        <MDBInput
+                                            type="text"
+                                            label="Treating Physician ZIP"
+                                            id="tPhysicianZIP"
+                                            name="tPhysicianZIP"
+                                            value={formData.tPhysicianZIP}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-1 d-flex align-items-center">
+                                        <MDBInput
+                                            type="text"
+                                            label="Ext"
+                                            id="tPhysicianZIPExt"
+                                            name="tPhysicianZIPExt"
+                                            value={formData.tPhysicianZIPExt}
+                                            onChange={handleChange}
+                                            floating
+                                            style={{ marginLeft: '9px' }}
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-2">
+                                        <MDBInput
+                                            type="text"
+                                            label="Treating Physician Phone"
+                                            id="tPhysicianPhone"
+                                            name="tPhysicianPhone"
+                                            value={formData.tPhysicianPhone}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-1 d-flex align-items-center">
+                                        <MDBInput
+                                            type="text"
+                                            label="Ext"
+                                            id="tPhysicianPhoneExt"
+                                            name="tPhysicianPhoneExt"
+                                            value={formData.tPhysicianPhoneExt}
+                                            onChange={handleChange}
+                                            floating
+                                            style={{ marginLeft: '9px' }}
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Initial Treatment"
+                                            id="initialTreatment"
+                                            name="initialTreatment"
+                                            value={formData.initialTreatment}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex-fill">
+                                <div className="form-group row mb-1">
+
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Hospital/Treating Facility"
+                                            id="treatingFacility"
+                                            name="treatingFacility"
+                                            value={formData.treatingFacility}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Hospital/Treating Facility Address 1"
+                                            id="treatingFacilityAddress1"
+                                            name="treatingFacilityAddress1"
+                                            value={formData.treatingFacilityAddress1}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Hospital/Treating Facility Address 2"
+                                            id="treatingFacilityAddress2"
+                                            name="treatingFacilityAddress2"
+                                            value={formData.treatingFacilityAddress2}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-3">
+                                        <MDBInput
+                                            type="text"
+                                            label="Hospital/Treating Facility City"
+                                            id="treatingFacilityCity"
+                                            name="treatingFacilityCity"
+                                            value={formData.treatingFacilityCity}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="form-group row mb-1">
+
+                                    <div className="col-md-3">
+                                        <Dropdown
+                                            value={formData.hospitalStateTypes}
+                                            name="hospitalStateTypes"
+                                            onChange={handleChange}
+                                            options={hospitalStateTypes.map(type => ({
+                                                label: type.description,
+                                                value: type.value
+                                            }))}
+                                            filter
+                                            className="dropdown-select "
+                                            placeholder="State"
+                                        />
+                                    </div>
+                                    <div className="col-md-2">
+                                        <MDBInput
+                                            type="text"
+                                            label="Hospital/Treating Facility Zip"
+                                            id="treatingFacilityZIP"
+                                            name="treatingFacilityZIP"
+                                            value={formData.treatingFacilityZIP}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-1 d-flex align-items-center">
+                                        <MDBInput
+                                            type="text"
+                                            label="Ext"
+                                            id="treatingFacilityZIPExt"
+                                            name="treatingFacilityZIPExt"
+                                            value={formData.treatingFacilityZIPExt}
+                                            onChange={handleChange}
+                                            floating
+                                            style={{ marginLeft: '9px' }}
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    {/* </div> */}
+
+                                    {/* <div className="form-group row mb-1"> */}
+                                    <div className="col-md-2">
+                                        <MDBInput
+                                            type="text"
+                                            label="Hospital Phone"
+                                            id="hospitalPhone"
+                                            name="hospitalPhone"
+                                            value={formData.hospitalPhone}
+                                            onChange={handleChange}
+                                            floating
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
+                                    <div className="col-md-1 d-flex align-items-center">
+                                        <MDBInput
+                                            type="text"
+                                            label="Ext"
+                                            id="hospitalPhoneExt"
+                                            name="hospitalPhoneExt"
+                                            value={formData.hospitalPhoneExt}
+                                            onChange={handleChange}
+                                            floating
+                                            style={{ marginLeft: '9px' }}
+                                            className="form-control custom-input"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1453,7 +1734,7 @@ const Wc1Component = () => {
                         <hr style={{ height: '1px', backgroundColor: 'black', border: 'none' }} />
                         <div className="d-flex flex-wrap">
                             <div className="form-section flex-fill">
-                                <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
+                                <div className="form-group row mb-1" >
                                     <div className="col-md-3">
                                         <div className="form-outline">
                                             {/* <MDBFloatingLabel label="If Returned to Work, Give Date:" className="custom-label"> */}
@@ -1514,7 +1795,7 @@ const Wc1Component = () => {
                         <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
                         <div className="d-flex flex-wrap">
                             <div className="form-section flex-fill">
-                                <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
+                                <div className="form-group row mb-1" >
                                     <div className="col-md-3">
                                         <div className="form-outline">
                                             {/* <MDBFloatingLabel label="Report Prepared By (Print or Type):" className="custom-label"> */}
@@ -1650,12 +1931,43 @@ const Wc1Component = () => {
                             </div>
                         </div>
                         {formData.benifitsBeingPaid === 'incomeBenifits' && (
-                            <div className="form-group Income-Benifits-Form mt-4">
+                            <div className="form-group Income-Benifits-Form mt-2">
                                 <div className="d-flex flex-wrap">
                                     <div className="form-section" style={{ marginLeft: '10px' }}>
+                                        <div className="col-md-12 form-group row mb-1 align-items-center">
+                                            <label className="form-check-label custom-label col-md-6">Previously Medical Only:</label>
+                                            <div className="d-flex col-md-6 align-items-center">
+                                                <div className="form-check custom-radio form-check-inline  d-flex align-items-center">
+                                                    <input
+                                                        type="radio"
+                                                        className="form-check-input"
+                                                        name="previouslyMedicalOnly"
+                                                        id="previouslyMedicalYes"
+                                                        value="Yes"
+                                                        onChange={handleChange}
+                                                        style={{ fontSize: '10px', color: 'black' }}
+                                                    />
+                                                    <label className="form-check-label custom-label ms-1" htmlFor="previouslyMedicalYes" style={{ lineHeight: '1.5' }}>Yes</label>
+                                                </div>
+                                                <div className="form-check custom-radio form-check-inline d-flex align-items-center">
+                                                    <input
+                                                        type="radio"
+                                                        className="form-check-input"
+                                                        name="previouslyMedicalOnly"
+                                                        id="previouslyMedicalNo"
+                                                        value="No"
+                                                        onChange={handleChange}
+                                                        style={{ fontSize: '10px', color: 'black' }}
+                                                    />
+                                                    <label className="form-check-label custom-label ms-1" htmlFor="previouslyMedicalNo" style={{ lineHeight: '1.5' }}>No</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="form-section" >
                                         <div className="col-md-12 form-group row mb-1">
                                             <MDBInput
-                                                label="Average Weekly Wage: $"
+                                                label={<>Average Weekly Wage: <span style={{ color: 'red' }}>*</span> </>}
                                                 type="text"
                                                 ref={getFieldRef('averageWeeklyWage')}
                                                 className={`form-control custom-input ${errors.averageWeeklyWage ? 'p-invalid' : ''}`}
@@ -1666,7 +1978,6 @@ const Wc1Component = () => {
                                                 onChange={handleChange}
                                                 floatingLabel
                                                 required
-
                                             />
                                             {errors.averageWeeklyWage && (
                                                 <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -1676,10 +1987,10 @@ const Wc1Component = () => {
                                         </div>
                                     </div>
 
-                                    <div className="form-section" >
+                                    <div className="form-section">
                                         <div className="col-md-12 form-group row">
                                             <MDBInput
-                                                label="Weekly Benefit: $"
+                                                label={<>Weekly Benefit: $ <span style={{ color: 'red' }}>*</span> </>}
                                                 type="text"
                                                 ref={getFieldRef('weeklyBenifit')}
                                                 className={`form-control custom-input ${errors.weeklyBenifit ? 'p-invalid' : ''}`}
@@ -1690,7 +2001,6 @@ const Wc1Component = () => {
                                                 onChange={handleChange}
                                                 floatingLabel
                                                 required
-
                                             />
                                             {errors.weeklyBenifit && (
                                                 <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -1700,8 +2010,8 @@ const Wc1Component = () => {
                                         </div>
                                     </div>
 
-                                    <div className="form-section ">
-                                        <div className="col-md-12 form-group row ">
+                                    <div className="form-section">
+                                        <div className="col-md-12 form-group row">
                                             <MDBInput
                                                 label="Date of Disability"
                                                 type="date"
@@ -1713,14 +2023,14 @@ const Wc1Component = () => {
                                                 onClick={(e) => e.target.showPicker()}
                                                 floatingLabel
                                                 required
-
                                             />
                                         </div>
                                     </div>
-                                    <div className="form-section mb-2" >
+
+                                    <div className="form-section mb-2">
                                         <div className="col-md-12 form-group row mb-1">
                                             <MDBInput
-                                                label="Date Of First Payment: *"
+                                                label={<>Date Of First Payment: <span style={{ color: 'red' }}>*</span> </>}
                                                 type="date"
                                                 ref={getFieldRef('DateOFFirstPayment')}
                                                 className={`form-control custom-input ${errors.DateOFFirstPayment ? 'p-invalid' : ''}`}
@@ -1731,7 +2041,6 @@ const Wc1Component = () => {
                                                 onClick={(e) => e.target.showPicker()}
                                                 floatingLabel
                                                 required
-
                                             />
                                             {errors.DateOFFirstPayment && (
                                                 <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -1742,12 +2051,11 @@ const Wc1Component = () => {
                                     </div>
                                 </div>
 
-                                {/* Second Row: 3 Fields */}
                                 <div className="d-flex flex-wrap">
                                     <div className="form-section" style={{ marginLeft: '10px' }}>
                                         <div className="col-md-12 form-group row mb-2">
                                             <MDBInput
-                                                label="Compensation Paid: $"
+                                                label={<>Compensation Paid: $ <span style={{ color: 'red' }}>*</span> </>}
                                                 type="text"
                                                 ref={getFieldRef('CompensationPaid')}
                                                 className={`form-control custom-input ${errors.CompensationPaid ? 'p-invalid' : ''}`}
@@ -1758,7 +2066,6 @@ const Wc1Component = () => {
                                                 onChange={handleChange}
                                                 floatingLabel
                                                 required
-
                                             />
                                             {errors.CompensationPaid && (
                                                 <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -1768,7 +2075,7 @@ const Wc1Component = () => {
                                         </div>
                                     </div>
 
-                                    <div className="form-section" >
+                                    <div className="form-section">
                                         <div className="col-md-12 form-group row mb-1">
                                             <MDBInput
                                                 label="Penalty Paid: $"
@@ -1780,14 +2087,14 @@ const Wc1Component = () => {
                                                 onBlur={handleBlur}
                                                 onChange={handleChange}
                                                 floatingLabel
-
                                             />
                                         </div>
                                     </div>
+
                                     <div className="form-section" style={{ marginRight: '10px' }}>
                                         <div className="col-md-12 form-group row mb-1">
                                             <MDBInput
-                                                label="Benefits Payable From Date: *"
+                                                label={<>Benefits Payable From Date: <span style={{ color: 'red' }}>*</span> </>}
                                                 type="date"
                                                 ref={getFieldRef('BenifitsPayableByDate')}
                                                 className={`form-control custom-input ${errors.BenifitsPayableByDate ? 'p-invalid' : ''}`}
@@ -1798,7 +2105,6 @@ const Wc1Component = () => {
                                                 onClick={(e) => e.target.showPicker()}
                                                 floatingLabel
                                                 required
-
                                             />
                                             {errors.BenifitsPayableByDate && (
                                                 <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -1807,10 +2113,11 @@ const Wc1Component = () => {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="form-section" >
+
+                                    <div className="form-section">
                                         <div className="col-md-12 form-group row mb-1">
                                             <MDBInput
-                                                label="Benefits Payable For: *"
+                                                label={<>Benefits Payable For: <span style={{ color: 'red' }}>*</span> </>}
                                                 type="text"
                                                 ref={getFieldRef('BenifitsPAyableFor')}
                                                 className={`form-control custom-input ${errors.BenifitsPAyableFor ? 'p-invalid' : ''}`}
@@ -1820,7 +2127,6 @@ const Wc1Component = () => {
                                                 onChange={handleChange}
                                                 floatingLabel
                                                 required
-
                                             />
                                             {errors.BenifitsPAyableFor && (
                                                 <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -1829,80 +2135,81 @@ const Wc1Component = () => {
                                             )}
                                         </div>
                                     </div>
-                                </div>
-                                <div className="d-flex flex-wrap">
                                     <div className="form-section" style={{ marginLeft: '10px' }}>
-                                        <div className="col-sm-3 form-group row mb-1">
+                                        <div className="col-md-12 form-group row mb-1">
                                             <MDBInput
-                                                label="Pay Benefit Until:"
+                                                label="Pay Benefit Until: "
                                                 type="date"
-                                                className="form-control custom-input"
-                                                id="payBenifitUntil"
-                                                name="payBenifitUntil"
-                                                value={formData.payBenifitUntil}
+                                                ref={getFieldRef('PayBenefitUntil')}
+                                                className={`form-control custom-input ${errors.PayBenefitUntil ? 'p-invalid' : ''}`}
+                                                id="PayBenefitUntil"
+                                                name="PayBenefitUntil"
+                                                value={formData.PayBenefitUntil}
                                                 onChange={handleChange}
-                                                floatingLabel
                                                 onClick={(e) => e.target.showPicker()}
+                                                floatingLabel
+                                                required
                                             />
+                                            {errors.PayBenefitUntil && (
+                                                <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
+                                                    {errors.PayBenefitUntil}
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className="col-md-3 form-group row mb-1"></div>
                                     </div>
                                 </div>
                             </div>
                         )}
                         {formData.benifitsBeingPaid === 'salaryInLieu' && (
                             <div className="d-flex flex-wrap">
-                                <div className="form-section">
-                                    <div className="form-group row  mt-2">
-                                        <label className="col-md-5 col-form-label custom-label" style={{ marginLeft: '10px' }}>Previously Medical Only:</label>
-                                        <div className="col-md-7 d-flex flex-wrap">
-                                            <div className="form-check custom-radio form-check-inline">
-                                                <input
-                                                    type="radio"
-                                                    className="form-check-input"
-                                                    name="previouslyMedicalOnly"
-                                                    id="previouslyMedicalYes"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    style={{ fontSize: '10px', color: 'black', marginTop: '10px' }}
-                                                />
-                                                <label className="form-check-label custom-label" htmlFor="previouslyMedicalYes" style={{ marginTop: '10px' }}>Yes</label>
-                                            </div>
-                                            <div className="form-check custom-radio form-check-inline">
-                                                <input
-                                                    type="radio"
-                                                    className="form-check-input"
-                                                    name="previouslyMedicalOnly"
-                                                    id="previouslyMedicalNo"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    style={{ fontSize: '10px', color: 'black', marginTop: '10px' }}
-                                                />
-                                                <label className="form-check-label custom-label" htmlFor="previouslyMedicalNo" style={{ marginTop: '10px' }}>No</label>
-                                            </div>
-                                            <div className="form-check custom-radio form-check-inline">
-                                                <input
-                                                    type="radio"
-                                                    className="form-check-input"
-                                                    name="previouslyMedicalOnly"
-                                                    id="previouslyMedicalNone"
-                                                    value="None"
-                                                    onChange={handleChange}
-                                                    style={{ fontSize: '10px', color: 'black', marginTop: '10px' }}
-                                                />
-                                                <label className="form-check-label custom-label" htmlFor="previouslyMedicalNone" style={{ marginTop: '10px' }}>None</label>
+                                <div className="form-section flex-fill">
+                                    <div className="form-group row mb-1">
+                                        <div className="col-md-3">
+                                            <label className="form-check-label custom-label">Previously Medical Only:</label>
+                                            <div className="d-flex">
+                                                <div className="form-check custom-radio form-check-inline">
+                                                    <input
+                                                        type="radio"
+                                                        className="form-check-input"
+                                                        name="previouslyMedicalOnly"
+                                                        id="previouslyMedicalYes"
+                                                        value="Yes"
+                                                        onChange={handleChange}
+                                                        style={{ fontSize: '10px', color: 'black', marginTop: '8px' }}
+                                                    />
+                                                    <label className="form-check-label custom-label mt-2" htmlFor="previouslyMedicalYes">Yes</label>
+                                                </div>
+                                                <div className="form-check custom-radio form-check-inline">
+                                                    <input
+                                                        type="radio"
+                                                        className="form-check-input"
+                                                        name="previouslyMedicalOnly"
+                                                        id="previouslyMedicalNo"
+                                                        value="No"
+                                                        onChange={handleChange}
+                                                        style={{ fontSize: '10px', color: 'black', marginTop: '8px' }}
+                                                    />
+                                                    <label className="form-check-label custom-label mt-2" htmlFor="previouslyMedicalNo">No</label>
+                                                </div>
+                                                <div className="form-check form-check-inline">
+                                                    <input
+                                                        type="radio"
+                                                        className="form-check-input"
+                                                        name="previouslyMedicalOnly"
+                                                        id="previouslyMedicalNone"
+                                                        value="None"
+                                                        onChange={handleChange}
+                                                        style={{ fontSize: '10px', color: 'black', marginTop: '8px' }}
+                                                    />
+                                                    <label className="form-check-label custom-label mt-2" htmlFor="previouslyMedicalNone">None</label>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Average Weekly Wage Amount */}
-                                    <div className="form-group row ">
-                                        {/* <label htmlFor="averageWeeklyWageAmount" className="col-md-3 col-form-label custom-label">Average Weekly Wage Amount: $</label> */}
-                                        <div className="col-md-10  mt-1 mb-2">
+                                        <div className="col-md-3">
                                             <MDBInput
+                                                label="Average Weekly Wage Amount ($)"
                                                 type="text"
-                                                className="form-control custom-input"
-                                                label="Average Weekly Wage Amount: $"
                                                 id="averageWeeklyWageAmount"
                                                 name="averageWeeklyWageAmount"
                                                 value={formData.averageWeeklyWageAmount}
@@ -1910,50 +2217,37 @@ const Wc1Component = () => {
                                                 onChange={handleChange}
                                             />
                                         </div>
-
-                                    </div>
-                                    <div className="col-md-10 ">
-                                        <MDBInput
-                                            type="date"
-                                            ref={getFieldRef('benefitsPayableFromDate')}
-                                            className={`form-control custom-input ${errors.benefitsPayableFromDate ? 'p-invalid' : ''}`}
-                                            id="benefitsPayableFromDate"
-                                            label="Benefits Payable From Date:"
-                                            name="benefitsPayableFromDate"
-                                            onClick={(e) => e.target.showPicker()}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                        {errors.benefitsPayableFromDate && (
-                                            <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                                                {errors.benefitsPayableFromDate}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="form-section">
-                                    <div className="form-group row  mt-4">
-                                        <div className="col-md-10 ">
+                                        <div className="col-md-3">
                                             <MDBInput
+                                                label="Weekly Benefit Amount ($)"
+                                                type="text"
+                                                id="weeklyBenefitAmount"
+                                                name="weeklyBenefitAmount"
+                                                value={formData.weeklyBenefitAmount}
+                                                onBlur={handleBlur}
+                                                onChange={handleChange}
+                                            />
+                                        </div>
+                                        <div className="col-md-3">
+                                            <MDBInput
+                                                label="Date of Disability"
                                                 type="date"
-                                                label="Date of Disability:"
-                                                className="form-control custom-input"
                                                 id="dateOfDisability"
                                                 name="dateOfDisability"
                                                 onChange={handleChange}
                                                 onClick={(e) => e.target.showPicker()}
                                             />
                                         </div>
+                                    </div>
 
-                                        {/* Date Salary Paid */}
-                                        <div className="col-md-10 mt-3">
+                                    <div className="form-group row mb-2 mt-2">
+                                        <div className="col-md-3">
                                             <MDBInput
+                                                label={<>Date Salary Paid <span style={{ color: 'red' }}>*</span> </>}
                                                 type="date"
                                                 ref={getFieldRef('dateSalaryPaid')}
                                                 className={`form-control custom-input ${errors.dateSalaryPaid ? 'p-invalid' : ''}`}
                                                 id="dateSalaryPaid"
-                                                label="Date Salary Paid:"
                                                 name="dateSalaryPaid"
                                                 onClick={(e) => e.target.showPicker()}
                                                 onChange={handleChange}
@@ -1965,91 +2259,59 @@ const Wc1Component = () => {
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
 
-                                    {/* Benefits Payable From Date */}
-                                    <div className="form-group row  col-md-14">
-                                        {/* <label htmlFor="benefitsPayableFor" className="col-md-5 col-form-label custom-label">Benefits Payable For:<span style={{ color: 'red' }}>*</span></label> */}
-                                        <div className="col-md-10">
-                                            {/* <select
-                                                ref={getFieldRef('benefitsPayableFor')}
-                                                className={`form-control custom-input ${errors.benefitsPayableFor ? 'p-invalid' : ''}`}
-                                                id="benefitsPayableFor"
-                                                name="benefitsPayableFor"
+                                        <div className="col-md-3">
+                                            <MDBInput
+                                                label={<>Benefits Payable From Date <span style={{ color: 'red' }}>*</span> </>}
+                                                type="date"
+                                                ref={getFieldRef('benefitsPayableFromDate')}
+                                                className={`form-control custom-input ${errors.benefitsPayableFromDate ? 'p-invalid' : ''}`}
+                                                id="benefitsPayableFromDate"
+                                                name="benefitsPayableFromDate"
+                                                onClick={(e) => e.target.showPicker()}
                                                 onChange={handleChange}
                                                 required
-                                            >
-                                                <option value="">Select</option>
-                                                <option value="Total Disability">TOTAL DISABILITY</option>
-                                            </select> */}
+                                            />
+                                            {errors.benefitsPayableFromDate && (
+                                                <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                                                    {errors.benefitsPayableFromDate}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="col-md-3">
                                             <FloatLabel className="w-full md:w-14rem">
                                                 <Dropdown
                                                     ref={getFieldRef('benefitsPayableFor')}
-                                                    value={formData.naicsTypes}
-                                                    name="naicsTypes"
+                                                    value={formData.benefitsPayableFor}
+                                                    name="benefitsPayableFor"
                                                     onChange={handleChange}
-                                                    options={naicsTypes.map(type => ({
-                                                        label: type.description,
-                                                        value: type.value
-                                                    }))}
                                                     placeholder="---Select One---"
                                                     filter
-                                                    className="select-dropdown mt-3"
+                                                    options={benefitsPayableFor}
+                                                    className="select-dropdown custom-input col-md-12"
                                                     label="Benefits Payable For"
                                                 />
-                                                <label htmlFor="naicsTypes">Benefits Payable For</label>
+                                                <label htmlFor="benefitsPayableFor">Benefits Payable For<span style={{ color: 'red' }}>*</span></label>
                                             </FloatLabel>
+
                                             {errors.benefitsPayableFor && (
                                                 <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
                                                     {errors.benefitsPayableFor}
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="form-section">
-                                    {/* Pay Benefit Until */}
-                                    <div className="form-group row mb-1 mt-4">
-                                        {/* <label htmlFor="payBenefitUntil" className="col-md-3 col-form-label custom-label">Pay Benefit Until:</label> */}
-                                        <div className="col-md-12">
+
+                                        <div className="col-md-3">
                                             <MDBInput
+                                                label="Pay Benefit Until"
                                                 type="date"
-                                                className="form-control custom-input"
                                                 id="payBenefitUntil"
-                                                label="Pay Benefit Until:"
                                                 name="payBenefitUntil"
                                                 onClick={(e) => e.target.showPicker()}
                                             />
                                         </div>
-                                        {/* Weekly Benefit Amount */}
-                                        {/* <label htmlFor="weeklyBenefitAmount" className="col-md-3 col-form-label custom-label">Weekly Benefit Amount: $</label> */}
-                                        <div className="col-md-12 mt-3">
-                                            <MDBInput
-                                                type="text"
-                                                className="form-control custom-input"
-                                                id="weeklyBenefitAmount"
-                                                label="Weekly Benefit Amount: $"
-                                                name="weeklyBenefitAmount"
-                                                value={formData.weeklyBenefitAmount}
-                                                onBlur={handleBlur}
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                        {/* Add a placeholder or another field */}
-                                        {/* <label htmlFor="placeholder" className="col-md-3 col-form-label custom-label">Placeholder:</label>
-                                        <div className="col-md-3">
-                                            <MDBInput
-                                                type="text"
-                                                className="form-control custom-input"
-                                                label=""
-                                                id="placeholder"
-                                                name="placeholder"
-                                                onChange={handleChange}
-                                            />
-                                        </div> */}
                                     </div>
-
-                                    {/* You can add more fields to complete the 4 fields per row */}
                                 </div>
                             </div>
                         )}
