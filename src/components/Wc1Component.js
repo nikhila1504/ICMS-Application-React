@@ -659,9 +659,8 @@ const Wc1Component = () => {
                 <div className="d-flex flex-wrap">
                     <div className="form-section flex-fill mb-0">
                         <div className="form-group row mb-0">
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
-                                    //label="First Name"
                                     label={<>First Name<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
                                     ref={getFieldRef('claimant.firstName')}
@@ -679,9 +678,8 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
-                                    //label="Last Name"
                                     label={<>Last Name<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
                                     ref={getFieldRef('claimant.lastName')}
@@ -699,7 +697,7 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
                                     label="M.I."
                                     type="text"
@@ -710,11 +708,7 @@ const Wc1Component = () => {
                                     onChange={handleChange}
                                 />
                             </div>
-                        </div>
-                    </div>
-                    <div className="form-section flex-fill">
-                        <div className="form-group row ">
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
                                     label="Birthdate"
                                     type="date"
@@ -727,7 +721,7 @@ const Wc1Component = () => {
                                     disabled
                                 />
                             </div>
-                            <div className="col-md-5 mb-2">
+                            <div className="col-md-3 mb-2">
                                 <label className="custom-label">Gender: <span style={{ color: 'red' }}>*</span></label>
                                 <div className="custom-radio">
                                     <div className="form-check form-check-inline">
@@ -774,11 +768,17 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-3 mb-2">
-                                <label className="custom-label mb-0">Out of Country Address:</label>
+                        </div>
+                    </div>
+                    <div className="form-section flex-fill">
+                        <div className="form-group row">
+
+                            <div className="col-md-2 mb-2 d-flex align-items-center">
+                                <label className="custom-label mb-0 me-2">Out of Country Address:</label>
                                 <div
                                     className={`custom-checkbox ${formData.outOfCountryAddress ? 'checked' : ''}`}
                                     onClick={() => handleChange({ target: { name: 'outOfCountryAddress', value: !formData.outOfCountryAddress } })}
+                                    style={{ cursor: 'pointer' }}
                                 />
                                 <input
                                     type="checkbox"
@@ -789,13 +789,8 @@ const Wc1Component = () => {
                                     style={{ display: 'none' }}
                                 />
                             </div>
-                        </div>
-                    </div>
-                    <div className="form-section flex-fill ">
-                        <div className="form-group row">
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-3 mb-2">
                                 <MDBInput
-                                    //label="Mailing Address 1"
                                     label={<>Mailing Address 1<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
                                     ref={getFieldRef('claimant.address1')}
@@ -812,7 +807,7 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-3 mb-2">
                                 <MDBInput
                                     label="Mailing Address 2"
                                     type="text"
@@ -823,9 +818,8 @@ const Wc1Component = () => {
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
-                                    //label="City"
                                     label={<>City<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
                                     ref={getFieldRef('claimant.city')}
@@ -842,12 +836,8 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                        </div>
-
-                        <div className="form-group row">
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
-                                    //label="State"
                                     label={<>State<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
                                     ref={getFieldRef('claimant.state')}
@@ -864,9 +854,13 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-4 mb-2">
+                        </div>
+                    </div>
+                    <div className="form-section flex-fill">
+                        <div className="form-group row">
+
+                            <div className="col-md-2 mb-2">
                                 <MDBInput
-                                    //label="Zip"
                                     label={<>Zip<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
                                     ref={getFieldRef('claimant.zip')}
@@ -883,7 +877,7 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-3 mb-2">
                                 <MDBInput
                                     label="Employee E-mail"
                                     type="text"
@@ -895,10 +889,7 @@ const Wc1Component = () => {
                                     disabled
                                 />
                             </div>
-                        </div>
-
-                        <div className="form-group row">
-                            <div className="col-md-4 mb-2">
+                            <div className="col-md-3 mb-2">
                                 <MDBInput
                                     label="Phone Number"
                                     type="text"
@@ -911,7 +902,6 @@ const Wc1Component = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div>
                     <h1 className="custom-h1  header ">Party Information</h1>
@@ -1393,6 +1383,7 @@ const Wc1Component = () => {
                                             filter
                                             className="select-dropdown custom-input col-md-12"
                                             label="Type of Injury/Illness"
+                                            dropdownClassName="custom-dropdown-panel"
                                         />
                                         <label htmlFor="naicsTypes">Type of Injury/Illness<span style={{ color: 'red' }}>*</span></label>
                                     </FloatLabel>
@@ -1429,6 +1420,7 @@ const Wc1Component = () => {
                                         }))}
                                         placeholder="---Select One---"
                                         filter
+                                        dropdownClassName="custom-dropdown-panel"
                                         inputRef={getFieldRef('injuryTypes')}
                                     />
                                 </div>
@@ -1442,7 +1434,7 @@ const Wc1Component = () => {
                                     <label className="col-sm-4 col-form-label custom-label" style={{ marginLeft: '30px' }}>
                                         Body Part Affected: <span style={{ color: 'red' }}>*</span>
                                     </label>
-                                    <div className="col-sm-2 picklist-container" style={{ width: '100%' }}>                      
+                                    <div className="col-sm-2 picklist-container" style={{ width: '100%' }}>
                                         <PickList
                                             dataKey="id"
                                             inputRef={pickListRef}
@@ -1461,12 +1453,12 @@ const Wc1Component = () => {
                                             responsive
                                         />
                                         {errors.bodyPartAffected && (
-                                        <div className="error-message" style={{ color: 'red', fontSize: '12px',marginLeft:'70px' }}>
-                                            {errors.bodyPartAffected}
-                                        </div>
-                                    )}
+                                            <div className="error-message" style={{ color: 'red', fontSize: '12px', marginLeft: '70px' }}>
+                                                {errors.bodyPartAffected}
+                                            </div>
+                                        )}
                                     </div>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -1538,6 +1530,7 @@ const Wc1Component = () => {
                                             }))}
                                             filter
                                             className="dropdown-select"
+                                            dropdownClassName="custom-dropdown-panel"
                                             placeholder="State"
                                         />
                                     </div>
@@ -1671,6 +1664,7 @@ const Wc1Component = () => {
                                             }))}
                                             filter
                                             className="dropdown-select "
+                                            dropdownClassName="custom-dropdown-panel"
                                             placeholder="State"
                                         />
                                     </div>
@@ -2289,6 +2283,7 @@ const Wc1Component = () => {
                                                     placeholder="---Select One---"
                                                     filter
                                                     options={benefitsPayableFor}
+                                                    dropdownClassName="custom-dropdown-panel"
                                                     className="select-dropdown custom-input col-md-12"
                                                     label="Benefits Payable For"
                                                 />
@@ -2355,6 +2350,8 @@ const Wc1Component = () => {
                                 placeholder="---Select One---"
                                 disabled={!formData.isControvertEnabled}
                                 filter
+                                dropdownClassName="custom-dropdown-panel"
+                                style={{ width: '200px' }}
                                 className={`select-dropdown-ct ${errors.convertType ? 'p-invalid' : ''}`}
                             />
                             {errors.convertType && (

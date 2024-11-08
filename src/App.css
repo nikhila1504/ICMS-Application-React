@@ -495,12 +495,28 @@
 .table-custom th {
   font-size: 14px;
 }
+.p-dropdown-panel, .p-dropdown-items, .p-dropdown-item {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
 
+.p-dropdown-panel {
+  width: 700px !important;  
+}
 
+.p-dropdown-items {
+  width: 700px !important;
+}
+
+.p-dropdown-item {
+  font-size: 15px !important;
+  padding: 6px 12px !important;
+}
 .form-container {
   text-align: left;
-  max-width: 1470px;
-  width: 99vw;
+  max-width: 100%;
+  width: 100%;
 }
 .form-container-ncc{
   text-align: left;
