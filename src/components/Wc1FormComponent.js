@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { PickList } from 'primereact/picklist';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -9,29 +10,29 @@ import { Dialog } from 'primereact/dialog';
 import NewClaimComponent from "./NewClaimComponent.js";
 import Modal from './Modal.js';
 import ClaimService from "../services/claim.service";
+import ClaimPartyService from "../services/claim.party.service";
 import { Dropdown } from 'primereact/dropdown';
 import StateTypeService from "../services/state.type.service";
 import NaicsTypeService from "../services/naics.type.service";
 import InjuryTypeService from "../services/injury.type.service";
 import InjuryCauseTypeService from "../services/injury.cause.type.service";
 import ControvertTypeService from "../services/controvert.type.service";
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-import Col from 'react-bootstrap/Col';
-import Nav from 'react-bootstrap/Nav';
-import Row from 'react-bootstrap/Row';
-
+import TreatmentTypeService from "../services/treatment.type.service";
+import { Accordion, AccordionTab } from 'primereact/accordion';
+import DisabilityTypeService from "../services/disability.type.service";
 
 const Wc1FormComponent = () => {
   const [stateTypes, setStateTypes] = useState([]);
   const [selectedState, setSelectedState] = useState([]);
   const [naicsTypes, setNaicsTypes] = useState([]);
-  const [injuryTypes, setInjuryTypes] = useState([]);
+  const [typeOfInjury, setInjuryTypes] = useState([]);
   const [injuryCauseTypes, setInjuryCauseTypes] = useState([]);
   const [activeTab, setActiveTab] = useState('tab1');
   const [controvertTypes, setControvertTypes] = useState([]);
   const [physicianStateTypes, setPhysicianStateTypes] = useState([]);
   const [hospitalStateTypes, setHospitalStateTypes] = useState([]);
+  const [disabilityTypes, setDisabilityTypes] = useState([]);
+  const [treatmentTypes, setTreatmentTypes] = useState([]);
   // Handle tab switch
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -41,7 +42,7 @@ const Wc1FormComponent = () => {
       <div className={`pagination-container d-flex justify-content-${className} mb-3`}>
         <select className="form-select custom-select" style={{ width: '50px', fontSize: '14px', padding: '5px' }}
           value={itemsPerPage} onChange={(e) => onItemsPerPageChange(Number(e.target.value))}>
-          {[2, 4, 6, 8].map((num) => (
+          {[2, 4, 6, 8, 10].map((num) => (
             <option key={num} value={num}>
               {num}
             </option>
@@ -66,45 +67,11 @@ const Wc1FormComponent = () => {
       </div>
     );
   };
-  const WidePagination = ({ currentPage, totalPages, onPageChange }) => {
-    return (
-      <div className="pagination-container d-flex justify-content-center mb-3">
-        <button
-          className="btn btn-outline-primary btn-sm mx-2"
-          onClick={() => onPageChange(1)}
-          disabled={currentPage === 1}
-        >
-          First
-        </button>
-        <button
-          className="btn-primary mx-2"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
-        <button
-          className="btn btn-primary mx-2"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-        <button
-          className="btn btn-primary mx-2"
-          onClick={() => onPageChange(totalPages)}
-          disabled={currentPage === totalPages}
-        >
-          Last
-        </button>
-      </div>
-    );
-  };
+  
 
   const headerRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(2);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [source, setSource] = useState([]);
   const [target, setTarget] = useState([]);
   const [isActive, setIsActive] = useState(false);
@@ -113,7 +80,7 @@ const Wc1FormComponent = () => {
   const [docToDelete, setDocToDelete] = useState(null);
   const [viewVisible, setViewVisible] = useState(false);
   const [deleteVisible, setDeleteVisible] = useState(false);
-  const [clicked, setClicked] = useState(false);
+  // const [clicked, setClicked] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedParty, setSelectedParty] = useState(null);
   const fieldRefs = useRef({});
@@ -122,7 +89,13 @@ const Wc1FormComponent = () => {
   const toast = React.useRef(null);
   const pickListRef = useRef(null);
   //const [isHovering, setIsHovering] = useState(false);
+  // Keep track of which accordion section is open
+  const [activeIndex, setActiveIndex] = useState(null);
 
+  // Function to toggle the accordion section
+  const handleToggle = (index) => {
+    setActiveIndex(activeIndex === index ? null : index);
+  };
 
   const openModal = (party) => {
     console.log("Opening modal for party:", party);
@@ -145,28 +118,24 @@ const Wc1FormComponent = () => {
     console.log("Selected party:", selectedParty);
   }, [selectedParty]);
 
-
-  // useEffect(() => {
-  //   // const handleWc1 = async (e) => {
-  //   //   e.preventDefault();
-  //     try {
-  //       ClaimService.getClaimById();
-  //     } catch (error) {
-  //       console.log(error);
-  //       setError("Incorrect username and password .Please Try again.");
-  //       setTimeout(() => {
-  //         setError("");
-  //       }, 1000);
-  //     }
-  //   // };
-  // }, []);
-
   useEffect(() => {
     ClaimService.getClaimById()
       .then((response) => {
         console.log(response);
         setFormData(response.data);
         console.log("formData", formData);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    ClaimPartyService.getClaimPartyByClaimId()
+      .then((response) => {
+        console.log(response);
+        // setFormData(response.data);
+        // console.log("formData", formData);
       })
       .catch((error) => {
         console.log(error);
@@ -219,6 +188,18 @@ const Wc1FormComponent = () => {
   }, []);
 
   useEffect(() => {
+    TreatmentTypeService.getAllTreatmentTypes()
+      .then((response) => {
+        console.log(response);
+        setTreatmentTypes(response.data);
+        console.log("treatmentTypes", treatmentTypes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  
+  useEffect(() => {
     NaicsTypeService.getAllNaicsTypes()
       .then((response) => {
         console.log(response);
@@ -235,7 +216,7 @@ const Wc1FormComponent = () => {
       .then((response) => {
         console.log(response);
         setInjuryTypes(response.data);
-        console.log("injuryTypes", injuryTypes);
+        console.log("typeOfInjury", typeOfInjury);
       })
       .catch((error) => {
         console.log(error);
@@ -266,6 +247,17 @@ const Wc1FormComponent = () => {
       });
   }, []);
 
+  useEffect(() => {
+    DisabilityTypeService.getAllDisabilityTypes()
+      .then((response) => {
+        console.log(response);
+        setDisabilityTypes(response.data);
+        console.log("disabilityTypes", disabilityTypes);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -273,7 +265,7 @@ const Wc1FormComponent = () => {
       const url = URL.createObjectURL(file);
       const newDocument = { id: documents.length + 1, name: file.name, fileUrl: url };
       setDocuments([...documents, newDocument]);
-      toast.current.show({ severity: 'success', summary: 'File Uploaded', detail: file.name, life: 3000, style: { backgroundColor: '#b6dde5', color: '#FFFFFF', color: 'black' }, });
+      toast.current.show({ severity: 'success', summary: 'File Uploaded', detail: file.name, life: 3000, style: { backgroundColor: '#4baaf5', color: '#FFFFFF'}, });
       event.target.value = null;
     }
   };
@@ -283,7 +275,7 @@ const Wc1FormComponent = () => {
   };
   const confirmDelete = () => {
     setDocuments(documents.filter(doc => doc.id !== docToDelete));
-    toast.current.show({ severity: 'warn', summary: 'Document Deleted', detail: `Deleted ID ${docToDelete}`, life: 3000, style: { backgroundColor: '#dd4f4f', color: '#FFFFFF', color: 'black' }, });
+    toast.current.show({ severity: 'warn', summary: 'Document Deleted', detail: `Deleted ID ${docToDelete}`, life: 3000, style: { backgroundColor: '#dd4f4f', color: '#FFFFFF'}, });
     setDeleteVisible(false);
     setDocToDelete(null);
   };
@@ -322,10 +314,11 @@ const Wc1FormComponent = () => {
     countyOfInjury: {
       description: '',
     },
-    NoOfDays: '',
-    insurerFile: '',
-    jobClssifiedCodeNo: '',
-    hiredDate: '',
+    
+    daysWorkedPerWeek: '',
+    insurerFileNo: '',
+    jobClassificationCode: '',
+    dateHired: '',
     wageRate: '',
     daysOff: '',
     wageRateFrequency: 'perHour',
@@ -333,54 +326,56 @@ const Wc1FormComponent = () => {
     stateTypes: [],
     physicianStateTypes: [],
     hospitalStateTypes: [],
+    naicsType: '',
     naicsTypes: [],
-    injuryTypes: [],
+    typeOfInjury: [],
     injuryCauseTypes: [],
     controvertTypes: [],
     dateOfInjury: '',
     timeOfInjury: '',
-    dateEmployerKnowledge: '',
-    firstDateFailed: '',
-    fullPayOnDate: 'Yes',
-    occurredOnPremises: '',
-    injuryType: '',
+    dateEmployerNotified: '',
+    dateFailedToWorkFullDay: '',
+    receivedFullPay: 'Yes',
+    injuredInEmpPermises: '',
     bodyPartAffected: [],
-    howOccurred: '',
+    treatmentTypes: [],
+    otherInjuryCause: '',
+    typeOfInjury: '',
     tPhysicianAddress: '',
-    tPhysicianName: '',
-    tPhysicianPhoneExt: '',
+    physicianName: '',
+    physicianPhoneExt: '',
     PhysicianPhone: '',
-    tPhysicianZIPExt: '',
+    physicianZipExt: '',
     PhysicianZIP: '',
     tPhysicianState: '',
-    tPhysicianCity: '',
-    tPhysicianAddress2: '',
-    tPhysicianAddress1: '',
-    initialTreatment: '',
-    treatingFacility: '',
-    treatingFacilityAddress1: '',
-    treatingFacilityAddress2: '',
-    treatingFacilityCity: '',
-    treatingFacilityState: '',
-    treatingFacilityZIP: '',
-    treatingFacilityZIPExt: '',
+    physicianCity: '',
+    physicianAddress2: '',
+    physicianAddress1: '',
+    initialTreatmentGiven: '',
+    hospitalName: '',
+    hospitalAddress1: '',
+    hospitalAddress2: '',
+    hospitalCity: '',
+    hospitalState: '',
+    hospitalZip: '',
+    hospitalZipExt: '',
     hospitalPhone: '',
     hospitalPhoneExt: '',
-    RtwDate: '',
-    ReturnedWagePerWeek: '',
-    FatalDeathDate: '',
+    dateReturnedToWork: '',
+    wagePerWeekAfterReturn: '',
+    dateOfDeath: '',
     reportPreparedBy: '',
-    telePhoneNumber: '',
-    telePhoneExt: '',
-    weeklyBenifit: '',
-    DateOfReport: '',
-    benifitsBeingPaid: '',
+    reportPreparedPhone: '',
+    reportPreparedPhoneExt: '',
+    weeklyBenefit: '',
+    dateOfReport: '',
+    incomeBenefits: '',
     convertType: '',
     BenifitsNPReasons: '',
-    isIncomeBenefitsEnabled: false,
+    sectionB: false,
     isControvertEnabled: false,
     isMedicalInjuryEnabled: false,
-    indemnityEnabaled: false,
+    controverted: false,
     document: null,
     payBenefitUntil: '',
     benefitsPayableFor: '',
@@ -389,34 +384,19 @@ const Wc1FormComponent = () => {
     dateOfDisability: '',
     weeklyBenefitAmount: '',
     averageWeeklyWage: '',
-    previouslyMedicalOnly: '',
-    averageWeeklyWageAmount: ''
+    previousMedicalOnly: '',
+    averageWeeklyWageAmount: '',
+    disabilityTypes: []
   });
 
   const [parties, setParties] = useState([
-    { partyType: 'Claimant', partyName: 'TEST A', parentParty: 'Parent 1', selfInsured: 'Yes', selfAdministered: 'No', groupFundMember: 'No' },
-    { partyType: 'Employer', partyName: 'TEST B', parentParty: 'Parent 2', selfInsured: 'No', selfAdministered: 'Yes', groupFundMember: 'No' },
-    { partyType: 'Attorney', partyName: 'Party C', parentParty: 'Parent 3', selfInsured: 'Yes', selfAdministered: 'No', groupFundMember: 'Yes' },
-    { partyType: 'AParty', partyName: 'Party D', parentParty: 'Parent 4', selfInsured: 'No', selfAdministered: 'No', groupFundMember: 'Yes' },
-
+    { partyType: 'Claimant', partyName: 'CLAYTON HUTCHINSON', parentParty: '', selfInsured: '', selfAdministered: '', groupFundMember: '' },
+    { partyType: 'Employer', partyName: 'PC METRO BOTTLING', parentParty: '', selfInsured: 'No', selfAdministered: 'No', groupFundMember: 'No' },
+    { partyType: 'Insurer', partyName: 'INDEMNITY INSURANCE COMPANY OF NORTH AMERICA', parentParty: 'PC METRO BOTTLING', selfInsured: '', selfAdministered: '', groupFundMember: '' },
+    { partyType: 'Claims Office	', partyName: 'SEDGWICK CMS INC', parentParty: 'INDEMNITY INSURANCE COMPANY OF NORTH AMERICA	', selfInsured: '', selfAdministered: '', groupFundMember: '' },
+    { partyType: 'Attorney', partyName: 'DAVID IMAHARA', parentParty: '', selfInsured: '', selfAdministered: '', groupFundMember: '' },
   ]);
-  const naicsOptions = [
-    // { label: '---Select One---', value: ' ' },
-    { label: 'Abrasive Product Manufacturing', value: 'Abrasive Product Manufacturing' },
-    { label: 'Adhesive Manufacturing', value: 'Adhesive Manufacturing' },
-    { label: 'Administration of Education Programs', value: 'Administration of Education Programs' },
-    { label: 'Administration of Housing Programs', value: 'Administration of Housing Programs' }
-  ];
-  // const injuryTypes = [
-  //   { label: 'AIDS', value: 'AIDS' },
-  //   { label: 'Adverse reaction to a vaccination or inoculation', value: 'Adverse reaction to a vaccination or inoculation' },
-  //   { label: 'Cancer', value: 'Cancer' },
-  // ]
-  const howOccurred = [
-    { label: 'Abnormal Air Pressure', value: 'Abnormal Air Pressure' },
-    { label: 'Absorption, Ingestion or Inhalation, NOC', value: '"Absorption, Ingestion or Inhalation, NOC' },
-    { label: 'Broken Glass', value: 'Broken Glass' }
-  ]
+
   const convertTypes = [
     { label: 'ALL THE ENTIRE CASE IS CONTROVERTED', value: 'ALL THE ENTIRE CASE IS CONTROVERTED' },
     { label: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED', value: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED' },
@@ -425,39 +405,31 @@ const Wc1FormComponent = () => {
   ]
   const handleCheckboxChange = () => {
     setFormData((prev) => {
-      if (prev.isIncomeBenefitsEnabled) {
+      if (prev.sectionB) {
         return {
           ...prev,
-          isIncomeBenefitsEnabled: false,
-          benifitsBeingPaid: '',
+          sectionB: false,
+          incomeBenefits: '',
           averageWeeklyWage: '',
-          weeklyBenifit: '',
-          DateOfDisablity: '',
-          DateOFFirstPayment: '',
-          CompensationPaid: '',
+          weeklyBenefit: '',
+          dateOfDisability: '',
+          dateOfFirstPayment: '',
+          compensationPaid: '',
           penalityPaid: '',
-          BenifitsPayableByDate: '',
-          BenifitsPAyableFor: '',
-          payBenifitUntil: '',
+          dateBenefitsPayableFrom: '',
+          benefitsPayableFor: '',
+          disabilityTypes:'',
+          dateUntilBenefitsPaid: '',
         };
       } else {
-        return { ...prev, isIncomeBenefitsEnabled: true };
+        return { ...prev, sectionB: true };
       }
     });
   };
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   // setFormData({ ...formData, [name]: value });
-  //   // setAmount(e.target.value.replace(/[^0-9.]/g, '');
-  //   setFormData({ ...formData, [name]: name === 'ReturnedWagePerWeek' ? value.replace(/[^0-9.]/g, '') : value });
-  //   if (errors[name]) {
-  //     setErrors({ ...errors, [name]: '' });
-  //   }
-  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log("state::", name);
+    console.log("value::", value);
     const nameParts = name.split('.');
     setErrors((prevErrors) => ({
       ...prevErrors,
@@ -476,22 +448,17 @@ const Wc1FormComponent = () => {
     } 
     
     else {
-    const numericFields = ['ReturnedWagePerWeek', 'averageWeeklyWage', 'weeklyBenefitAmount', 'averageWeeklyWageAmount', 'CompensationPaid', 'penalityPaid', 'weeklyBenifit'];
-    console.log("name === 'claimant.state'::", name === "claimant.state");
-  if (numericFields.includes(name)) {
-    if (/^\d*\.?\d*$/.test(value) || value === '') {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-    //  else {
-    //   setFormData((prevData) => ({
-    //     ...prevData,
-    //     [name]: '', 
-    //   }));
-    // }
-  }else if (name === 'claimant.state') {
+  //   const numericFields = ['wagePerWeekAfterReturn', 'averageWeeklyWage', 'weeklyBenefitAmount', 'averageWeeklyWageAmount', 'compensationPaid', 'penalityPaid', 'weeklyBenefit'];
+  //   console.log("name === 'claimant.state'::", name === "claimant.state");
+  // if (numericFields.includes(name)) {
+  //   if (/^\d*\.?\d*$/.test(value) || value === '') {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       [name]: value,
+  //     }));
+  //   }
+  // }else 
+  if (name === 'claimant.state') {
     console.log("name::", value);
     // Handle state dropdown 
     setFormData((prevData) => ({
@@ -511,338 +478,356 @@ state: value,
 }
   };
 
-const handleBlur = (e) => {
-  const { name } = e.target;
-  setFormData((prev) => {
-    const newValue = prev[name] && prev[name] !== ''
-      ? `$${parseFloat(prev[name]).toFixed(2)}`
-      : '';
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setFormData((prev) => {
+      const newValue = prev[name] && prev[name] !== ''
+        ? `$${parseFloat(prev[name]).toFixed(2)}`
+        : '';
 
-    return {
-      ...prev,
-      [name]: newValue,
+      return {
+        ...prev,
+        [name]: newValue,
+      };
+    });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = [
+        'Abdomen Including Groin',
+        'Ankle',
+        'Artificial Appliance',
+        'Blindness in Both Eyes',
+        'Body Systems and Multiple Body Systems',
+        'Brain',
+        'Buttocks',
+        'Check',
+        'Wrist',
+        'Whole Body',
+      ];
+      setSource(data);
     };
-  });
-};
-
-useEffect(() => {
-  const fetchData = async () => {
-    const data = [
-      'Abdomen Including Groin',
-      'Ankle',
-      'Artificial Appliance',
-      'Wrist',
-      'Whole Body',
-    ];
-    setSource(data);
-  };
-  fetchData();
-}, []);
+    fetchData();
+  }, []);
 
 
-const itemTemplate = (item) => {
-  return (
-    <div>
+  const itemTemplate = (item) => {
+    return (
       <div>
-        <span className="font-bold" style={{ fontSize: '15px' }}>{item}</span>
+        <div>
+          <span className="font-bold" style={{ fontSize: '15px' }}>{item}</span>
+        </div>
       </div>
-    </div>
-  );
-};
-
-
-const handleSubmit = (e) => {
-  e.preventDefault();
-  console.log('Form to be Submitted:', formData);
-  const requiredFields = [
-    'claimant.firstName', 'claimant.lastName', 'claimant.address1', 'claimant.city',
-    'claimant.state', 'claimant.zip', 'claimant.gender', 'NoOfDays',
-    'daysOff', 'dateOfInjury', 'countyOfInjury.description', 'fullPayOnDate',
-    'occurredOnPremises', 'howOccurred', 'injuryType'
-  ];
-  const newErrors = validateRequiredFields(formData, requiredFields);
-  const validateConditionalFields = () => {
-    if (formData.isIncomeBenefitsEnabled) {
-      if (formData.benifitsBeingPaid === 'incomeBenifits') {
-        const incomeBenefitsRequiredFields = [
-          'averageWeeklyWage', 'DateOFFirstPayment',
-          'CompensationPaid', 'BenifitsPayableByDate', 'BenifitsPAyableFor', 'weeklyBenifit'
-        ];
-        Object.assign(newErrors, validateRequiredFields(formData, incomeBenefitsRequiredFields));
-      }
-      if (formData.benifitsBeingPaid === 'salaryInLieu') {
-        const salaryInLieuRequiredFields = [
-          'dateSalaryPaid', 'benefitsPayableFromDate', 'benefitsPayableFor'
-        ];
-        Object.assign(newErrors, validateRequiredFields(formData, salaryInLieuRequiredFields));
-      }
-    }
-    if (formData.isControvertEnabled) {
-      const controvertRequiredFields = ['convertType'];
-      Object.assign(newErrors, validateRequiredFields(formData, controvertRequiredFields));
-    }
-    if (formData.isMedicalInjuryEnabled) {
-      const indemnityRequiredFields = ['indemnityEnabaled'];
-      Object.assign(newErrors, validateRequiredFields(formData, indemnityRequiredFields));
-    }
+    );
   };
-  validateConditionalFields();
-  console.log('Validation Errors:', newErrors);
-  if (!formData.bodyPartAffected || formData.bodyPartAffected.length === 0) {
-    newErrors.bodyPartAffected = 'Please select at least one body part affected.';
-  }
-  const scrollToFirstError = () => {
-    if (Object.keys(newErrors).length > 0) {
-      const firstErrorField = Object.keys(newErrors)[0];
-      if (fieldRefs.current[firstErrorField]) {
-        const ref = fieldRefs.current[firstErrorField].current;
-        if (ref && ref instanceof HTMLElement) {
-          ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          ref.focus();
+  const errorTabMapping = {
+    'claimant.firstName': 'tab1',
+    'claimant.lastName': 'tab1',
+    'claimant.address1': 'tab1',
+    'claimant.city': 'tab1',
+    'claimant.state': 'tab1',
+    'claimant.zip': 'tab1',
+    'claimant.gender': 'tab1',
+    'daysWorkedPerWeek': 'tab3',
+    'daysOff': 'tab3',
+    'dateOfInjury': 'tab4',
+    'countyOfInjury.description': 'tab4',
+    'receivedFullPay': 'tab4',
+    'injuredInEmpPermises': 'tab4',
+    'typeOfInjury': 'tab4',
+    'otherInjuryCause': 'tab4',
+    'sectionB': 'tab5',
+    'incomeBenefits': 'tab5',
+    'averageWeeklyWage': 'tab5',
+    'dateOfFirstPayment': 'tab5',
+    'compensationPaid': 'tab5',
+    'dateBenefitsPayableFrom': 'tab5',
+    'benefitsPayableFor': 'tab5',
+    'weeklyBenefit': 'tab5',
+    'dateSalaryPaid': 'tab5',
+    'benefitsPayableFromDate': 'tab5',
+    'disabilityTypes':'tab5',
+    'convertType': 'tab5',
+    'controverted': 'tab5',
+    'isControvertEnabled': 'tab5',
+    'isMedicalInjuryEnabled': 'tab5',
+    // Add more mappings as needed
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Form to be Submitted:', formData);
+    const requiredFields = [
+      'claimant.firstName', 'claimant.lastName', 'claimant.address1', 'claimant.city',
+      'claimant.state', 'claimant.zip', 'claimant.gender', 'daysWorkedPerWeek',
+      'daysOff', 'dateOfInjury', 'countyOfInjury.description', 'receivedFullPay',
+      'injuredInEmpPermises', 'otherInjuryCause', 'typeOfInjury'
+    ];
+    const newErrors = validateRequiredFields(formData, requiredFields);
+    const validateConditionalFields = () => {
+
+
+      if (formData.sectionB) {
+        const sectionBRequired = ['incomeBenefits'];
+        Object.assign(newErrors, validateRequiredFields(formData, sectionBRequired));
+        if (formData.incomeBenefits === 'incomeBenefitsPaid') {
+          const incomeBenefitsRequiredFields = [
+            'averageWeeklyWage', 'dateOfFirstPayment',
+            'compensationPaid', 'dateBenefitsPayableFrom', 'disabilityTypes', 'weeklyBenefit'
+          ];
+          Object.assign(newErrors, validateRequiredFields(formData, incomeBenefitsRequiredFields));
+        }
+        if (formData.incomeBenefits === 'salaryInLieu') {
+          const salaryInLieuRequiredFields = [
+            'dateSalaryPaid', 'benefitsPayableFromDate', 'disabilityTypes'
+          ];
+          Object.assign(newErrors, validateRequiredFields(formData, salaryInLieuRequiredFields));
         }
       }
-    }
-  };
-  const errorFieldsToCheck = requiredFields.filter(field =>
-    ['injuryType', 'fullPayOnDate', 'bodyPartAffected', 'occurredOnPremises'].includes(field)
-  );
-  const hasRelevantErrors = errorFieldsToCheck.some(field => newErrors[field]);
-  if (Object.keys(newErrors).length > 0) {
-    console.log('Errors found:', newErrors);
-    setErrors(newErrors);
-    console.log("newError", newErrors);
-    if (hasRelevantErrors) {
-      setIsActive(true);
-    }
-    scrollToFirstError();
-    return;
-  }
-  else {
-    toastRef.current.show({
-      severity: 'success',
-      summary: 'Submission Successful',
-      detail: 'Your form has been successfully submitted!',
-      life: 3000,
-    });
-    console.log('Submitting form with data:', formData);
-    setIsActive(false);
-  }
-  setIsActive(false);
-  console.log("Form is valid. Proceeding with submission...");
-  setFormData(prev => ({
-    ...prev,
-  }));
-};
-
-const validateRequiredFields = (data, requiredFields) => {
-  const newErrors = {};
-  requiredFields.forEach(field => {
-    const fieldParts = field.split('.');
-    let value = data;
-    for (const part of fieldParts) {
-      value = value[part];
-    }
-    if (typeof value !== 'string' || value.trim() === '') {
-      newErrors[field] = `${field.replace('claimant.', '')} is required.`;
-    }
-  });
-  return newErrors;
-};
-
-const formatDateForInput = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
-const checkRequiredFields = (data) => {
-  return (
-    data.dateOfInjury &&
-    data.countyOfInjury &&
-    data.injuryType &&
-    data.howOccurred
-  );
-};
-
-const getFieldRef = (fieldName) => {
-  if (!fieldRefs.current[fieldName]) {
-    fieldRefs.current[fieldName] = React.createRef();
-  }
-  return fieldRefs.current[fieldName];
-};
-
-const onChange = (event) => {
-  const { source, target } = event;
-  if (!Array.isArray(source) || !Array.isArray(target)) {
-    console.error('Source or target is not an array:', source, target);
-    return;
-  }
-  setSource(source);
-  setTarget(target);
-  console.log('Previous formData:', formData);
-  setFormData((prevState) => {
-    const updatedFormData = {
-      ...prevState,
-      bodyPartAffected: target,
-    };
-    console.log('Updated formData:', updatedFormData);
-    if (target.length > 0) {
-      setErrors((prevErrors) => {
-        const { bodyPartAffected, ...rest } = prevErrors;
-        return rest;
-      });
-      if (Object.keys(errors).length === 1 && errors.bodyPartAffected) {
-        setIsActive(false);
+      if (formData.isControvertEnabled) {
+        const controvertRequiredFields = ['convertType'];
+        Object.assign(newErrors, validateRequiredFields(formData, controvertRequiredFields));
       }
+      if (formData.isMedicalInjuryEnabled) {
+        const indemnityRequiredFields = ['controverted'];
+        Object.assign(newErrors, validateRequiredFields(formData, indemnityRequiredFields));
+      }
+
+    };
+    validateConditionalFields();
+
+    console.log('Validation Errors:', newErrors);
+    if (!formData.bodyPartAffected || formData.bodyPartAffected.length === 0) {
+      newErrors.bodyPartAffected = 'Please select at least one body part affected.';
     }
-    return updatedFormData;
+
+
+    const scrollToFirstError = () => {
+      if (Object.keys(newErrors).length > 0) {
+        // Get the first error field
+        const firstErrorField = Object.keys(newErrors)[0];
+
+        // Mapping error fields to their corresponding tabs
+
+
+        // Determine the tab of the first error
+        const targetTab = errorTabMapping[firstErrorField]; // Default to 'tab1' if not mapped
+
+        // If the error's tab is not the current active tab, set it
+        if (targetTab !== activeTab) {
+          setActiveTab(targetTab);
+          console.log("formData.tab3..",formData.tab3);
+          formData.tab3 = true;
+          console.log("formData.tab3...",formData.tab3);
+        }
+
+
+        // Scroll to the first error field
+        if (fieldRefs.current[firstErrorField]) {
+          const ref = fieldRefs.current[firstErrorField].current;
+          if (ref && ref instanceof HTMLElement) {
+            ref.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            ref.focus(); // Optionally, focus the field with the error
+          }
+        }
+
+      }
+      // if (!formData.sectionB && !formData.isMedicalInjuryEnabled && !formData.isControvertEnabled) {
+      //   if (activeTab !== 'tab5') {
+      //     alert("Section B or C or D is required.");
+      //     setActiveTab('tab5');
+      //     return;
+      //   }
+      // }
+
+
+    };
+
+    // If there are errors, set the error state and handle scrolling
+    if (Object.keys(newErrors).length > 0) {
+      console.log('Errors found:', newErrors);
+      setErrors(newErrors);
+      const tab5Errors = ['sectionB', 'isControvertEnabled', 'isMedicalInjuryEnabled'].filter(field => newErrors[field]);
+      if (tab5Errors.length > 0) {
+        // If there are errors in Tab 5, select Tab 5 programmatically
+        setActiveTab('tab5'); // Tab 5 is index 4 (0-based index)
+      }
+      scrollToFirstError(); // Scroll to the first error field
+
+      return;
+    }
+
+    // else {
+
+    if (!formData.sectionB && !formData.isMedicalInjuryEnabled && !formData.isControvertEnabled) {
+      if (activeTab !== 'tab5') {
+        alert("Section B or C or D is required.");
+        setActiveTab('tab5');
+        return;
+      }
+    } else {
+
+
+      // If form is valid, show success toast and submit the form
+      toastRef.current.show({
+        severity: 'success',
+        summary: 'Submission Successful',
+        detail: 'Your form has been successfully submitted!',
+        life: 3000,
+      });
+      console.log('Submitting form with data:', formData);
+      setIsActive(false); // Reset active state if needed
+    }
+
+    // Reset active state after submission
+    setIsActive(false);
+    console.log("Form is valid. Proceeding with submission...");
+    setFormData(prev => ({
+      ...prev,
+    }));
+
+  };
+
+  const validateRequiredFields = (data, requiredFields) => {
+    const newErrors = {};
+    requiredFields.forEach(field => {
+      const fieldParts = field.split('.');
+      let value = data;
+      for (const part of fieldParts) {
+        value = value[part];
+      }
+      // if (typeof value !== 'string' || value.trim() === '') {
+      //   newErrors[field] = `${field.replace('claimant.', '')} is required.`;
+      // }
+
+      if (!value || (Array.isArray(value) && value.length === 0)) {
+        newErrors[field] = `${field.replace('claimant.', '')} is required.`;
+      } else if (typeof value === 'string' && value.trim() === '') {
+        newErrors[field] = `${field.replace('claimant.', '')} is required.`;
+      }
+    });
+    return newErrors;
+  };
+
+  const formatDateForInput = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+
+  const getFieldRef = (fieldName) => {
+    if (!fieldRefs.current[fieldName]) {
+      fieldRefs.current[fieldName] = React.createRef();
+    }
+    return fieldRefs.current[fieldName];
+  };
+
+  const onChange = (event) => {
+    const { source, target } = event;
+    if (!Array.isArray(source) || !Array.isArray(target)) {
+      console.error('Source or target is not an array:', source, target);
+      return;
+    }
+    setSource(source);
+    setTarget(target);
+    console.log('Previous formData:', formData);
+    setFormData((prevState) => {
+      const updatedFormData = {
+        ...prevState,
+        bodyPartAffected: target,
+      };
+      console.log('Updated formData:', updatedFormData);
+      if (target.length > 0) {
+        setErrors((prevErrors) => {
+          const { bodyPartAffected, ...rest } = prevErrors;
+          return rest;
+        });
+        if (Object.keys(errors).length === 1 && errors.bodyPartAffected) {
+          setIsActive(false);
+        }
+      }
+      return updatedFormData;
+    });
+  };
+
+
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    mailingAddress1: '',
+    city: '',
+    state: '',
+    zip: '',
+    gender: '',
+    daysWorkedPerWeek: '', dateOfInjury: '', countyOfInjury: '', receivedFullPay: '', injuredInEmpPermises: '', otherInjuryCause: '', typeOfInjury: '',
+    bodyPartAffected: false, averageWeeklyWage: '',
+    weeklyBenefit: '', dateOfFirstPayment: '', compensationPaid: '',
+    dateBenefitsPayableFrom: '', benefitsPayableFor: ''
+    , benefitsPayableFromDate: '', sectionB: '', incomeBenefits: '',
+    dateSalaryPaid: '', disabilityTypes: '', convertType: '', controverted: ''
   });
-};
-
-const [errors, setErrors] = useState({
-  firstName: '',
-  lastName: '',
-  mailingAddress1: '',
-  city: '',
-  state: '',
-  zip: '',
-  gender: '',
-  NoOfDays: '', dateOfInjury: '', countyOfInjury: '', fullPayOnDate: '', occurredOnPremises: '', howOccurred: '', injuryType: '',
-  bodyPartAffected: false, averageWeeklyWage: '',
-  weeklyBenifit: '', DateOFFirstPayment: '', CompensationPaid: '',
-  BenifitsPayableByDate: '', BenifitsPAyableFor: ''
-  , benefitsPayableFromDate: '',
-  dateSalaryPaid: '', benefitsPayableFor: '', convertType: '', indemnityEnabaled: ''
-});
 
 
 
-const totalPages = Math.ceil(parties.length / itemsPerPage);
-const paginatedParties = parties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(parties.length / itemsPerPage);
+  const paginatedParties = parties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-return (
-  <div className="tabs container">
-    <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
-    {/* <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-      <Row>
-        <Col sm={3}>
-          <Nav variant="pills" className="flex-column">
-            <Nav.Item>
-              <Nav.Link eventKey="claimantInfo">Claimant Information</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="partyInfo">Party Information</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="employmentWage">EMPLOYMENT/WAGE</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="injuryIllness">INJURY/ILLNESS AND MEDICAL</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="SectionB">Section B</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="sectionC">Section C</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="sectionD">Section D</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="attchments">Attachments</Nav.Link>
-            </Nav.Item>
-          </Nav>
-        </Col>
-        <Col sm={9}>
-          <Tab.Content>
-            <Tab.Pane eventKey="claimantInfo">Claimant Information</Tab.Pane>
-            <Tab.Pane eventKey="partyInfo">Party Information</Tab.Pane>
-            <Tab.Pane eventKey="employmentWage">EMPLOYMENT/WAGE</Tab.Pane>
-            <Tab.Pane eventKey="injuryIllness">INJURY/ILLNESS AND MEDICAL</Tab.Pane>
-            <Tab.Pane eventKey="SectionB">B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum</Tab.Pane>
-            <Tab.Pane eventKey="sectionC">C. Notice To Convert Payment Of Compensation</Tab.Pane>
-            <Tab.Pane eventKey="sectionD">D. Medical Only Injury</Tab.Pane>
-            <Tab.Pane eventKey="attchments">Attachments</Tab.Pane>
-          </Tab.Content>
-        </Col>
-      </Row>
-    </Tab.Container>
-      <Tabs
-      defaultActiveKey="profile"
-      id="uncontrolled-tab-example"
-      className="mb-3"
-    >
-      <Tab eventKey="tab1" title="Claimant Information">
-        Tab content for Home
-      </Tab>
-      <Tab eventKey="tab2" title="Party Information">
-        Tab content for Profile
-      </Tab>
-      <Tab eventKey="tab3" title="EMPLOYMENT/WAGE">
-        Tab content for Contact
-      </Tab>
+  return (
+    <div className="tabs container">
+      <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
 
-      <Tab eventKey="tab4" title="INJURY/ILLNESS AND MEDICAL">
-        Tab content for Contact
-      </Tab>
-    </Tabs> */}
-    <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit} noValidate>
+
+        <Toast ref={toastRef} />
 
       <Toast ref={toastRef} />
 
       {/* <NewClaimComponent /> */}
       <div className="tab-titles">
 
-        <button
+        <button type="button"
           className={activeTab === 'tab1' ? 'active' : ''}
-          onClick={() => handleTabClick('tab1')}
+          onClick={(e) => {e.preventDefault(); handleTabClick('tab1');}}
         >
           Claimant Information
         </button>
-        <button
+        <button type="button"
           className={activeTab === 'tab2' ? 'active' : ''}
-          onClick={() => handleTabClick('tab2')}
+          onClick={(e) => {e.preventDefault(); handleTabClick('tab2');}}
         >
           Party Information
         </button>
-        <button
+        <button type="button"
           className={activeTab === 'tab3' ? 'active' : ''}
-          onClick={() => handleTabClick('tab3')}
+          onClick={(e) => {e.preventDefault(); handleTabClick('tab3');}}
         >
           Employment/Wage
         </button>
-        <button
+        <button type="button"
           className={activeTab === 'tab4' ? 'active' : ''}
-          onClick={() => handleTabClick('tab4')}
+          onClick={(e) => {e.preventDefault(); handleTabClick('tab4');}}
         >
           Injury/Illness & Medical
         </button>
-        <button
-          className={activeTab === 'tab5' ? 'active' : ''}
-          onClick={() => handleTabClick('tab5')}
-        >
-          Section B
-        </button>
-        <button
-          className={activeTab === 'tab6' ? 'active' : ''}
-          onClick={() => handleTabClick('tab6')}
-        >
-          Section C
-        </button>
-        <button
-          className={activeTab === 'tab7' ? 'active' : ''}
-          onClick={() => handleTabClick('tab7')}
-        >
-          Section D
-        </button>
-        <button
-          className={activeTab === 'tab8' ? 'active' : ''}
-          onClick={() => handleTabClick('tab8')}
-        >
-          Attachments
-        </button>
+        <button type="button"
+            className={activeTab === 'tab5' ? 'active' : ''}
+            onClick={(e) => { e.preventDefault(); handleTabClick('tab5'); }}
+          >
+            Section B, C, D
+         
+          </button>
+          <button type="button"
+            className={activeTab === 'tab8' ? 'active' : ''}
+            onClick={(e) => { e.preventDefault(); handleTabClick('tab8'); }}
+          >
+            Attachments
+          </button>
+        
 
 
       </div>
@@ -1050,25 +1035,21 @@ return (
                 </div>
                 <div className="form-group row mb-1">
                   <label htmlFor="stateTypes" className="col-md-4 col-form-label custom-label">State: <span style={{ color: 'red' }}>*</span></label>
-                  <div className="col-md-6">
-                    <Dropdown
-                      value={formData.state}
-                      name="claimant.state" required
-                      onChange={handleChange}
-                      options={stateTypes.map(type => ({
-                        label: type.description, // Displayed in the dropdown
-                        value: type.code // Value sent on change
-                      }))}
-                      placeholder="..Select One..."
-                      filter
-                      className="select-dropdown" />
+                 
+                  <div className="col-md-4">
+                        <Dropdown
+                          value={formData.stateTypes}
+                          name="stateTypes"
+                          onChange={handleChange}
+                          options={stateTypes.map(type => ({
+                            label: type.description, // Displayed in the dropdown
+                            value: type.value // Value sent on change
+                          }))}
+                          filter
+                          className="dropdown-select" 
+                          placeholder="Georgia"/>
 
-                    {errors['stateTypes'] && (
-                      <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                        {errors['stateTypes']}
                       </div>
-                    )}
-                  </div>
                 </div>
                 <div className="form-group row mb-1">
                   <label htmlFor="zip" className="col-md-4 col-form-label custom-label">Zip: <span style={{ color: 'red' }}>*</span></label>
@@ -1126,7 +1107,7 @@ return (
           </div>
         )}
         {activeTab === 'tab2' && (
-          <div>
+          <div className="card">
             <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Party Information</h1>
             <table className="table table-custom table-striped table-bordered w-100">
               <thead className="thead-light">
@@ -1170,41 +1151,41 @@ return (
               <div className="form-section  flex-fill">
                 {/* <form onSubmit={handleSubmit}> */}
                 <div className="form-group row mb-1">
-                  <label htmlFor="hiredDate" className="col-sm-4 col-form-label custom-label">Date Hired by Employer :</label>
+                  <label htmlFor="dateHired" className="col-sm-4 col-form-label custom-label">Date Hired by Employer :</label>
                   <div className="col-md-4">
                     <input autoComplete="off"
                       type="date"
                       className="form-control custom-input"
-                      id="hiredDate"
-                      name="hiredDate"
-                      value={formData.hiredDate}
+                      id="dateHired"
+                      name="dateHired"
+                      value={formData.dateHired}
                       onChange={handleChange}
                       onClick={(e) => e.target.showPicker()}
                     />
                   </div>
                 </div>
                 <div className="form-group row mb-1">
-                  <label htmlFor="jobClssifiedCodeNo" className="col-sm-4 col-form-label custom-label">Job Classified Code No :</label>
+                  <label htmlFor="jobClassificationCode" className="col-sm-4 col-form-label custom-label">Job Classified Code No :</label>
                   <div className="col-md-4">
                     <input autoComplete="off"
                       type="text"
                       className="form-control custom-input"
-                      id="jobClssifiedCodeNo"
-                      name="jobClssifiedCodeNo"
-                      value={formData.jobClssifiedCodeNo}
+                      id="jobClassificationCode"
+                      name="jobClassificationCode"
+                      value={formData.jobClassificationCode}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
                 <div className="form-group row mb-1">
-                  <label htmlFor="insurerFile" className="col-sm-4 col-form-label custom-label">Insurer/Self Insurer File# :</label>
+                  <label htmlFor="insurerFileNo" className="col-sm-4 col-form-label custom-label">Insurer/Self Insurer File# :</label>
                   <div className="col-md-4">
                     <input autoComplete="off"
                       type="text"
                       className="form-control custom-input"
-                      id="insurerFile"
-                      name="insurerFile"
-                      value={formData.insurerFile}
+                      id="insurerFileNo"
+                      name="insurerFileNo"
+                      value={formData.insurerFileNo}
                       onChange={handleChange}
                     />
                   </div>
@@ -1214,21 +1195,21 @@ return (
               <div className="form-section flex-fill pl-3">
                 {/* <form onSubmit={handleSubmit}> */}
                 <div className="form-group row mb-1">
-                  <label htmlFor="NoOfDays" className="col-sm-5 col-form-label custom-label">Number of Days Worked Per Week:<span style={{ color: 'red' }}>*</span></label>
+                  <label htmlFor="daysWorkedPerWeek" className="col-sm-5 col-form-label custom-label">Number of Days Worked Per Week:<span style={{ color: 'red' }}>*</span></label>
                   <div className="col-md-4">
                     <input autoComplete="off"
                       type="text"
-                      ref={getFieldRef('NoOfDays')}
-                      className={`form-control custom-input ${errors.NoOfDays ? 'p-invalid' : ''}`}
-                      id="NoOfDays"
-                      name="NoOfDays"
-                      value={formData.NoOfDays}
+                      ref={getFieldRef('daysWorkedPerWeek')}
+                      className={`form-control custom-input ${errors.daysWorkedPerWeek ? 'p-invalid' : ''}`}
+                      id="daysWorkedPerWeek"
+                      name="daysWorkedPerWeek"
+                      value={formData.daysWorkedPerWeek}
                       onChange={handleChange}
                       required
                     />
-                    {errors.NoOfDays && (
+                    {errors.daysWorkedPerWeek && (
                       <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                        {errors.NoOfDays}
+                        {errors.daysWorkedPerWeek}
                       </div>
                     )}
                   </div>
@@ -1288,7 +1269,7 @@ return (
                 </div>
                 <div className="form-group row mb-1 custom-radio">
                   <label className="col-md-5 col-form-label custom-label">Wage Rate Frequency:</label>
-                  <div className="col-md-7">
+                  <div className="col-md-6">
                     <div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
@@ -1354,12 +1335,13 @@ return (
         )}
         {activeTab === 'tab4' && (
           <div className="card">
-            <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>INJURY/ILLNESS AND MEDICAL</h1>
-            <div className="d-flex flex-wrap">
-              <div className="form-section  flex-fill">
+            {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>INJURY/ILLNESS AND MEDICAL</h1> */}
+            <Accordion activeIndex={0}>
+                <AccordionTab header="Injury/Illness" onClick={() => handleToggle(0)}>
+                  <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
                   <label htmlFor="naicsTypes" className="col-sm-4 col-form-label custom-label">NAICS Code:</label>
-                  <div className="col-sm-8">
+                  <div className="col-sm-7">
                     <Dropdown
                       value={formData.naicsTypes}
                       name="naicsTypes"
@@ -1367,7 +1349,7 @@ return (
                       // options={naicsTypes}
                       options={naicsTypes.map(type => ({
                         label: type.description, // Displayed in the dropdown
-                        value: type.value // Value sent on change
+                        value: type.code // Value sent on change
                       }))}
                       placeholder="---Select One---"
                       filter
@@ -1377,7 +1359,7 @@ return (
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
                   <label htmlFor="dateOfInjury" className="col-sm-4 col-form-label custom-label">Date Of Injury: <span style={{ color: 'red' }}>*</span></label>
-                  <div className="col-sm-3">
+                  <div className="col-sm-2">
                     <input autoComplete="off"
                       type="date"
                       ref={getFieldRef('dateOfInjury')}
@@ -1400,7 +1382,7 @@ return (
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
                   <label htmlFor="timeOfInjury" className="col-sm-4 col-form-label custom-label">Time of Injury:</label>
-                  <div className="col-sm-3">
+                  <div className="col-sm-2">
                     <input autoComplete="off"
                       type="time"
                       className="form-control custom-input"
@@ -1416,7 +1398,7 @@ return (
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
                   <label htmlFor="countyOfInjury" className="col-sm-4 col-form-label custom-label">County Of Injury: <span style={{ color: 'red' }}>*</span></label>
-                  <div className="col-sm-3">
+                  <div className="col-sm-2">
                     <input autoComplete="off"
                       type="text"
                       ref={getFieldRef('countyOfInjury.description')}
@@ -1437,14 +1419,14 @@ return (
                 </div>
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="dateEmployerKnowledge" className="col-sm-4 col-form-label custom-label">Date Employer had knowledge of Injury:</label>
-                  <div className="col-sm-3">
+                  <label htmlFor="dateEmployerNotified" className="col-sm-4 col-form-label custom-label">Date Employer had knowledge of Injury:</label>
+                  <div className="col-sm-2">
                     <input autoComplete="off"
                       type="date"
                       className="form-control custom-input"
-                      id="dateEmployerKnowledge"
-                      name="dateEmployerKnowledge"
-                      value={formData.dateEmployerKnowledge}
+                      id="dateEmployerNotified"
+                      name="dateEmployerNotified"
+                      value={formData.dateEmployerNotified}
                       onChange={handleChange}
                       onClick={(e) => e.target.showPicker()}
                     />
@@ -1452,14 +1434,14 @@ return (
                 </div>
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="firstDateFailed" className="col-sm-4 col-form-label custom-label">Enter First Date Employee Failed to Work a Full Day:</label>
-                  <div className="col-sm-3">
+                  <label htmlFor="dateFailedToWorkFullDay" className="col-sm-4 col-form-label custom-label">Enter First Date Employee Failed to Work a Full Day:</label>
+                  <div className="col-sm-2">
                     <input autoComplete="off"
                       type="date"
                       className="form-control custom-input"
-                      id="firstDateFailed"
-                      name="firstDateFailed"
-                      value={formData.firstDateFailed}
+                      id="dateFailedToWorkFullDay"
+                      name="dateFailedToWorkFullDay"
+                      value={formData.dateFailedToWorkFullDay}
                       onClick={(e) => e.target.showPicker()}
                       onChange={handleChange}
                     />
@@ -1468,17 +1450,17 @@ return (
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
                   <label className="col-sm-4 col-form-label custom-label">Did Employee Receive Full Pay on Date of Injury: <span style={{ color: 'red' }}>*</span></label>
-                  <div className="col-sm-8 custom-radio">
+                  <div className="col-sm-6 custom-radio">
                     <div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
-                          ref={getFieldRef('fullPayOnDate')}
-                          className={`form-check-input ${errors.fullPayOnDate ? 'p-invalid' : ''}`}
+                          ref={getFieldRef('receivedFullPay')}
+                          className={`form-check-input ${errors.receivedFullPay ? 'p-invalid' : ''}`}
                           type="radio"
-                          name="fullPayOnDate"
+                          name="receivedFullPay"
                           value="Yes"
                           style={{ marginTop: "14px" }}
-                          checked={formData.fullPayOnDate === 'Yes'}
+                          checked={formData.receivedFullPay === 'Yes'}
                           onChange={handleChange}
                           required
                         />
@@ -1486,33 +1468,33 @@ return (
                       </div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
-                          ref={getFieldRef('fullPayOnDate')}
-                          className={`form-check-input ${errors.fullPayOnDate ? 'p-invalid' : ''}`}
+                          ref={getFieldRef('receivedFullPay')}
+                          className={`form-check-input ${errors.receivedFullPay ? 'p-invalid' : ''}`}
                           type="radio"
-                          name="fullPayOnDate"
+                          name="receivedFullPay"
                           value="No"
                           style={{ marginTop: "14px" }}
-                          checked={formData.fullPayOnDate === 'No'}
+                          checked={formData.receivedFullPay === 'No'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="No">No</label>
                       </div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
-                          ref={getFieldRef('fullPayOnDate')}
-                          className={`form-check-input ${errors.fullPayOnDate ? 'p-invalid' : ''}`}
+                          ref={getFieldRef('receivedFullPay')}
+                          className={`form-check-input ${errors.receivedFullPay ? 'p-invalid' : ''}`}
                           type="radio"
-                          name="fullPayOnDate"
+                          name="receivedFullPay"
                           value="None"
                           style={{ marginTop: "14px" }}
-                          checked={formData.fullPayOnDate === 'None'}
+                          checked={formData.receivedFullPay === 'None'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="None">None</label>
                       </div>
-                      {errors.fullPayOnDate && (
+                      {errors.receivedFullPay && (
                         <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                          {errors.fullPayOnDate}
+                          {errors.receivedFullPay}
                         </div>
                       )}
                     </div>
@@ -1521,17 +1503,17 @@ return (
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
                   <label className="col-sm-4 col-form-label custom-label">Did Injury/Illness Occur on Employer's premises?: <span style={{ color: 'red' }}>*</span></label>
-                  <div className="col-sm-8 custom-radio">
+                  <div className="col-sm-6 custom-radio">
                     <div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
-                          ref={getFieldRef('occurredOnPremises')}
-                          className={`form-check-input ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
+                          ref={getFieldRef('injuredInEmpPermises')}
+                          className={`form-check-input ${errors.injuredInEmpPermises ? 'p-invalid' : ''}`}
                           type="radio"
-                          name="occurredOnPremises"
+                          name="injuredInEmpPermises"
                           value="Yes"
                           style={{ marginTop: "14px" }}
-                          checked={formData.occurredOnPremises === 'Yes'}
+                          checked={formData.injuredInEmpPermises === 'Yes'}
                           onChange={handleChange}
                           required
                         />
@@ -1539,33 +1521,33 @@ return (
                       </div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
-                          ref={getFieldRef('occurredOnPremises')}
-                          className={`form-check-input ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
+                          ref={getFieldRef('injuredInEmpPermises')}
+                          className={`form-check-input ${errors.injuredInEmpPermises ? 'p-invalid' : ''}`}
                           type="radio"
-                          name="occurredOnPremises"
+                          name="injuredInEmpPermises"
                           value="No"
                           style={{ marginTop: "14px" }}
-                          checked={formData.occurredOnPremises === 'No'}
+                          checked={formData.injuredInEmpPermises === 'No'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="No">No</label>
                       </div>
                       <div className="form-check form-check-inline">
                         <input autoComplete="off"
-                          ref={getFieldRef('occurredOnPremises')}
-                          className={`form-check-input ${errors.occurredOnPremises ? 'p-invalid' : ''}`}
+                          ref={getFieldRef('injuredInEmpPermises')}
+                          className={`form-check-input ${errors.injuredInEmpPermises ? 'p-invalid' : ''}`}
                           type="radio"
-                          name="occurredOnPremises"
+                          name="injuredInEmpPermises"
                           value="None"
                           style={{ marginTop: "14px" }}
-                          checked={formData.occurredOnPremises === 'None'}
+                          checked={formData.injuredInEmpPermises === 'None'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: "12px" }} htmlFor="None">None</label>
                       </div>
-                      {errors.occurredOnPremises && (
+                      {errors.injuredInEmpPermises && (
                         <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                          {errors.occurredOnPremises}
+                          {errors.injuredInEmpPermises}
                         </div>
                       )}
                     </div>
@@ -1574,25 +1556,26 @@ return (
                 </div>
 
                 <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="injuryTypes" className="col-sm-4 col-form-label custom-label">Type of Injury/Illness: <span style={{ color: 'red' }}>*</span></label>
-                  <div className="col-sm-8">
+                  <label htmlFor="typeOfInjury" className="col-sm-4 col-form-label custom-label">Type of Injury/Illness: <span style={{ color: 'red' }}>*</span></label>
+                  <div className="col-sm-7">
                     <Dropdown
-                      value={formData.injuryTypes}
-                      name="injuryTypes"
+                      value={formData.typeOfInjury}
+                      name="typeOfInjury"
                       onChange={handleChange}
                       // options={naicsTypes}
-                      options={injuryTypes.map(type => ({
+                      options={typeOfInjury.map(type => ({
                         label: type.description, // Displayed in the dropdown
                         value: type.value // Value sent on change
                       }))}
                       placeholder="---Select One---"
                       filter
-                      inputRef={getFieldRef('injuryTypes')}
-                      className={`dropdown-select ${errors.injuryTypes ? 'p-invalid' : ''}`}
+                      inputRef={getFieldRef('typeOfInjury')}
+                      dropdownClassName="custom-dropdown-panel"
+                      className={`dropdown-select ${errors.typeOfInjury ? 'p-invalid' : ''}`}
                     />
-                    {errors.injuryTypes && (
+                    {errors.typeOfInjury && (
                       <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                        {errors.injuryTypes}
+                        {errors.typeOfInjury}
                       </div>
                     )}
                   </div>
@@ -1615,31 +1598,31 @@ return (
                   targetStyle={{ height: '0px' }} required /> */}
                     {/* {errors.bodyPartAffected && <div className="error-message">
                   Please select at least one item.</div>} */}
-                <div className="col-md-14" >
-                  {errors.bodyPartAffected && (
-                    <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                      {errors.bodyPartAffected}
+                    <div className="col-md-14" >
+                      {errors.bodyPartAffected && (
+                        <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                          {errors.bodyPartAffected}
+                        </div>
+                      )}
+                      <PickList
+                        dataKey="id"
+                        inputRef={pickListRef}
+                        name='bodyPartAffected'
+                        value={formData.bodyPartAffected}
+                        source={source}
+                        target={target}
+                        onChange={onChange}
+                        itemTemplate={itemTemplate}
+                        breakpoint="1280px"
+                        sourceHeader={<span style={{ fontSize: '1.0rem' }}>Available</span>}
+                        targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>}
+                        sourceStyle={{ height: '12rem' }}
+                        targetStyle={{ height: '12rem' }}
+                        filter
+                        responsive
+                      />
                     </div>
-                  )}
-                  <PickList
-                    dataKey="id"
-                    inputRef={pickListRef}
-                    name='bodyPartAffected'
-                    value={formData.bodyPartAffected}
-                    source={source}
-                    target={target}
-                    onChange={onChange}
-                    itemTemplate={itemTemplate}
-                    breakpoint="1280px"
-                    sourceHeader={<span style={{ fontSize: '1.0rem' }}>Available</span>}
-                    targetHeader={<span style={{ fontSize: '1.0rem' }}>Selected</span>}
-                    sourceStyle={{ height: '12rem' }}
-                    targetStyle={{ height: '12rem' }}
-                    filter
-                    responsive
-                  />
-                </div>
-                {/* <PickList
+                    {/* <PickList
                   name='bodyPartAffected'
                   source={source}
                   target={formData.bodyPartAffected}
@@ -1651,88 +1634,104 @@ return (
                   className={errors.bodyPartAffected ? 'error-highlight' : ''}
                   data-tip={errors.bodyPartAffected  }
                 />  */}
-              </div>
-            </div>
-            <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
-              <label htmlFor="injuryCauseTypes" className="col-sm-4 col-form-label custom-label">How Injury or Illness Occurred: <span style={{ color: 'red' }}>*</span></label>
-              <div className="col-sm-8">
-                <Dropdown
-                  value={formData.injuryCauseTypes}
-                  name="injuryCauseTypes"
-                  onChange={handleChange}
-                  options={injuryCauseTypes.map(type => ({
-                    label: type.description, // Displayed in the dropdown
-                    value: type.value // Value sent on change
-                }))}
-                  placeholder="---Select One---"
-                  filter
-                  inputRef={getFieldRef('injuryCauseTypes')}
-                  className={`select-dropdown ${errors.injuryCauseTypes ? 'p-invalid' : ''}`}
-                />
-                {errors.injuryCauseTypes && (
-                  <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                    {errors.injuryCauseTypes}
                   </div>
-                )}
-              </div>
-            </div>
-            {/* </form> */}
-            {/* <hr style={{ color:'#4baaf5' }} /> */}
-            <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
-            <div className="d-flex flex-wrap">
-              <div className=" flex-fill">
-                {/* <form onSubmit={handleSubmit}> */}
-                <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                  <label htmlFor="tPhysicianName" className="col-md-4 col-form-label custom-label ">Treating Physician Name: </label>
-                  <div className="col-md-6">
-                    <input autoComplete="off"
-                      type="text"
-                      className="form-control custom-input"
-                      id="tPhysicianName"
-                      name="tPhysicianName"
-                      value={formData.tPhysicianName}
+                </div>
+                <div className="form-group row mb-2" style={{ marginLeft: '5px' }}>
+                  <label htmlFor="otherInjuryCause" className="col-sm-4 col-form-label custom-label">How Injury or Illness Occurred: <span style={{ color: 'red' }}>*</span></label>
+                  <div className="col-sm-7">
+                    <div className="col-md-6">
+                  <textarea
+                  name="otherInjuryCause"
+                  className="form-control-nr"
+                  value={formData.otherInjuryCause}
+                  onChange={handleChange}
+                  rows="3"
+                  cols="100"
+                  style={{ marginTop: '0px', resize: 'none' }}
+                />
+                    </div>
+                    {errors.otherInjuryCause && (
+                      <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
+                        {errors.otherInjuryCause}
+                      </div>
+                    )}
+                    <hr style={{ height: '0px', backgroundColor: 'none', border: 'none', margin: '4px 0' }} />
+                    <Dropdown
+                      value={formData.injuryCauseTypes}
+                      name="injuryCauseTypes"
                       onChange={handleChange}
+                      options={injuryCauseTypes.map(type => ({
+                        label: type.description, // Displayed in the dropdown
+                        value: type.value // Value sent on change
+                      }))}
+                      placeholder="---Select One---"
+                      filter
+                      inputRef={getFieldRef('injuryCauseTypes')}
+                      className={`dropdown-select ${errors.injuryCauseTypes ? 'p-invalid' : ''}`}
+                    />
 
-                        />
-                      </div>
-                    </div>
+                  </div>
+                </div>
+                </div>
+                {/* </form> */}
+                {/* <hr style={{ color:'#4baaf5' }} /> */}
+                </AccordionTab>
+                <AccordionTab header="Medical" onClick={() => handleToggle(0)}>
+                  <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
+                <div className="d-flex flex-wrap">
+                  <div className=" flex-fill">
+                    {/* <form onSubmit={handleSubmit}> */}
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="tPhysicianAddress1" className="col-md-4 col-form-label custom-label">Treating Physician Address 1:</label>
+                      <label htmlFor="physicianName" className="col-md-4 col-form-label custom-label ">Treating Physician Name: </label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianAddress1"
-                          name="tPhysicianAddress1"
-                          value={formData.tPhysicianAddress1}
+                          id="physicianName"
+                          name="physicianName"
+                          value={formData.physicianName}
                           onChange={handleChange}
 
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="tPhysicianAddress2" className="col-md-4 col-form-label custom-label">Treating Physician Address 2:</label>
+                      <label htmlFor="physicianAddress1" className="col-md-4 col-form-label custom-label">Treating Physician Address 1:</label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianAddress2"
-                          name="tPhysicianAddress2"
-                          value={formData.tPhysicianAddress2}
+                          id="physicianAddress1"
+                          name="physicianAddress1"
+                          value={formData.physicianAddress1}
                           onChange={handleChange}
 
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="tPhysicianCity" className="col-md-4 col-form-label custom-label">Treating Physician City:</label>
+                      <label htmlFor="physicianAddress2" className="col-md-4 col-form-label custom-label">Treating Physician Address 2:</label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianCity"
-                          name="tPhysicianCity"
-                          value={formData.tPhysicianCity}
+                          id="physicianAddress2"
+                          name="physicianAddress2"
+                          value={formData.physicianAddress2}
+                          onChange={handleChange}
+
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
+                      <label htmlFor="physicianCity" className="col-md-4 col-form-label custom-label">Treating Physician City:</label>
+                      <div className="col-md-6">
+                        <input autoComplete="off"
+                          type="text"
+                          className="form-control custom-input"
+                          id="physicianCity"
+                          name="physicianCity"
+                          value={formData.physicianCity}
                           onChange={handleChange}
 
                         />
@@ -1750,57 +1749,58 @@ return (
                             value: type.value // Value sent on change
                           }))}
                           filter
-                          className="dropdown-select" />
+                          className="dropdown-select" 
+                          placeholder="Georgia"/>
 
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="tPhysicianZIP" className="col-md-4 col-form-label custom-label">Treating Physician ZIP:</label>
+                      <label htmlFor="physicianZip" className="col-md-4 col-form-label custom-label">Treating Physician ZIP:</label>
                       <div className="col-md-3">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianZIP"
-                          name="tPhysicianZIP"
-                          value={formData.tPhysicianZIP}
+                          id="physicianZip"
+                          name="physicianZip"
+                          value={formData.physicianZip}
                           onChange={handleChange}
                         />
                       </div>
                       <div className="col-md-2 d-flex align-items-center">
-                        <label htmlFor="tPhysicianZIPExt" className="col-sm col-form-label custom-label">Ext:</label>
+                        <label htmlFor="physicianZipExt" className="col-sm col-form-label custom-label">Ext:</label>
                         {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianZIPExt"
-                          name="tPhysicianZIPExt"
-                          value={formData.tPhysicianZIPExt}
+                          id="physicianZipExt"
+                          name="physicianZipExt"
+                          value={formData.physicianZipExt}
                           onChange={handleChange}
                           style={{ marginLeft: '9px' }}
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="tPhysicianPhone" className="col-md-4 col-form-label custom-label">Treating Physician Phone:</label>
+                      <label htmlFor="physicianPhone" className="col-md-4 col-form-label custom-label">Treating Physician Phone:</label>
                       <div className="col-md-3">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianPhone"
-                          name="tPhysicianPhone"
-                          value={formData.tPhysicianPhone}
+                          id="physicianPhone"
+                          name="physicianPhone"
+                          value={formData.physicianPhone}
                           onChange={handleChange}
                         />
                       </div>
                       <div className="col-md-2 d-flex align-items-center">
-                        <label htmlFor="tPhysicianPhoneExt" className="col-sm col-form-label custom-label">Ext:</label>
+                        <label htmlFor="physicianPhoneExt" className="col-sm col-form-label custom-label">Ext:</label>
                         {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="tPhysicianPhoneExt"
-                          name="tPhysicianPhoneExt"
-                          value={formData.tPhysicianPhoneExt}
+                          id="physicianPhoneExt"
+                          name="physicianPhoneExt"
+                          value={formData.physicianPhoneExt}
                           onChange={handleChange}
                           style={{ marginLeft: '9px' }}
                         />
@@ -1810,78 +1810,81 @@ return (
                   </div>
                   <div className=" flex-fill ">
                     {/* <form onSubmit={handleSubmit}> */}
+                    
                     <div className="form-group row mb-1">
-                      <label htmlFor="initialTreatment" className="col-md-5 col-form-label custom-label">Initial Treatment: </label>
+                      <label htmlFor="treatmentTypes" className="col-md-5 col-form-label custom-label">Initial Treatment:</label>
+                      <div className="col-md-6">
+                        <Dropdown
+                          value={formData.treatmentTypes}
+                          name="treatmentTypes"
+                          onChange={handleChange}
+                          options={treatmentTypes.map(type => ({
+                            label: type.description, // Displayed in the dropdown
+                            value: type.value // Value sent on change
+                          }))}
+                          filter
+                          className="dropdown-select" />
+
+                      </div>
+                    </div>
+                    <div className="form-group row mb-1">
+                      <label htmlFor="hospitalName" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility:</label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="initialTreatment"
-                          name="initialTreatment"
-                          value={formData.initialTreatment}
+                          id="hospitalName"
+                          name="hospitalName"
+                          value={formData.hospitalName}
                           onChange={handleChange}
 
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1">
-                      <label htmlFor="treatingFacility" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility:</label>
+                      <label htmlFor="hospitalAddress1" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility Address 1:</label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="treatingFacility"
-                          name="treatingFacility"
-                          value={formData.treatingFacility}
+                          id="hospitalAddress1"
+                          name="hospitalAddress1"
+                          value={formData.hospitalAddress1}
                           onChange={handleChange}
 
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1">
-                      <label htmlFor="treatingFacilityAddress1" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility Address 1:</label>
+                      <label htmlFor="hospitalAddress2" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility Address 2:</label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="treatingFacilityAddress1"
-                          name="treatingFacilityAddress1"
-                          value={formData.treatingFacilityAddress1}
+                          id="hospitalAddress2"
+                          name="hospitalAddress2"
+                          value={formData.hospitalAddress2}
                           onChange={handleChange}
 
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1">
-                      <label htmlFor="treatingFacilityAddress2" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility Address 2:</label>
+                      <label htmlFor="hospitalCity" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility City:</label>
                       <div className="col-md-6">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="treatingFacilityAddress2"
-                          name="treatingFacilityAddress2"
-                          value={formData.treatingFacilityAddress2}
+                          id="hospitalCity"
+                          name="hospitalCity"
+                          value={formData.hospitalCity}
                           onChange={handleChange}
 
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1">
-                      <label htmlFor="treatingFacilityCity" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility City:</label>
-                      <div className="col-md-6">
-                        <input autoComplete="off"
-                          type="text"
-                          className="form-control custom-input"
-                          id="treatingFacilityCity"
-                          name="treatingFacilityCity"
-                          value={formData.treatingFacilityCity}
-                          onChange={handleChange}
-
-                        />
-                      </div>
-                    </div>
-                    <div className="form-group row mb-1">
-                      <label htmlFor="treatingFacilityState" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility State:</label>
+                      <label htmlFor="hospitalState" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility State:</label>
                       <div className="col-md-6">
                         <Dropdown
                           value={formData.hospitalStateTypes}
@@ -1892,31 +1895,32 @@ return (
                             value: type.value // Value sent on change
                           }))}
                           filter
-                          className="dropdown-select" />
+                          className="dropdown-select"
+                          placeholder="Georgia" />
 
                       </div>
                     </div>
                     <div className="form-group row mb-1" >
-                      <label htmlFor="treatingFacilityZIP" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility Zip:</label>
+                      <label htmlFor="hospitalZip" className="col-md-5 col-form-label custom-label">Hospital/Treating Facility Zip:</label>
                       <div className="col-md-3">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="treatingFacilityZIP"
-                          name="treatingFacilityZIP"
-                          value={formData.treatingFacilityZIP}
+                          id="hospitalZip"
+                          name="hospitalZip"
+                          value={formData.hospitalZip}
                           onChange={handleChange}
                         />
                       </div>
                       <div className="col-md-2 d-flex align-items-center">
-                        <label htmlFor="treatingFacilityZIPExt" className="col-sm col-form-label custom-label">Ext:</label>
+                        <label htmlFor="hospitalZipExt" className="col-sm col-form-label custom-label">Ext:</label>
                         {/* <div className="col-md-2" style={{ paddingLeft: '0', marginLeft: '0' }}> */}
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="treatingFacilityZIPExt"
-                          name="treatingFacilityZIPExt"
-                          value={formData.treatingFacilityZIPExt}
+                          id="hospitalZipExt"
+                          name="hospitalZipExt"
+                          value={formData.hospitalZipExt}
                           onChange={handleChange}
                           style={{ marginLeft: '9px' }}
                         />
@@ -1951,32 +1955,35 @@ return (
                     {/* </form> */}
                   </div>
                 </div>
-                <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
+                </div>
+                </AccordionTab>
+                <AccordionTab header="Report" onClick={() => handleToggle(0)}>
+                  <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
                 <div className="d-flex flex-wrap">
                   <div className="form-section  flex-fill">
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="RtwDate" className="col-md-3 col-form-label custom-label mt-0">If Returned to Work, Give Date: </label>
+                      <label htmlFor="dateReturnedToWork" className="col-md-3 col-form-label custom-label mt-0">If Returned to Work, Give Date: </label>
                       <div className="col-md-2">
                         <input autoComplete="off"
                           type="date"
                           className="form-control custom-input"
-                          id="RtwDate"
-                          name="RtwDate"
-                          value={formData.RtwDate}
+                          id="dateReturnedToWork"
+                          name="dateReturnedToWork"
+                          value={formData.dateReturnedToWork}
                           onChange={handleChange}
                           onClick={(e) => e.target.showPicker()}
                         />
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="ReturnedWagePerWeek" className="col-md-3 col-form-label custom-label">Returned at what wage per week:</label>
+                      <label htmlFor="wagePerWeekAfterReturn" className="col-md-3 col-form-label custom-label">Returned at what wage per week:</label>
                       <div className="col-md-2 osition-relative">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="ReturnedWagePerWeek"
-                          name="ReturnedWagePerWeek"
-                          value={formData.ReturnedWagePerWeek ? formData.ReturnedWagePerWeek : ''}
+                          id="wagePerWeekAfterReturn"
+                          name="wagePerWeekAfterReturn"
+                          value={formData.wagePerWeekAfterReturn ? formData.wagePerWeekAfterReturn : ''}
                           onBlur={handleBlur}
                           onChange={handleChange}
                           //onFocus={handleFocus}
@@ -1985,14 +1992,14 @@ return (
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="FatalDeathDate" className="col-md-3 col-form-label custom-label ">If Fatal, Enter Complete Date of Death:</label>
+                      <label htmlFor="dateOfDeath" className="col-md-3 col-form-label custom-label ">If Fatal, Enter Complete Date of Death:</label>
                       <div className="col-md-2">
                         <input autoComplete="off"
                           type="date"
                           className="form-control custom-input"
-                          id="FatalDeathDate"
-                          name="FatalDeathDate"
-                          value={formData.FatalDeathDate}
+                          id="dateOfDeath"
+                          name="dateOfDeath"
+                          value={formData.dateOfDeath}
                           onChange={handleChange}
                           onClick={(e) => e.target.showPicker()}
                         />
@@ -2005,7 +2012,7 @@ return (
                   <div className="form-section  flex-fill">
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
                       <label htmlFor="reportPreparedBy" className="col-md-3 col-form-label custom-label ">Report Prepared By (Print or Type):</label>
-                      <div className="col-md-4">
+                      <div className="col-md-3">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
@@ -2018,38 +2025,38 @@ return (
                       </div>
                     </div>
                     <div className="form-group row mb-1" style={{ marginLeft: '5px' }}>
-                      <label htmlFor="telePhoneNumber" className="col-md-3 col-form-label custom-label">Telephone Number:</label>
+                      <label htmlFor="reportPreparedPhone" className="col-md-3 col-form-label custom-label">Telephone Number:</label>
                       <div className="col-md-2">
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="telePhoneNumber"
-                          name="telePhoneNumber"
-                          value={formData.telePhoneNumber}
+                          id="reportPreparedPhone"
+                          name="reportPreparedPhone"
+                          value={formData.reportPreparedPhone}
                           onChange={handleChange}
                         />
                       </div>
                       <div className="col-sm-1 d-flex align-items-center">
-                        <label htmlFor="telePhoneExt" className="col-sm col-form-label custom-label">Ext:</label>
+                        <label htmlFor="reportPreparedPhoneExt" className="col-sm col-form-label custom-label">Ext:</label>
                         <input autoComplete="off"
                           type="text"
                           className="form-control custom-input"
-                          id="telePhoneExt"
-                          name="telePhoneExt"
-                          value={formData.telePhoneExt}
+                          id="reportPreparedPhoneExt"
+                          name="reportPreparedPhoneExt"
+                          value={formData.reportPreparedPhoneExt}
                           onChange={handleChange}
                           style={{ marginLeft: '9px' }}
                         />
                       </div>
                       <div className="form-group row mb-1" >
-                        <label htmlFor="DateOfReport" className="col-md-3 col-form-label custom-label ">Date of Report:</label>
-                        <div className="col-md-2 ml-3" style={{ marginLeft: '4px' }}>
+                        <label htmlFor="dateOfReport" className="col-md-3 col-form-label custom-label ">Date of Report:</label>
+                        <div className="col-md-2" style={{ marginLeft: '5px' }}>
                           <input autoComplete="off"
                             type="date"
                             className="form-control custom-input"
-                            id="DateOfReport"
-                            name="DateOfReport"
-                            value={formData.DateOfReport}
+                            id="dateOfReport"
+                            name="dateOfReport"
+                            value={formData.dateOfReport}
                             onChange={handleChange}
                             onClick={(e) => e.target.showPicker()}
                           />
@@ -2060,10 +2067,12 @@ return (
                 </div>
                 <div>
 
-                </div>
-              </div>
+               </div>
+               </div>
+              
+            </AccordionTab>
+            </Accordion>
             </div>
-          </div>
         )}
         {activeTab === 'tab5' && (
           <div className="card">
@@ -2071,13 +2080,15 @@ return (
               <input
                 autoComplete="off"
                 type="checkbox"
-                checked={formData.isIncomeBenefitsEnabled}
+                disabled={formData.isControvertEnabled || formData.isMedicalInjuryEnabled}
+                checked={formData.sectionB}
                 onChange={handleCheckboxChange}
                 className="large-checkbox"
                 style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
               />
               B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum
             </h1>
+            
             <div>
               <div className="form-group row mb-1 col-md-11">
                 <label className="col-3 col-form-label custom-label mr-0">
@@ -2088,50 +2099,87 @@ return (
                     <div className="form-check form-check-inline mb-0">
                       <input
                         autoComplete="off"
-                        className="form-check-input"
                         type="radio"
-                        name="benifitsBeingPaid"
-                        id="incomeBenifits"
-                        value="incomeBenifits"
-                        disabled={!formData.isIncomeBenefitsEnabled}
+                        ref={getFieldRef('incomeBenefits')}
+                        className={`form-check-input ${errors.incomeBenefits ? 'p-invalid' : ''}`}
+                        name="incomeBenefits"
+                        id="incomeBenefitsPaid"
+                        value="incomeBenefitsPaid"
+                        disabled={!formData.sectionB}
                         style={{ marginTop: '12px' }}
-                        checked={formData.benifitsBeingPaid === 'incomeBenifits'}
+                        checked={formData.incomeBenefits === 'incomeBenefitsPaid'}
                         onChange={handleChange}
                         required
                       />
-                      <label className="form-check-label custom-label" style={{ marginTop: '10px' }} htmlFor="incomeBenifits">
+                      <label className="form-check-label custom-label" style={{ marginTop: '10px' }} htmlFor="incomeBenefitsPaid">
                         Income benefits
                       </label>
                     </div>
+                    
                     <div className="form-check form-check-inline mb-0">
                       <input
                         autoComplete="off"
-                        className="form-check-input"
+                        ref={getFieldRef('incomeBenefits')}
+                        className={`form-check-input ${errors.incomeBenefits ? 'p-invalid' : ''}`}
                         type="radio"
-                        name="benifitsBeingPaid"
+                        name="incomeBenefits"
                         id="salaryInLieu"
                         value="salaryInLieu"
-                        disabled={!formData.isIncomeBenefitsEnabled}
+                        disabled={!formData.sectionB}
                         style={{ marginTop: '12px' }}
-                        checked={formData.benifitsBeingPaid === 'salaryInLieu'}
+                        checked={formData.incomeBenefits === 'salaryInLieu'}
                         onChange={handleChange}
                       />
                       <label className="form-check-label custom-label" style={{ marginTop: '10px' }} htmlFor="salaryInLieu">
                         Salary in Lieu
                       </label>
                     </div>
+                    {errors.incomeBenefits && (
+                              <div className="error-message" style={{ color: 'red', fontSize: '12px', marginLeft: '70px' }}>
+                                {errors.incomeBenefits}
+                              </div>
+                            )}
                   </div>
                 </div>
               </div>
-              {formData.benifitsBeingPaid === 'incomeBenifits' && (
+              {formData.incomeBenefits === 'incomeBenefitsPaid' && (
                 <div className="form-group Income-Benifits-Form">
                   <div className="d-flex flex-wrap">
                     <div className="form-section  flex-fill">
+                    <div className="form-group row mb-1 ">
+                      <label className="col-md-4 col-form-label  custom-label">Previously Medical Only:</label>
+                      <div className="col-md-6 d-flex  flex-wrap ">
+                        <div className="form-check custom-radio form-check-inline">
+                          <input
+                            type="radio"
+                            className="form-check-input"
+                            name="previousMedicalOnly"
+                            id="previouslyMedicalYes"
+                            value="Yes"
+                            onChange={handleChange}
+                            style={{ fontSize: '12px', color: 'black', marginTop: '10px' }}
+                          />
+                          <label className="form-check-label custom-label" htmlFor="previouslyMedicalYes">Yes</label>
+                        </div>
+                        <div className="form-check custom-radio form-check-inline">
+                          <input
+                            type="radio"
+                            className="form-check-input "
+                            name="previousMedicalOnly"
+                            id="previouslyMedicalNo"
+                            onChange={handleChange}
+                            value="No"
+                            style={{ fontSize: '12px', color: 'black', marginTop: '10px' }}
+                          />
+                          <label className="form-check-label custom-label" htmlFor="previouslyMedicalNo">No</label>
+                        </div>                        
+                      </div>
+                    </div>
                       <div className="form-group row mb-1">
                         <label htmlFor="averageWeeklyWage" className="col-md-4 col-form-label custom-label">
                           Average Weekly Wage: $<span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="text"
@@ -2153,41 +2201,41 @@ return (
                         </div>
                       </div>
                       <div className="form-group row mb-1">
-                        <label htmlFor="weeklyBenifit" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="weeklyBenefit" className="col-md-4 col-form-label custom-label">
                           Weekly benefit: $ <span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="text"
-                            ref={getFieldRef('weeklyBenifit')}
-                            className={`form-control custom-input ${errors.weeklyBenifit ? 'p-invalid' : ''}`}
-                            id="weeklyBenifit"
-                            name="weeklyBenifit"
-                            value={formData.weeklyBenifit}
+                            ref={getFieldRef('weeklyBenefit')}
+                            className={`form-control custom-input ${errors.weeklyBenefit ? 'p-invalid' : ''}`}
+                            id="weeklyBenefit"
+                            name="weeklyBenefit"
+                            value={formData.weeklyBenefit}
                             onBlur={handleBlur}
                             onChange={handleChange}
                             required
                           />
-                          {errors.weeklyBenifit && (
+                          {errors.weeklyBenefit && (
                             <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                              {errors.weeklyBenifit}
+                              {errors.weeklyBenefit}
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="form-group row mb-1">
-                        <label htmlFor="DateOfDisablity" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="dateOfDisability" className="col-md-4 col-form-label custom-label">
                           Date of disability:
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="date"
                             className="form-control custom-input"
-                            id="DateOfDisablity"
-                            name="DateOfDisablity"
-                            value={formData.DateOfDisablity}
+                            id="dateOfDisability"
+                            name="dateOfDisability"
+                            value={formData.dateOfDisability}
                             onChange={handleChange}
                             onClick={(e) => e.target.showPicker()}
                             required
@@ -2195,49 +2243,49 @@ return (
                         </div>
                       </div>
                       <div className="form-group row mb-1">
-                        <label htmlFor="DateOFFirstPayment" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="dateOfFirstPayment" className="col-md-4 col-form-label custom-label">
                           Date Of first Payment: <span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="date"
-                            ref={getFieldRef('DateOFFirstPayment')}
-                            className={`form-control custom-input ${errors.DateOFFirstPayment ? 'p-invalid' : ''}`}
-                            id="DateOFFirstPayment"
-                            name="DateOFFirstPayment"
-                            value={formData.DateOFFirstPayment}
+                            ref={getFieldRef('dateOfFirstPayment')}
+                            className={`form-control custom-input ${errors.dateOfFirstPayment ? 'p-invalid' : ''}`}
+                            id="dateOfFirstPayment"
+                            name="dateOfFirstPayment"
+                            value={formData.dateOfFirstPayment}
                             onChange={handleChange}
                             onClick={(e) => e.target.showPicker()}
                             required
                           />
-                          {errors.DateOFFirstPayment && (
+                          {errors.dateOfFirstPayment && (
                             <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                              {errors.DateOFFirstPayment}
+                              {errors.dateOfFirstPayment}
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="form-group row mb-1">
-                        <label htmlFor="CompensationPaid" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="compensationPaid" className="col-md-4 col-form-label custom-label">
                           Compensation paid: $ <span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="text"
-                            ref={getFieldRef('CompensationPaid')}
-                            className={`form-control custom-input ${errors.CompensationPaid ? 'p-invalid' : ''}`}
-                            id="CompensationPaid"
-                            name="CompensationPaid"
-                            value={formData.CompensationPaid}
+                            ref={getFieldRef('compensationPaid')}
+                            className={`form-control custom-input ${errors.compensationPaid ? 'p-invalid' : ''}`}
+                            id="compensationPaid"
+                            name="compensationPaid"
+                            value={formData.compensationPaid}
                             onBlur={handleBlur}
                             onChange={handleChange}
                             required
                           />
-                          {errors.CompensationPaid && (
+                          {errors.compensationPaid && (
                             <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                              {errors.CompensationPaid}
+                              {errors.compensationPaid}
                             </div>
                           )}
                         </div>
@@ -2246,7 +2294,7 @@ return (
                         <label htmlFor="penalityPaid" className="col-md-4 col-form-label custom-label">
                           Penalty paid: $
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="text"
@@ -2263,66 +2311,100 @@ return (
                     </div>
                     <div className="form-section flex-fill pl-3">
                       <div className="form-group row mb-1">
-                        <label htmlFor="BenifitsPayableByDate" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="dateBenefitsPayableFrom" className="col-md-4 col-form-label custom-label">
                           Benefits Payable From Date:<span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="date"
-                            ref={getFieldRef('BenifitsPayableByDate')}
-                            className={`form-control custom-input ${errors.BenifitsPayableByDate ? 'p-invalid' : ''}`}
-                            id="BenifitsPayableByDate"
-                            name="BenifitsPayableByDate"
-                            value={formData.BenifitsPayableByDate}
+                            ref={getFieldRef('dateBenefitsPayableFrom')}
+                            className={`form-control custom-input ${errors.dateBenefitsPayableFrom ? 'p-invalid' : ''}`}
+                            id="dateBenefitsPayableFrom"
+                            name="dateBenefitsPayableFrom"
+                            value={formData.dateBenefitsPayableFrom}
                             onChange={handleChange}
                             onClick={(e) => e.target.showPicker()}
                             required
                           />
-                          {errors.BenifitsPayableByDate && (
+                          {errors.dateBenefitsPayableFrom && (
                             <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                              {errors.BenifitsPayableByDate}
+                              {errors.dateBenefitsPayableFrom}
                             </div>
                           )}
                         </div>
                       </div>
+                     <div className="form-section flex-fill pl-3">
                       <div className="form-group row mb-1">
-                        <label htmlFor="BenifitsPAyableFor" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="dateBenefitsPayableFrom" className="col-md-4 col-form-label custom-label">
+                        Benefits Payable For:<span style={{ color: 'red' }}>*</span>
+                        </label>
+                        <div className="col-md-5">
+                            <Dropdown
+                              value={formData.disabilityTypes}
+                              name="disabilityTypes"
+                              onChange={handleChange}
+                              options={disabilityTypes.map(type => ({
+                                label: type.description,
+                                value: type.value
+                              }))}
+                              placeholder="---Select One---"
+                              filter
+                              // className="select-dropdown custom-input col-md-12"
+                              className={`select-dropdown  custom-input col-md-10 ${errors.disabilityTypes ? 'p-invalid' : ''}`}
+                              ref={getFieldRef('disabilityTypes')}
+
+                              label="Benefits Payable For"
+                              dropdownClassName="custom-dropdown-panel"
+                            />
+                            
+
+                          {errors.disabilityTypes && (
+                            <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
+                              {errors.disabilityTypes}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      </div>
+                      {/* <div className="form-group row mb-1">
+                        <label htmlFor="benefitsPayableFor" className="col-md-4 col-form-label custom-label">
                           Benefits Payable For: <span style={{ color: 'red' }}>*</span>
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="text"
-                            ref={getFieldRef('BenifitsPAyableFor')}
-                            className={`form-control custom-input ${errors.BenifitsPAyableFor ? 'p-invalid' : ''}`}
-                            id="BenifitsPAyableFor"
-                            name="BenifitsPAyableFor"
-                            value={formData.BenifitsPAyableFor}
+                            ref={getFieldRef('benefitsPayableFor')}
+                            className={`form-control custom-input ${errors.benefitsPayableFor ? 'p-invalid' : ''}`}
+                            id="benefitsPayableFor"
+                            name="benefitsPayableFor"
+                            value={formData.benefitsPayableFor}
                             onChange={handleChange}
                             onClick={(e) => e.target.showPicker()}
                             required
                           />
-                          {errors.BenifitsPAyableFor && (
+                          {errors.benefitsPayableFor && (
                             <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                              {errors.BenifitsPAyableFor}
+                              {errors.benefitsPayableFor}
                             </div>
                           )}
                         </div>
-                      </div>
+                      </div> */}
                       <div className="form-group row mb-1">
-                        <label htmlFor="payBenifitUntil" className="col-md-4 col-form-label custom-label">
+                        <label htmlFor="dateUntilBenefitsPaid" className="col-md-4 col-form-label custom-label">
                           Pay Benefit Until:
                         </label>
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                           <input
                             autoComplete="off"
                             type="date"
                             className="form-control custom-input"
-                            id="payBenifitUntil"
-                            name="payBenifitUntil"
-                            value={formData.payBenifitUntil}
+                            id="dateUntilBenefitsPaid"
+                            name="dateUntilBenefitsPaid"
+                            value={formData.dateUntilBenefitsPaid}
                             onChange={handleChange}
+                            onClick={(e) => e.target.showPicker()}
                           />
                         </div>
                       </div>
@@ -2330,7 +2412,7 @@ return (
                   </div>
                 </div>
               )}
-              {formData.benifitsBeingPaid === 'salaryInLieu' && (
+              {formData.incomeBenefits === 'salaryInLieu' && (
                 <div className="d-flex flex-wrap">
                   <div className="form-section  flex-fill">
                     <div className="form-group row mb-1 ">
@@ -2340,7 +2422,7 @@ return (
                           <input
                             type="radio"
                             className="form-check-input"
-                            name="previouslyMedicalOnly"
+                            name="previousMedicalOnly"
                             id="previouslyMedicalYes"
                             value="Yes"
                             onChange={handleChange}
@@ -2352,7 +2434,7 @@ return (
                           <input
                             type="radio"
                             className="form-check-input "
-                            name="previouslyMedicalOnly"
+                            name="previousMedicalOnly"
                             id="previouslyMedicalNo"
                             onChange={handleChange}
                             value="No"
@@ -2364,7 +2446,7 @@ return (
                           <input
                             type="radio"
                             className="form-check-input"
-                            name="previouslyMedicalOnly"
+                            name="previousMedicalOnly"
                             id="previouslyMedicalNone"
                             onChange={handleChange}
                             value="None"
@@ -2471,14 +2553,10 @@ return (
                           onChange={handleChange}
                           required
                         >
-                          <option value="">Select</option>
+                          
                           <option value="Total Disability">TOTAL DISABILITY</option>
                         </select>
-                        {errors.benefitsPayableFor && (
-                          <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                            {errors.benefitsPayableFor}
-                          </div>
-                        )}
+                        
                       </div>
                     </div>
                     <div className="form-group row mb-1">
@@ -2497,14 +2575,15 @@ return (
                 </div>
               )}
             </div>
-          </div>
+          {/* </div>
         )}
 
         {activeTab === 'tab6' && (
-          <div className="card">
+          <div className="card"> */}
             <h1 className="custom-h1  header" style={{ margingBottom: '10px' }}>
               <input autoComplete="off"
                 type="checkbox"
+                disabled={formData.sectionB || formData.isMedicalInjuryEnabled}
                 checked={formData.isControvertEnabled}
                 onChange={() => setFormData((prev) => ({ ...prev, isControvertEnabled: !prev.isControvertEnabled }))}
                 className="large-checkbox"
@@ -2563,13 +2642,14 @@ return (
                 />
               </div>
             </div>
-          </div>
+          {/* </div>
         )}
         {activeTab === 'tab7' && (
-          <div className="card">
+          <div className="card"> */}
             <h1 className="custom-h1 header" ref={headerRef}>
               <input autoComplete="off"
                 type="checkbox"
+                disabled={formData.sectionB || formData.isControvertEnabled}
                 checked={formData.isMedicalInjuryEnabled}
                 onChange={() => {
                   setFormData((prev) => ({
@@ -2681,49 +2761,49 @@ return (
       </div>
 
 
-      <div className="card">
-        <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Submitter Information</h1>
-        <div className="d-flex flex-wrap">
-          <div className="form-section  flex-fill">
-            <div className="form-group row mb-1" >
-              <label className="col-sm-5 col-form-label custom-label custom-label-no-padding">Insurer/Self-Insurer: Type or Print Name of Person Filing Form:</label>
-              <div className="col-sm-2  mt-2 ">
-                <span style={{ fontSize: '15px' }} className='value'>DAVID IMAHARA</span>
-              </div>
-            </div>
-            <div className="form-group row mb-1" >
-              <label htmlFor="submittedDate" className="col-sm-5 col-form-label custom-label ">Date:</label>
-              <div className="col-2  mt-2 ">
-                <span style={{ fontSize: '15px' }} className='value'>11/06/2024</span>
-              </div>
-            </div>
-          </div>
-          <div className="form-section flex-fill">
-            <div className="form-group row mb-1" >
-              <label className="col-sm-3 col-form-label custom-label custom-label-no-padding">Phone Number:</label>
-              <div className="col-sm-3  mt-2">
-                <span style={{ fontSize: '15px' }} >(404) 463-1999</span>
-              </div>
-              <label className="col-sm-1 col-form-label custom-label custom-label-no-padding">Ext:</label>
-              <div className="col-sm-2  mt-2 ">
-                <span style={{ fontSize: '15px' }}>ext</span>
-              </div>
-            </div>
-            <div className="form-group row mb-1" >
-              <label className="col-sm-3 col-form-label custom-label custom-label-no-padding"> E-mail:</label>
-              <div className="col-sm-5  mt-2 ml-2">
-                <span style={{ fontSize: '15px' }}>CAMPBELLN@SBWC.GA.GOV</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="card-content">
+      <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Submitter Information</h1>
+                    <div className="d-flex flex-wrap">
+                        <div className="form-section flex-fill">
+                            <div className="form-group mb-1 d-flex align-items-center">
+                                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
+                                    Insurer/Self-Insurer: Type or Print Name of Person Filing Form:
+                                </label>
+                                <span style={{ fontSize: '15px' }} className="value">DAVID IMAHARA</span>
+                            </div>
+                            <div className="form-group mb-1 d-flex align-items-center">
+                                <label htmlFor="submittedDate" className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
+                                    Date:
+                                </label>
+                                <span style={{ fontSize: '15px' }} className="value">11/09/2024</span>
+                            </div>
+                        </div>
+                        <div className="form-section flex-fill pl-3">
+                            <div className="form-group mb-1 d-flex align-items-center">
+                                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
+                                    Phone Number:
+                                </label>
+                                <span style={{ fontSize: '15px', lineHeight: '1.5' }}>(404) 463-1999</span>
+                                <label className="custom-label" style={{ marginRight: '10px', marginLeft: '20px', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
+                                    Ext:
+                                </label>
+                                <span style={{ fontSize: '15px', lineHeight: '1.0' }}>ext</span>
+                            </div>
+                            <div className="form-group mb-1 d-flex align-items-center">
+                                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
+                                    E-mail:
+                                </label>
+                                <span style={{ fontSize: '15px' }}>CAMPBELLN@SBWC.GA.GOV</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 
 
 
 
-      <div className="d-flex justify-content-center mt-5 mb-10">
+      <div className="d-flex justify-content-center mt-3">
         <ButtonGroup>
           <Button label="Reset" icon="pi pi-refresh" size="large" />
           <Button label="Save" icon="pi pi-save" size="large" />
@@ -2734,12 +2814,12 @@ return (
         {/* <button type="reset" className="btn btn-secondary mx-2 mb-10 custom-label">Reset</button>
           <button type="button" className="btn btn-primary mx-2 mb-10  custom-label"
             style={{
-              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Save</button>
           <button type="submit" className="btn btn-primary mx-2 mb-10  custom-label" 
             style={{
-              backgroundColor: clicked ? '#4baaf5' : '#4baaf5', border: 'none', color: 'black'
+              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
             }}
             onClick={() => setClicked(!clicked)}>Submit</button> */}
 

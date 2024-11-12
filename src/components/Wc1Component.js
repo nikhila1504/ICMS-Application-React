@@ -773,7 +773,7 @@ const Wc1Component = () => {
                     <div className="form-section flex-fill">
                         <div className="form-group row">
 
-                            <div className="col-md-2 mb-2 d-flex align-items-center">
+                            <div className="col-md-3 mb-2 d-flex align-items-center">
                                 <label className="custom-label mb-0 me-2">Out of Country Address:</label>
                                 <div
                                     className={`custom-checkbox ${formData.outOfCountryAddress ? 'checked' : ''}`}
@@ -789,7 +789,7 @@ const Wc1Component = () => {
                                     style={{ display: 'none' }}
                                 />
                             </div>
-                            <div className="col-md-3 mb-2">
+                            <div className="col-md-4 mb-2">
                                 <MDBInput
                                     label={<>Mailing Address 1<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
@@ -807,7 +807,7 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-3 mb-2">
+                            <div className="col-md-4 mb-2">
                                 <MDBInput
                                     label="Mailing Address 2"
                                     type="text"
@@ -818,7 +818,7 @@ const Wc1Component = () => {
                                     onChange={handleChange}
                                 />
                             </div>
-                            <div className="col-md-2 mb-2">
+                            <div className="col-md-3 mb-2">
                                 <MDBInput
                                     label={<>City<span style={{ color: 'red' }}>*</span> </>}
                                     type="text"
@@ -854,11 +854,6 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                        </div>
-                    </div>
-                    <div className="form-section flex-fill">
-                        <div className="form-group row">
-
                             <div className="col-md-2 mb-2">
                                 <MDBInput
                                     label={<>Zip<span style={{ color: 'red' }}>*</span> </>}
@@ -877,7 +872,7 @@ const Wc1Component = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-3 mb-2">
+                            <div className="col-md-4 mb-2">
                                 <MDBInput
                                     label="Employee E-mail"
                                     type="text"
@@ -900,6 +895,14 @@ const Wc1Component = () => {
                                     onChange={handleChange}
                                 />
                             </div>
+                        </div>
+                    </div>
+                    <div className="form-section flex-fill">
+                        <div className="form-group row">
+
+                            
+                            
+                            
                         </div>
                     </div>
                 </div>
@@ -945,7 +948,7 @@ const Wc1Component = () => {
                         {/* First Row */}
                         <div className="form-section flex-fill">
                             <div className="form-group row mb-3">
-                                <div className="col-md-12">
+                                <div className="col-md-5">
                                     <MDBInput
                                         label="Hired Date"
                                         autoComplete="off"
@@ -954,6 +957,7 @@ const Wc1Component = () => {
                                         name="hiredDate"
                                         value={formData.hiredDate}
                                         onChange={handleChange}
+                                        onClick={(e) => e.target.showPicker()}
                                         floating
                                         className="custom-input"
                                         style={{ borderColor: 'blue', width: '100%' }}

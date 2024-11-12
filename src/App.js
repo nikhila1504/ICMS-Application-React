@@ -2,6 +2,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-datepicker/dist/react-datepicker.module.css";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
+// import "./icms.css";
 import LoginComponent from "./auth/Login";
 import Registration from "./auth/Registration";
 import AddPartyComponent from "./components/AddPartyComponent";
@@ -9,7 +10,8 @@ import CalendarComponent from "./components/CalendarComponent";
 import HeaderComponent from "./components/HeaderComponent";
 import FooterComponent from "./components/FooterComponent";
 import PartyListComponent from "./components/PartyListComponent";
-import Wc1FormComponent from "./components/Wc1FormComponent";
+import Wc1FormComponent from "./components/Wc1Form";
+import Wc1Form from "./components/Wc1Form";
 import Wc1Component from "./components/Wc1Component";
 import NewWc1 from "./components/NewWc1";
 import manageMatchingClaims from "./components/manageMatchingClaims";
@@ -28,6 +30,7 @@ function App() {
               <Route exact path="/login" element={<LoginComponent />} />
               <Route exact path="/register" element={<Registration />} />
               <Route path="/parties" element={<PartyListComponent />} />
+              <Route path="/wc1Form" element={<Wc1Form />} />
               <Route path="/wc1" element={<Wc1FormComponent />} />
               <Route path="/add-party" element={<AddPartyComponent />} />
               <Route path="/edit-party/:id" element={<AddPartyComponent />} />

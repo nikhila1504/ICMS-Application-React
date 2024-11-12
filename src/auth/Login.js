@@ -14,7 +14,7 @@ const Login = () => {
       const userData = await AuthService.login(username, password);
       if (userData.token) {
         localStorage.setItem("token", userData.token);
-        navigate("/Wc1poc");
+        navigate("/wc1");
       } else {
         setError(userData.message);
       }
@@ -30,10 +30,14 @@ const Login = () => {
   return (
     <div>
       <br />
+      <h4>Welcome to the State Board of Workers' Compensation Online Integrated Claims Management System (ICMS).
+        </h4>
+        
       <br />
-      <div className="container">
+      <div className="container justify-content-right">
         <div className="row">
-          <div className="card col-md-6 offset-md-3 offset-md-3">
+        
+          <div className="card col-md-4 offset-md-3 offset-md-3">
             <h2 className="text-center">User Login</h2>
             <div className="card-body">
               {error && (
