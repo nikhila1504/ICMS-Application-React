@@ -328,7 +328,11 @@
   /* Label color for floating state */
   padding-bottom: 100px;
 }
-
+.pi-exclamation-circle {
+  color: red;
+  font-size: 20px;
+  margin-left: 5px;
+}
 /* Optional: Custom styles for disabled state */
 .custom-border:disabled {
   background-color: #f5f5f5; /* Disabled background */

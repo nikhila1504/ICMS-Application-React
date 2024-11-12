@@ -93,6 +93,7 @@ const Wc1FormComponent = () => {
   //const [isHovering, setIsHovering] = useState(false);
   // Keep track of which accordion section is open
   const [activeIndex, setActiveIndex] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
 
   // Function to toggle the accordion section
   const handleToggle = (index) => {
@@ -325,7 +326,7 @@ const Wc1FormComponent = () => {
 
   const [formData, setFormData] = useState({
     tab3: false,
-    
+
     claimant: {
       firstName: '',
       lastName: '',
@@ -460,70 +461,73 @@ const Wc1FormComponent = () => {
     });
   };
 
+  const numericFields = [
+    'wagePerWeekAfterReturn', 'averageWeeklyWage', 'weeklyBenefitAmount', 
+    'averageWeeklyWageAmount', 'compensationPaid', 'penalityPaid', 'weeklyBenefit'
+  ];
+  
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log("value::", value);
+    const { name, value, selectionStart } = e.target;
     const nameParts = name.split('.');
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: undefined,
-    }));
-
-
-    if (nameParts.length > 1) {
-      setFormData((prevData) => ({
-        ...prevData,
-        [nameParts[0]]: {
-          ...prevData[nameParts[0]],
-          [nameParts[1]]: value
-        }
+  
+    // Remove any non-numeric characters except for decimal point
+    let numericValue = value.replace(/[^0-9.]/g, '');
+  
+    // Allow numbers with up to two decimal places
+    if (numericFields.includes(name) && /^\d*\.?\d{0,2}$/.test(numericValue)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: undefined,
       }));
-    }
-
-    else {
-      // const numericFields = ['wagePerWeekAfterReturn', 'averageWeeklyWage', 'weeklyBenefitAmount', 'averageWeeklyWageAmount', 'compensationPaid', 'penalityPaid', 'weeklyBenefit'];
-      // console.log("name === 'claimant.state'::", name === "claimant.state");
-      // if (numericFields.includes(name)) {
-      //   if (/^\d*\.?\d*$/.test(value) || value === '') {
-      //     setFormData((prevData) => ({
-      //       ...prevData,
-      //       [name]: value,
-      //     }));
-      //   }
-      // } else 
-      if (name === 'claimant.state') {
-        console.log("name::", value);
-        // Handle state dropdown 
+  
+      // Update formData without formatting characters
+      if (nameParts.length > 1) {
         setFormData((prevData) => ({
           ...prevData,
-          claimant: {
-            ...prevData.claimant,
-            state: value,
+          [nameParts[0]]: {
+            ...prevData[nameParts[0]],
+            [nameParts[1]]: numericValue,
           },
         }));
-      }
-      else {
+      } else {
         setFormData((prevData) => ({
           ...prevData,
-          [name]: value,
+          [name]: numericValue,
         }));
       }
+      
+      // Set cursor back to the last known position after rendering
+      setTimeout(() => e.target.setSelectionRange(selectionStart, selectionStart), 0);
+    } else if (!numericFields.includes(name)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
     }
   };
-
+  
   const handleBlur = (e) => {
     const { name } = e.target;
     setFormData((prev) => {
-      const newValue = prev[name] && prev[name] !== ''
-        ? `$${parseFloat(prev[name]).toFixed(2)}`
-        : '';
-
+      const value = prev[name];
+      const isNumericField = numericFields.includes(name);
+  
       return {
         ...prev,
-        [name]: newValue,
+        [name]: isNumericField && value
+          ? `$${parseFloat(value).toFixed(2)}` // Format as currency when user leaves the input
+          : value,
       };
     });
   };
+  
+  // Helper function to remove dollar sign for initial render
+  const getRawValue = (value) => {
+    return value ? value.replace(/^\$/, '') : '';
+  };
+  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -590,6 +594,7 @@ const Wc1FormComponent = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setSubmitted(true);
     console.log('Form to be Submitted:', formData);
     const requiredFields = [
       'claimant.firstName', 'claimant.lastName', 'claimant.address1', 'claimant.city',
@@ -599,8 +604,6 @@ const Wc1FormComponent = () => {
     ];
     const newErrors = validateRequiredFields(formData, requiredFields);
     const validateConditionalFields = () => {
-
-
       if (formData.sectionB) {
         const sectionBRequired = ['incomeBenefits'];
         Object.assign(newErrors, validateRequiredFields(formData, sectionBRequired));
@@ -634,29 +637,14 @@ const Wc1FormComponent = () => {
     if (!formData.bodyPartAffected || formData.bodyPartAffected.length === 0) {
       newErrors.bodyPartAffected = 'Please select at least one body part affected.';
     }
-
-
     const scrollToFirstError = () => {
       if (Object.keys(newErrors).length > 0) {
         // Get the first error field
         const firstErrorField = Object.keys(newErrors)[0];
-
-        // Mapping error fields to their corresponding tabs
-
-
-        // Determine the tab of the first error
-        const targetTab = errorTabMapping[firstErrorField]; // Default to 'tab1' if not mapped
-
-        // If the error's tab is not the current active tab, set it
+        const targetTab = errorTabMapping[firstErrorField]; 
         if (targetTab !== activeTab) {
           setActiveTab(targetTab);
-          console.log("formData.tab3..",formData.tab3);
-          formData.tab3 = true;
-          console.log("formData.tab3...",formData.tab3);
         }
-
-
-        // Scroll to the first error field
         if (fieldRefs.current[firstErrorField]) {
           const ref = fieldRefs.current[firstErrorField].current;
           if (ref && ref instanceof HTMLElement) {
@@ -666,42 +654,27 @@ const Wc1FormComponent = () => {
         }
 
       }
-      // if (!formData.sectionB && !formData.isMedicalInjuryEnabled && !formData.isControvertEnabled) {
-      //   if (activeTab !== 'tab5') {
-      //     alert("Section B or C or D is required.");
-      //     setActiveTab('tab5');
-      //     return;
-      //   }
-      // }
-
-
     };
-
-    // If there are errors, set the error state and handle scrolling
     if (Object.keys(newErrors).length > 0) {
       console.log('Errors found:', newErrors);
       setErrors(newErrors);
-      const tab5Errors = ['sectionB', 'isControvertEnabled', 'isMedicalInjuryEnabled'].filter(field => newErrors[field]);
-      if (tab5Errors.length > 0) {
-        // If there are errors in Tab 5, select Tab 5 programmatically
-        setActiveTab('tab5'); // Tab 5 is index 4 (0-based index)
-      }
-      scrollToFirstError(); // Scroll to the first error field
-
+      // const tab5Errors = ['sectionB', 'isControvertEnabled', 'isMedicalInjuryEnabled'].filter(field => newErrors[field]);
+      // if (tab5Errors.length > 0) {
+      //   setActiveTab('tab5'); 
+      // }
+      scrollToFirstError(); 
       return;
     }
-
-    // else {
-
     if (!formData.sectionB && !formData.isMedicalInjuryEnabled && !formData.isControvertEnabled) {
+      setSubmitted(true);
       if (activeTab !== 'tab5') {
         alert("Section B or C or D is required.");
+        newErrors['tab5'] = 'Please select at least one option in Section B, C, or D.'; 
         setActiveTab('tab5');
+        //setErrors(newErrors);
         return;
       }
     } else {
-
-
       // If form is valid, show success toast and submit the form
       toastRef.current.show({
         severity: 'success',
@@ -720,6 +693,25 @@ const Wc1FormComponent = () => {
       ...prev,
     }));
 
+  };
+
+  const getRequiredFieldsForTab = (tab) => {
+    const tabFields = {
+      tab1: ['claimant.firstName', 'claimant.lastName', 'claimant.address1', 'claimant.city', 'claimant.state', 'claimant.zip', 'claimant.gender'],
+      tab3: ['daysWorkedPerWeek', 'daysOff'],
+      tab4: ['dateOfInjury', 'countyOfInjury.description', 'receivedFullPay', 'injuredInEmpPermises', 'typeOfInjury', 'otherInjuryCause'],
+      tab5: ['sectionB', 'isControvertEnabled', 'isMedicalInjuryEnabled'], 
+    };
+    return tabFields[tab] || [];
+  };
+  
+  const hasErrorsInTab = (tab) => {
+    const requiredFields = getRequiredFieldsForTab(tab);
+    if (tab === 'tab5') {
+      const isTab5ConditionMet = formData.sectionB || formData.isControvertEnabled || formData.isMedicalInjuryEnabled;
+      return submitted && (!isTab5ConditionMet || requiredFields.some((field) => errors[field]));
+    }
+    return submitted && requiredFields.some((field) => errors[field]);
   };
 
   const validateRequiredFields = (data, requiredFields) => {
@@ -820,45 +812,42 @@ const Wc1FormComponent = () => {
 
         {/* <NewClaimComponent /> */}
         <div className="tab-titles">
-        
+
           <button type="button"
             className={activeTab === 'tab1' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab1'); }}
           >
             Claimant Information
+            {hasErrorsInTab('tab1') && <span className="pi pi-exclamation-circle ml-6"></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab2' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab2'); }}
           >
             Party Information
+            {hasErrorsInTab('tab2') && <span className="pi pi-exclamation-circle ml-6"></span>}
           </button>
-          
+
           <button type="button"
             className={activeTab === 'tab3' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab3'); }}
           >
-          {/* <div className={`tab ${formData.tab3 ? <span className="error-icon">❌</span> : ''}`}/>    */}
-              
             Employment/Wage
-            {/* {formData.tab3 ? (
-<span className="error-icon">❌</span>
-          ) : (
-            ''
-          )}    */}
+            {hasErrorsInTab('tab3') && <span className="pi pi-exclamation-circle ml-6"></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab4' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab4'); }}
           >
             Injury/Illness & Medical
+            {hasErrorsInTab('tab4') && <span className="pi pi-exclamation-circle ml-6"></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab5' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab5'); }}
           >
             Section B, C, D
-
+            {hasErrorsInTab('tab5') && <span className="pi pi-exclamation-circle"></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab8' ? 'active' : ''}
@@ -2455,7 +2444,7 @@ const Wc1FormComponent = () => {
                             </div>
                           )}
                         </div> */}
-                        {/* <div className="col-md-12 form-group row mb-1">
+                      {/* <div className="col-md-12 form-group row mb-1">
                           <MDBInput
                             label={<>Benefits Payable For: <span style={{ color: 'red' }}>*</span> </>}
                             type="text"
@@ -2563,7 +2552,8 @@ const Wc1FormComponent = () => {
                             type="text"
                             id="weeklyBenefitAmount"
                             name="weeklyBenefitAmount"
-                            value={formData.weeklyBenefitAmount || ' '}
+                            //value={formData.weeklyBenefitAmount || ' '}
+                            value={getRawValue(formData.weeklyBenefitAmount) || ' '}
                             onBlur={handleBlur}
                             onChange={handleChange}
                           />
