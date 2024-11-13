@@ -461,73 +461,70 @@ const Wc1FormComponent = () => {
     });
   };
 
-  const numericFields = [
-    'wagePerWeekAfterReturn', 'averageWeeklyWage', 'weeklyBenefitAmount', 
-    'averageWeeklyWageAmount', 'compensationPaid', 'penalityPaid', 'weeklyBenefit'
-  ];
-  
-
   const handleChange = (e) => {
-    const { name, value, selectionStart } = e.target;
+    const { name, value } = e.target;
+    console.log("value::", value);
     const nameParts = name.split('.');
-  
-    // Remove any non-numeric characters except for decimal point
-    let numericValue = value.replace(/[^0-9.]/g, '');
-  
-    // Allow numbers with up to two decimal places
-    if (numericFields.includes(name) && /^\d*\.?\d{0,2}$/.test(numericValue)) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: undefined,
-      }));
-  
-      // Update formData without formatting characters
-      if (nameParts.length > 1) {
-        setFormData((prevData) => ({
-          ...prevData,
-          [nameParts[0]]: {
-            ...prevData[nameParts[0]],
-            [nameParts[1]]: numericValue,
-          },
-        }));
-      } else {
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: numericValue,
-        }));
-      }
-      
-      // Set cursor back to the last known position after rendering
-      setTimeout(() => e.target.setSelectionRange(selectionStart, selectionStart), 0);
-    } else if (!numericFields.includes(name)) {
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: undefined,
+    }));
+
+
+    if (nameParts.length > 1) {
       setFormData((prevData) => ({
         ...prevData,
-        [name]: value,
+        [nameParts[0]]: {
+          ...prevData[nameParts[0]],
+          [nameParts[1]]: value
+        }
       }));
     }
+
+    else {
+      // const numericFields = ['wagePerWeekAfterReturn', 'averageWeeklyWage', 'weeklyBenefitAmount', 'averageWeeklyWageAmount', 'compensationPaid', 'penalityPaid', 'weeklyBenefit'];
+      // console.log("name === 'claimant.state'::", name === "claimant.state");
+      // if (numericFields.includes(name)) {
+      //   if (/^\d*\.?\d*$/.test(value) || value === '') {
+      //     setFormData((prevData) => ({
+      //       ...prevData,
+      //       [name]: value,
+      //     }));
+      //   }
+      // } else 
+      if (name === 'claimant.state') {
+        console.log("name::", value);
+        // Handle state dropdown 
+        setFormData((prevData) => ({
+          ...prevData,
+          claimant: {
+            ...prevData.claimant,
+            state: value,
+          },
+        }));
+      }
+      else {
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
+    }
   };
-  
+
   const handleBlur = (e) => {
     const { name } = e.target;
     setFormData((prev) => {
-      const value = prev[name];
-      const isNumericField = numericFields.includes(name);
-  
+      const newValue = prev[name] && prev[name] !== ''
+        ? `$${parseFloat(prev[name]).toFixed(2)}`
+        : '';
+
       return {
         ...prev,
-        [name]: isNumericField && value
-          ? `$${parseFloat(value).toFixed(2)}` // Format as currency when user leaves the input
-          : value,
+        [name]: newValue,
       };
     });
   };
-  
-  // Helper function to remove dollar sign for initial render
-  const getRawValue = (value) => {
-    return value ? value.replace(/^\$/, '') : '';
-  };
-  
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -2552,8 +2549,7 @@ const Wc1FormComponent = () => {
                             type="text"
                             id="weeklyBenefitAmount"
                             name="weeklyBenefitAmount"
-                            //value={formData.weeklyBenefitAmount || ' '}
-                            value={getRawValue(formData.weeklyBenefitAmount) || ' '}
+                            value={formData.weeklyBenefitAmount || ' '}
                             onBlur={handleBlur}
                             onChange={handleChange}
                           />
