@@ -2182,6 +2182,12 @@ const Wc1FormComponent = () => {
           )}
           {activeTab === 'tab5' && (
             <div className="card">
+              {!formData.isControvertEnabled && !formData.sectionB && !formData.isMedicalInjuryEnabled && (
+                <div className="alert alert-warning" style={{ color: 'black', fontSize: '14px'}}>                 
+                  <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
+                          Please select any one of B,C,D sections.
+                </div>
+              )}
               <h1 className="custom-h1 header">
                 <input
                   autoComplete="off"
