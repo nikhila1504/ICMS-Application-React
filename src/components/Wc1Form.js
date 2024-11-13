@@ -665,20 +665,21 @@ const Wc1FormComponent = () => {
     if (!formData.sectionB && !formData.isMedicalInjuryEnabled && !formData.isControvertEnabled) {
       setSubmitted(true);
       if (activeTab !== 'tab5') {
-        alert("Section B or C or D is required.");
+        alert("Selection one of Section B/C/D is required.");
         newErrors['tab5'] = 'Please select at least one option in Section B, C, or D.'; 
         setActiveTab('tab5');
         //setErrors(newErrors);
         return;
       }
     } else {
+      alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
       // If form is valid, show success toast and submit the form
-      toastRef.current.show({
-        severity: 'success',
-        summary: 'Submission Successful',
-        detail: 'Your form has been successfully submitted!',
-        life: 3000,
-      });
+      // toastRef.current.show({
+      //   severity: 'success',
+      //   summary: 'Submission Successful',
+      //   detail: 'Your form has been successfully submitted!',
+      //   life: 3000,
+      // });
       console.log('Submitting form with data:', formData);
       setIsActive(false); // Reset active state if needed
     }
@@ -2863,7 +2864,7 @@ const Wc1FormComponent = () => {
 
 
 
-        <div className="d-flex justify-content-center mt-5 mb-10">
+        <div className="d-flex justify-content-center mt-4">
           <ButtonGroup>
             <Button label="Reset" icon="pi pi-refresh" size="large" />
             <Button label="Save" icon="pi pi-save" size="large" />

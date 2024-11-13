@@ -20,7 +20,7 @@ const HeaderComponent = () => {
   };
   return (
 <div>
-<img src={logo} alt="Logo" /><img src={icmslogo} alt="Logo" style={{ marginLeft: '1200px'}}/>
+<img src={logo} alt="Logo" /><img src={icmslogo} alt="Logo" style={{ marginLeft: '800px'}}/>
   <header>
     <nav className="navbar navbar-expand-md">
       <div className="container-fluid">
