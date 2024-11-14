@@ -9,10 +9,10 @@ import { useState } from 'react';
 // import { FilterService } from 'primereact/api';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
-import { Calendar } from 'primereact/calendar';
+// import { Calendar } from 'primereact/calendar';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import FileSaver from 'file-saver';
+// import FileSaver from 'file-saver';
 import { saveAs } from 'file-saver';
 import { Button } from 'primereact/button';
 
@@ -86,7 +86,7 @@ const exportToPDF = () => {
   
 
   const header = (
-    <div className="flex align-items-center export-button">
+    <div className='data-table1' style={{ border:'1px' }}>
       <Button
       type="button" 
       icon="pi pi-file-excel"
@@ -104,7 +104,7 @@ const exportToPDF = () => {
     <div>
       <h1></h1>
       <h1 className="custom-h1" style={{ marginTop: '5px', align:'right' }}>User Productivity Report </h1>
-      <div style={{backgroundColor:"#4169e1",display: 'flex', justifyContent: 'flex-start' ,padding :'4px' }}>
+      <div style={{backgroundColor:"skyblue",display: 'flex', justifyContent: 'flex-start' ,padding :'4px' }}>
       <InputText 
           onInput={(e) =>
           setFilters({
@@ -113,9 +113,9 @@ const exportToPDF = () => {
         }
       />
 </div>
-
+<div>
       <DataTable value={posts} sortMode="multiple" filters={filters}
-      paginator
+      paginator 
       footer={header}
       rows={5}
       rowsPerPageOptions={[1,2,3,4,5]}
@@ -128,6 +128,7 @@ const exportToPDF = () => {
         <Column field="city" header="City" sortable/>
       </DataTable>
 
+    </div>
     </div>
   );
 }
