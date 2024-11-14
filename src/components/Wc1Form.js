@@ -424,7 +424,7 @@ const Wc1FormComponent = () => {
     { partyType: 'Attorney', partyName: 'DAVID IMAHARA', parentParty: '', selfInsured: '', selfAdministered: '', groupFundMember: '' },
   ]);
 
-  const convertTypes = [
+  const controvertType = [
     { label: 'ALL THE ENTIRE CASE IS CONTROVERTED', value: 'ALL THE ENTIRE CASE IS CONTROVERTED' },
     { label: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED', value: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED' },
     { label: 'MEDICAL IS DENIED', value: 'MEDICAL IS DENIED' },
@@ -714,14 +714,20 @@ const Wc1FormComponent = () => {
         return;
       }
     } else {
-      alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
-      // If form is valid, show success toast and submit the form
-      // toastRef.current.show({
-      //   severity: 'success',
-      //   summary: 'Submission Successful',
-      //   detail: 'Your form has been successfully submitted!',
-      //   life: 3000,
-      // });
+
+      //If form is valid, show success toast and submit the form
+      toastRef.current.show({
+        severity: 'success',
+        summary: 'Submission Successful',
+        detail: 'Your form has been successfully submitted!',
+        life: 3000,
+      });
+      const claim = { };
+      ClaimService.saveClaim(formData).then((response) => {
+        alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
+      }).catch((error) => {
+        console.log(error);
+      });
       console.log('Submitting form with data:', formData);
       setIsActive(false); // Reset active state if needed
     }
@@ -2183,8 +2189,8 @@ const Wc1FormComponent = () => {
           {activeTab === 'tab5' && (
             <div className="card">
               {!formData.isControvertEnabled && !formData.sectionB && !formData.isMedicalInjuryEnabled && (
-                <div style={{ color: 'red', fontSize: '14px'}}>                 
-                  <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
+                <div style={{ color: 'red', fontSize: '14px' }}>
+                  <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem', color: 'red', marginRight: '15px' }}></i>
                   Selection one of Section B/C/D is required.
                 </div>
               )}
@@ -2201,8 +2207,8 @@ const Wc1FormComponent = () => {
                 B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum
               </h1>
               {formData.sectionB && !formData.incomeBenefits && (
-                <div style={{ color: 'red', fontSize: '14px'}}>                 
-                  <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
+                <div style={{ color: 'red', fontSize: '14px' }}>
+                  <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem', color: 'red', marginRight: '15px' }}></i>
                   Income Benefits is required.
                 </div>
               )}
@@ -2737,8 +2743,8 @@ const Wc1FormComponent = () => {
                   onChange={() => setFormData((prev) => {
                     const updatedData = { ...prev, isControvertEnabled: !prev.isControvertEnabled };
                     if (!updatedData.isControvertEnabled) {
-                      updatedData.convertTypes = '';  
-                    }                   
+                      updatedData.controvertTypes = '';
+                    }
                     return updatedData;
                   })}
                   className="large-checkbox"
@@ -2746,29 +2752,33 @@ const Wc1FormComponent = () => {
                   style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
                 />
                 C. Notice To Convert Payment Of Compensation</h1>
-                {formData.isControvertEnabled && !formData.convertTypes && (
-                <div style={{ color: 'red', fontSize: '14px'}}>                 
-                  <i className="pi pi-exclamation-triangle-down" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
-                          Controvert Type is required.
+              {formData.isControvertEnabled && !formData.controvertTypes && (
+                <div style={{ color: 'red', fontSize: '14px' }}>
+                  <i className="pi pi-exclamation-triangle-down" style={{ fontSize: '1rem', color: 'red', marginRight: '15px' }}></i>
+                  Controvert Type is required.
                 </div>
               )}
               <div className="form-group row mb-1">
-                <label htmlFor="convertTypes" className="col-md-2 col-form-label custom-label">Controvert Type:<span style={{ color: 'red' }}>*</span></label>
+                <label htmlFor="controvertTypes" className="col-md-2 col-form-label custom-label">Controvert Type:<span style={{ color: 'red' }}>*</span></label>
                 <div className="col-md-3">
                   <Dropdown
-                    value={formData.convertTypes}
-                    id="convertTypes"
-                    name="convertTypes"
+                    value={formData.controvertTypes}
+                    id="controvertTypes"
+                    name="controvertTypes"
                     onChange={handleChange}
-                    options={convertTypes}
+                    //options={controvertTypes}
+                    options={controvertTypes.map(part => ({
+                      label: part.description,
+                      value: part.value
+                    }))}
                     placeholder="---Select One---"
                     disabled={!formData.isControvertEnabled}
                     filter
-                    className={`select-dropdown-ct ${errors.convertType ? 'p-invalid' : ''}`}
+                    className={`select-dropdown-ct ${errors.controvertType ? 'p-invalid' : ''}`}
                   />
-                  {errors.convertType && (
+                  {errors.controvertType && (
                     <div className="error-message" style={{ color: 'red', marginTop: '5px', fontSize: '12px' }}>
-                      {errors.convertType}
+                      {errors.controvertType}
                     </div>
                   )}
                 </div>
