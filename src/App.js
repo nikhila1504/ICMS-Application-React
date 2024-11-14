@@ -11,9 +11,10 @@ import HeaderComponent from "./components/HeaderComponent";
 import FooterComponent from "./components/FooterComponent";
 import PartyListComponent from "./components/PartyListComponent";
 import Wc1FormComponent from "./components/Wc1Form";
-import Wc1Form from "./components/Wc1Form";
+import Wc1Form from "./components/Wc1FormComponent";
 import Wc1Component from "./components/Wc1Component";
-import NewWc1 from "./components/NewWc1";
+import ReportComponent from "./components/report.component";
+
 import manageMatchingClaims from "./components/manageMatchingClaims";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
@@ -34,10 +35,11 @@ function App() {
               <Route path="/wc1" element={<Wc1FormComponent />} />
               <Route path="/add-party" element={<AddPartyComponent />} />
               <Route path="/edit-party/:id" element={<AddPartyComponent />} />
-              <Route path="/newWc1" element={<NewWc1 />} />
+              {/* <Route path="/newWc1" element={<NewWc1 />} /> */}
               <Route path="/Wc1poc" element={<Wc1Component />} />
-              <Route path="/calendar/1" element={<CalendarComponent />} />
+              <Route path="/calendar/:id" element={<CalendarComponent />} />
               <Route path="/manageMatchingClaims" element={<manageMatchingClaims />} />
+              <Route path="/reports" element={<ReportComponent />} />
             </Routes>
           </div>
           <FooterComponent />

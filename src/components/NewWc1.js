@@ -14,7 +14,7 @@ const NewWc1 = () => {
 
     return (
         <div className="form-container-ncc" style={{ position: 'relative', minHeight: '100vh' }}>
-            <NewClaimComponent />
+            {/* <NewClaimComponent /> */}
             <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', maxWidth: '600px' }}>
                 <div className="card p-4" style={{ width: '100%' }}>
                     <h2 className="text-center mb-4">WC-1 Form</h2>

@@ -2183,9 +2183,9 @@ const Wc1FormComponent = () => {
           {activeTab === 'tab5' && (
             <div className="card">
               {!formData.isControvertEnabled && !formData.sectionB && !formData.isMedicalInjuryEnabled && (
-                <div className="alert alert-warning" style={{ color: 'black', fontSize: '14px'}}>                 
+                <div style={{ color: 'red', fontSize: '14px'}}>                 
                   <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
-                          Please select any one of B,C,D sections.
+                  Selection one of Section B/C/D is required.
                 </div>
               )}
               <h1 className="custom-h1 header">
@@ -2201,9 +2201,9 @@ const Wc1FormComponent = () => {
                 B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum
               </h1>
               {formData.sectionB && !formData.incomeBenefits && (
-                <div className="alert alert-warning" style={{ color: 'black', fontSize: '14px'}}>                 
+                <div style={{ color: 'red', fontSize: '14px'}}>                 
                   <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
-                          Please select one of the following options: "Salary in Lieu" or "Income Benefits".
+                  Income Benefits is required.
                 </div>
               )}
               <div>
@@ -2747,9 +2747,9 @@ const Wc1FormComponent = () => {
                 />
                 C. Notice To Convert Payment Of Compensation</h1>
                 {formData.isControvertEnabled && !formData.convertTypes && (
-                <div className="alert alert-warning" style={{ color: 'black', fontSize: '14px'}}>                 
-                  <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
-                          Please select Controvert Type.
+                <div style={{ color: 'red', fontSize: '14px'}}>                 
+                  <i className="pi pi-exclamation-triangle-down" style={{ fontSize: '1rem',color:'red',marginRight:'15px' }}></i>
+                          Controvert Type is required.
                 </div>
               )}
               <div className="form-group row mb-1">

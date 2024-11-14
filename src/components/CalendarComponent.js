@@ -164,7 +164,7 @@ const CalendarComponent = () => {
         weekends={false}
         events={events}
         dateClick={handleDateClick}
-        contentHeight={580}
+        contentHeight={500}
       />
       <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
         <Modal.Header closeButton>

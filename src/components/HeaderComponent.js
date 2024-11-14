@@ -2,6 +2,9 @@ import { React } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from '../sbwc_logo.gif'; // Tell webpack this JS file uses this image
 import icmslogo from '../icms_logo.gif'; // Tell webpack this JS file uses this image
+import NewClaimComponent from "./NewClaimComponent.js";
+import DataTableComponent from "./DataTableComponent.js";
+
 
 const HeaderComponent = () => {
   const location = useLocation();
@@ -22,11 +25,15 @@ const HeaderComponent = () => {
 <div>
 <img src={logo} alt="Logo" /><img src={icmslogo} alt="Logo" style={{ marginLeft: '800px'}}/>
   <header>
+
     <nav className="navbar navbar-expand-md">
+    
       <div className="container-fluid">
-        
+     
 
         <div className="collapse navbar-collapse" id="navbarNav">
+        {/* <NewClaimComponent /> */}
+        <DataTableComponent />
           <div className="ms-auto">
             {path ? (
               <button
