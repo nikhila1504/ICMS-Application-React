@@ -1235,7 +1235,7 @@ const Wc1FormComponent = () => {
                         name="hiredDate"
                         value={formData.hiredDate}
                         onChange={handleChange}
-                        onClick={(e) => e.target.showPicker()}
+                        // onClick={(e) => e.target.showPicker()}
                         floating
                         className="custom-border"
                         style={{ borderColor: 'blue', width: '100%' }}
@@ -1472,7 +1472,7 @@ const Wc1FormComponent = () => {
                         <MDBInput
                           type="date"
                           label={<>Date of Injury<span style={{ color: 'red' }}>*</span> </>}
-                          onClick={(e) => e.target.showPicker()}
+                          // onClick={(e) => e.target.showPicker()}
                           id="dateOfInjury"
                           name="dateOfInjury"
                           value={formatDateForInput(formData.dateOfInjury)}
@@ -1491,7 +1491,7 @@ const Wc1FormComponent = () => {
                       <div className="col-md-3 mb-3">
                         <MDBInput
                           type="time"
-                          onClick={(e) => e.target.showPicker()}
+                          // onClick={(e) => e.target.showPicker()}
                           label="Time of Injury"
                           className="custom-input"
                           name="timeOfInjury"
@@ -1525,7 +1525,7 @@ const Wc1FormComponent = () => {
                       <div className="col-md-4 mb-3">
                         <MDBInput
                           type="date"
-                          onClick={(e) => e.target.showPicker()}
+                          // onClick={(e) => e.target.showPicker()}
                           label="Date Employer had Knowledge of Injury"
                           className="custom-input"
                           name="dateEmployerKnowledge"
@@ -1538,7 +1538,7 @@ const Wc1FormComponent = () => {
                       <div className="col-md-3 mb-3">
                         <MDBInput
                           type="date"
-                          onClick={(e) => e.target.showPicker()}
+                          // onClick={(e) => e.target.showPicker()}
                           label="First Date Employee Failed to Work"
                           className="custom-input"
                           name="firstDateFailed"
@@ -2055,7 +2055,7 @@ const Wc1FormComponent = () => {
                                   name="RtwDate"
                                   value={formData.RtwDate}
                                   onChange={handleChange}
-                                  onClick={(e) => e.target.showPicker()}
+                                  // onClick={(e) => e.target.showPicker()}
                                 />
                                 {/* </MDBFloatingLabel> */}
                               </div>
@@ -2168,7 +2168,7 @@ const Wc1FormComponent = () => {
                                   name="DateOfReport"
                                   value={formData.DateOfReport}
                                   onChange={handleChange}
-                                  onClick={(e) => e.target.showPicker()}
+                                  // onClick={(e) => e.target.showPicker()}
                                 />
                                 {/* </MDBFloatingLabel> */}
                               </div>
@@ -2356,7 +2356,7 @@ const Wc1FormComponent = () => {
                             name="dateOfDisability"
                             value={formData.dateOfDisability || ' '}
                             onChange={handleChange}
-                            onClick={(e) => e.target.showPicker()}
+                            // onClick={(e) => e.target.showPicker()}
                             floatingLabel
                             required
                           />
@@ -2374,7 +2374,7 @@ const Wc1FormComponent = () => {
                             name="dateOfFirstPayment"
                             value={formData.dateOfFirstPayment}
                             onChange={handleChange}
-                            onClick={(e) => e.target.showPicker()}
+                            // onClick={(e) => e.target.showPicker()}
                             floatingLabel
                             required
                           />
@@ -2438,7 +2438,7 @@ const Wc1FormComponent = () => {
                             name="dateBenefitsPayableFrom"
                             value={formData.dateBenefitsPayableFrom}
                             onChange={handleChange}
-                            onClick={(e) => e.target.showPicker()}
+                            // onClick={(e) => e.target.showPicker()}
                             floatingLabel
                             required
                           />
@@ -2491,7 +2491,7 @@ const Wc1FormComponent = () => {
                             name="PayBenefitUntil"
                             value={formData.PayBenefitUntil}
                             onChange={handleChange}
-                            onClick={(e) => e.target.showPicker()}
+                            // onClick={(e) => e.target.showPicker()}
                             floatingLabel
                             required
                           />
@@ -2652,7 +2652,7 @@ const Wc1FormComponent = () => {
                             id="dateOfDisability"
                             name="dateOfDisability"
                             onChange={handleChange}
-                            onClick={(e) => e.target.showPicker()}
+                            // onClick={(e) => e.target.showPicker()}
                           />
                         </div>
                       </div>
