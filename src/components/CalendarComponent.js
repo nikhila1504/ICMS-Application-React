@@ -147,7 +147,7 @@ const CalendarComponent = () => {
   };
 
   return (
-    <div>
+    <div className="calendar">
       <h1>
         <Link to="/parties" className="heading btn  btn-dark mb-2">
           Back

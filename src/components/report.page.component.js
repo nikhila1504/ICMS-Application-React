@@ -5,6 +5,7 @@ import { Column } from 'primereact/column';
 import { Calendar } from 'primereact/calendar';
 import 'primereact/resources/themes/nova-alt/theme.css';
 import 'primereact/resources/primereact.min.css';
+import { MDBInput } from 'mdb-react-ui-kit';
 
 import { useState,useEffect } from 'react';
 // import { FilterService } from 'primereact/api';
@@ -23,8 +24,11 @@ const ReportPageComponent = () => {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   })
+// const [data, setData] = useState({
+//     fromDate: '',
+//     toDate: ''
+//   });
 
-  
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredData, setFilteredData] = useState(data);  // The state for the filtered data
@@ -50,18 +54,26 @@ const ReportPageComponent = () => {
     const handleFilterChange = () => {
         setFilteredData(data.filter(item => dateFilter(item.date)));
     };
-
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setData({
+        ...data,
+        [name]: value,
+      });
+  
+    };
 
 const exportToPDF = () => {
         const doc = new jsPDF();
-        doc.text('Product List', 20, 10);
+        doc.text('User Productivity Report', 20, 10);
 
         // Convert DataTable columns to a format `autoTable` can use
         const columns = [
-            { header: 'ID', dataKey: 'id' },
-            { header: 'Name', dataKey: 'fname' },
-            { header: 'Age', dataKey: 'age' },
-            { header: 'City', dataKey: 'city' }
+            { header: 'Date ', dataKey: 'activityDate' },
+            { header: 'Staff Name', dataKey: 'staffName' },
+            { header: 'Functional Role', dataKey: 'functionalRole' },
+            { header: 'Form Name', dataKey: 'formName' },
+            { header: 'Count', dataKey: 'countNo' }
         ];
 
         // Convert rows of data to `autoTable` format
@@ -167,8 +179,68 @@ console.log(filtered);
       <h1></h1>
       <h1 className="custom-h1" style={{ marginTop: '5px', align:'right' }}>User Productivity Report </h1>
      {/* Date Range Inputs */}
+     <div>
+        {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Claimant Information</h1> */}
+        <div className="form-section flex-fill mb-0">
+          <div className="form-group row mb-0 mt-3">
+            <div className="col-md-2">
+              <MDBInput
+                type="date"
+                label="From Date"
+                className="custom-input"
+                name="fromDate"
+                onChange={handleChange}
+                value={data.fromDate || ''}
+                floating
+              />
+            </div>
+            <div className="col-md-2">
+              <MDBInput
+                type="date"
+                label="To Date"
+                onChange={handleChange}
+                className="custom-input"
+                name="toDate"
+                value={data.toDate || ''}
+                floating
+              />
+            </div>
+            {/* <Button
+                    label="Clear Filters"
+                    icon="pi pi-times"
+                    onClick={() => {
+                        setFromDate(null);
+                        setToDate(null);
+                        setFilteredData(data); // Reset to all data when filters are cleared
+                    }}
+                    className="p-button-secondary p-ml-3"
+                /> */}
+            <div className="col-md-1">
+              <Button label="Reset" icon="pi pi-refresh" size="small" />
+            </div>
+            <div className="col-md-2">
+              <Button label="Generete Report" icon="pi pi-check" size="small" />
+            </div>
+            {/* <div className="col-md-2">
+            <Button
+                    label="Clear Filters"
+                    icon="pi pi-times"
+                    onClick={() => {
+                        setFromDate(null);
+                        setToDate(null);
+                        setFilteredData(data); // Reset to all data when filters are cleared
+                    }}
+                    className="p-button-secondary p-ml-3"
+                />
+            </div> */}
+            
+          </div>
+        </div>
+        <h1></h1>
+        <h1></h1>
+      </div>
      <div className="p-mb-3">
-                <span className="p-mr-3">From Date:</span>
+                {/* <span className="p-mr-3">From Date:</span>
                 <Calendar
                     value={fromDate}
                     onChange={(e) => {
@@ -197,9 +269,9 @@ console.log(filtered);
                         setFilteredData(data); // Reset to all data when filters are cleared
                     }}
                     className="p-button-secondary p-ml-3"
-                />
+                /> */}
        
-      <DataTable value={filteredData} sortMode="multiple" filters={filters}
+      {/* <DataTable value={filteredData} sortMode="multiple" filters={filters}
       loading={loading}
      paginator 
       footer={header}
@@ -210,13 +282,31 @@ console.log(filtered);
       scrollable 
       scrollHeight="400px"  // Defines vertical scroll height
       responsiveLayout="scroll" 
-      >
-         <Column field="activityDate" header="Activity Date" sortable></Column>
-                <Column field="countNo" header="Count No" sortable></Column>
-                <Column field="divisionName" header="Division Name" sortable></Column>
-                <Column field="formName" header="Form Name" sortable></Column>
-                <Column field="staffName" header="Staff Name" sortable></Column>
-                <Column field="functionalRole" header="Functional Role" sortable></Column>
+      > */}
+ <div style={{ backgroundColor: "skyblue", display: 'flex', justifyContent: 'flex-start', padding: '4px' }}>
+        <InputText
+          onInput={(e) =>
+            setFilters({
+              global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
+            })
+          }
+        />
+      </div>
+<DataTable value={filteredData} sortMode="multiple" filters={filters}
+          paginator
+          footer={header}
+          rows={10}
+          rowsPerPageOptions={[1,2,3,4,5,10,20,50,100]}
+          // totalRecords={500}
+          stripedRows
+          scrollable 
+        >
+         <Column field="activityDate" header="Date" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%' }} ></Column>
+                {/* <Column field="divisionName" header="Division Name" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px'  }} ></Column> */}
+                <Column field="staffName" header="Staff Name" sortable  headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'20%' }} ></Column>
+                <Column field="functionalRole" header="Functional Role" sortable  headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px',width:'30%'  }} ></Column>
+                <Column field="formName" header="Form Name" sortable headerStyle={{ backgroundColor: '#4babf55e' ,padding: '16px',paddingLeft:'52px'}} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'30%' }} ></Column>
+                <Column field="countNo" header="Count" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%'  }} ></Column>
       </DataTable>
 
     </div>

@@ -1,10 +1,11 @@
+import { bottom } from '@popperjs/core';
 import React from 'react'
 import { Link } from 'react-router-dom';
 
 const DataTableComponent = () => {
     return (
         // <div>NewClaimComponent</div>
-        <nav className="navbar navbar-expand-md mt-3 ml-0">
+        <nav className="navbar navbar-expand-md ml-0">
             <ul className="navbar navbar-nav">
                 <li className="nav-item dropdown">
                     <h2> <Link
@@ -15,6 +16,7 @@ const DataTableComponent = () => {
                         data-toggle="dropdown"
                         aria-haspopup="true"
                         aria-expanded="false" 
+                        style={{paddingBottom: '10px'}}
                     >
                         Reports
                     </Link></h2>
