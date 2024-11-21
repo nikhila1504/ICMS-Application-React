@@ -77,7 +77,7 @@ const exportToPDF = () => {
 
         // Convert DataTable columns to a format `autoTable` can use
         const columns = [
-            { header: 'Date ', dataKey: 'activityDate' },
+            { header: 'Date', dataKey: 'activityDate' },
             { header: 'Staff Name', dataKey: 'staffName' },
             { header: 'Functional Role', dataKey: 'functionalRole' },
             { header: 'Form Name', dataKey: 'formName' },
@@ -103,7 +103,7 @@ const exportToPDF = () => {
        bookType: "xlsx",
         type: "array",
       });
-      saveAsExcelFile(excelBuffer, "data");
+      saveAsExcelFile(excelBuffer, "UserProductivityReport");
     });
   };
 
@@ -118,7 +118,8 @@ const exportToPDF = () => {
       // FileSaver.saveAs(
       saveAs(
         data,
-        fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
+        fileName + EXCEL_EXTENSION
+        // fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
       );
     }) ;
   
@@ -132,11 +133,11 @@ const exportToPDF = () => {
         const flattenedData = fetchedData.map(item => ({
 
           activityDate: format(new Date(item.userProductivityReportPK.activityDate), 'MM/dd/yyyy'),
-          countNo: item.userProductivityReportPK.countNo,
-          divisionName: item.userProductivityReportPK.divisionName,
-          formName: item.userProductivityReportPK.formName,
           staffName: item.userProductivityReportPK.staffName,
-          functionalRole: item.functionalRole
+          functionalRole: item.functionalRole,
+          // divisionName: item.userProductivityReportPK.divisionName,
+          formName: item.userProductivityReportPK.formName,
+          countNo: item.userProductivityReportPK.countNo,
       }));
       
         setData(flattenedData);

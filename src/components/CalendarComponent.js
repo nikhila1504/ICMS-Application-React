@@ -23,6 +23,8 @@ const CalendarComponent = () => {
   const [endTime, setEndTime] = useState("01:00");
   const [title, setTitle] = useState("");
   const [modalShow, setModalShow] = useState(false);
+  const [modalMode, setModalMode] = useState('');  // 'edit' or 'create'
+  const [selectedEvent, setSelectedEvent] = useState(null);  
 
   const handleDateClick = (info) => {
     console.log("Date clicked:", info.dateStr);
@@ -62,6 +64,32 @@ const CalendarComponent = () => {
 
     fetchEvents();
   }, [id, title]);
+
+  // Event click handler to fetch the event details for editing
+  const handleEventClick = async (info) => {
+    console.log(info);
+    const eventId = info.event.id;
+    console.log(eventId);
+    CalendarService.getSlotById(eventId)
+    .then((response) => {
+      console.log(response);
+      setSelectedEvent(response.data); // Set the clicked event as the selected event
+      const startDateTime = `${
+        selectedDate.toISOString().split("T")[0]
+      }T${selectedEvent.startTime}`;
+      const endDateTime = `${
+        selectedDate.toISOString().split("T")[0]
+      }T${selectedEvent.endTime}`;
+      console.log("selectedevent..",startDateTime);
+      setModalMode('edit'); // Set modal mode to "edit"
+      setModalShow(true); // Show the modal for editing
+      
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  };
+
 
   const handleSaveSlot = async () => {
     if (!startTime || !endTime || !title) {
@@ -147,28 +175,39 @@ const CalendarComponent = () => {
   };
 
   return (
-    <div className="calendar">
+    <div style={{display: "flex",gap: "20px", padding: "20px", width:'100%' }}>
+      <div style={{ flex: 3 }}>
       <h1>
-        <Link to="/parties" className="heading btn  btn-dark mb-2">
+        <Link to="/wc1" className="heading btn  btn-dark mb-2">
           Back
         </Link>
         Calendar :{currentDate}
       </h1>
-      <FullCalendar
+      <FullCalendar 
         headerToolbar={{
           start: "today prev next",
+          center: "title", 
           end: "dayGridMonth dayGridWeek dayGridDay",
         }}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
         weekends={false}
-        events={events}
+        events={events} // Pass events array
+        editable={true} // Allow drag-and-drop
+        selectable={true} // Allow selection
+        nowIndicator={true} // Highlight the current time
+        initialDate={new Date()} // Start with today's date
+        dayCellClassNames={(date) =>
+          date.date.toDateString() === new Date().toDateString()
+            ? "highlight-today"
+            : ""}
         dateClick={handleDateClick}
+        eventClick={handleEventClick}
         contentHeight={500}
       />
-      <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
+      <Modal className="calendar" show={modalShow} onHide={() => setModalShow(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Create Slot</Modal.Title>
+          <Modal.Title><h3>{modalMode === 'edit' ? 'Edit Event' : 'Create New Event'}</h3></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -177,7 +216,7 @@ const CalendarComponent = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter slot title"
-                value={title}
+                value={selectedEvent?.title || ''}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </Form.Group>
@@ -185,7 +224,7 @@ const CalendarComponent = () => {
               <Form.Label>Start Time</Form.Label>
               <Form.Control
                 type="time"
-                value={startTime}
+                value={selectedEvent?.startTime ? selectedEvent.startTime.slice(11, 16) : ''}
                 onChange={(e) => setStartTime(e.target.value)}
               />
             </Form.Group>
@@ -193,7 +232,7 @@ const CalendarComponent = () => {
               <Form.Label>End Time</Form.Label>
               <Form.Control
                 type="time"
-                value={endTime}
+                value={selectedEvent?.endTime ? selectedEvent.endTime.slice(11, 16) : ''}
                 onChange={(e) => setEndTime(e.target.value)}
               />
             </Form.Group>
@@ -203,11 +242,68 @@ const CalendarComponent = () => {
           <Button variant="secondary" onClick={() => setModalShow(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSaveSlot}>
+          {/* <Button variant="primary" onClick={handleSaveSlot}>
             Save Slot
-          </Button>
+          </Button> */}
+          <Button variant="primary" onClick={handleSaveSlot}>{modalMode === 'edit' ? 'Save Changes' : 'Save Slot'}</Button>
         </Modal.Footer>
       </Modal>
+      </div>
+      {/* Legend Section */}
+      <div style={{ flex: 1,marginTop:"200px"  }}>
+        {/* <h3>Legend</h3> */}
+        <ul style={{ listStyle: "none", padding: 10}}>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#007bff",
+                marginRight: "10px",
+              }}
+            ></span>
+            Appointment
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#28a745",
+                marginRight: "10px",
+              }}
+            ></span>
+            Holiday
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#dc3545",
+                marginRight: "10px",
+              }}
+            ></span>
+            Doctor's Appointment
+          </li>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#f7f8b4",
+                border: "2px solid #007bff",
+                marginRight: "10px",
+              }}
+            ></span>
+            Today
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

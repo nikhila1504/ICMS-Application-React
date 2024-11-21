@@ -4,7 +4,7 @@ import logo from '../sbwc_logo.gif'; // Tell webpack this JS file uses this imag
 import icmslogo from '../icms_logo.gif'; // Tell webpack this JS file uses this image
 import NewClaimComponent from "./NewClaimComponent.js";
 import DataTableComponent from "./DataTableComponent.js";
-
+import CalendarHeader from "./CalendarHeader.js";
 
 const HeaderComponent = () => {
   const location = useLocation();
@@ -34,6 +34,7 @@ const HeaderComponent = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
         {/* <NewClaimComponent /> */}
         <DataTableComponent />
+        <CalendarHeader />
           <div className="ms-auto">
             {path ? (
               <button
