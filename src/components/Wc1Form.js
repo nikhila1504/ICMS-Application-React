@@ -432,7 +432,7 @@ const Wc1FormComponent = () => {
   ]
 
   const [benefitsPayableFor, setBenefitsPayableFor] = useState([
-    { label: 'Total Disability', value: 'Total Disability' },
+    { label: 'Total Disability', value: { id: 2, code: 'TOTALDIS', description: 'Total Disability' } },
   ]);
 
 
@@ -503,7 +503,7 @@ const Wc1FormComponent = () => {
     });
     if (!Object.keys(stateMappings).some(key => name.includes(key))) {
       if (name === 'incomeBenefits') {
-        const mappedValue = value === 'incomeBenefitsPaid' ? 'Y' : 'N'; 
+        const mappedValue = value === 'incomeBenefitsPaid' ? 'Y' : 'N';
         setFormData((prevData) => ({
           ...prevData,
           // name:value,
@@ -716,23 +716,22 @@ const Wc1FormComponent = () => {
         return;
       }
     } else {
-
-      //If form is valid, show success toast and submit the form
-      toastRef.current.show({
-        severity: 'success',
-        summary: 'Submission Successful',
-        detail: 'Your form has been successfully submitted!',
-        life: 3000,
-      });
-      const claim = { };
-      console.log("formData",formData);
+      const claim = {};
+      console.log("formData", formData);
       ClaimService.saveClaim(formData).then((response) => {
         alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
+        //If form is valid, show success toast and submit the form
+        // toastRef.current.show({
+        //   severity: 'success',
+        //   summary: 'Submission Successful',
+        //   detail: 'Your form has been successfully submitted!',
+        //   life: 3000,
+        // });
       }).catch((error) => {
         console.log(error);
       });
       console.log('Submitting form with data:', formData);
-      setIsActive(false); 
+      setIsActive(false);
     }
     setIsActive(false);
     console.log("Form is valid. Proceeding with submission...");
@@ -1667,7 +1666,7 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               options={typeOfInjury.map(type => ({
                                 label: type.description,
-                                value: type.value
+                                value: { id: type.id, code: type.code }
                               }))}
                               placeholder="---Select One---"
                               filter
@@ -2056,7 +2055,7 @@ const Wc1FormComponent = () => {
                                   name="RtwDate"
                                   value={formData.RtwDate}
                                   onChange={handleChange}
-                                  // onClick={(e) => e.target.showPicker()}
+                                // onClick={(e) => e.target.showPicker()}
                                 />
                                 {/* </MDBFloatingLabel> */}
                               </div>
@@ -2169,7 +2168,7 @@ const Wc1FormComponent = () => {
                                   name="DateOfReport"
                                   value={formData.DateOfReport}
                                   onChange={handleChange}
-                                  // onClick={(e) => e.target.showPicker()}
+                                // onClick={(e) => e.target.showPicker()}
                                 />
                                 {/* </MDBFloatingLabel> */}
                               </div>
@@ -2653,7 +2652,7 @@ const Wc1FormComponent = () => {
                             id="dateOfDisability"
                             name="dateOfDisability"
                             onChange={handleChange}
-                            // onClick={(e) => e.target.showPicker()}
+                          // onClick={(e) => e.target.showPicker()}
                           />
                         </div>
                       </div>
