@@ -19,11 +19,26 @@ import { saveAs } from 'file-saver';
 import { Button } from 'primereact/button';
 import ReportService from "../services/report.service";
 import { format } from 'date-fns';
+import { isEmpty } from 'validator';
 
 const ReportPageComponent = () => {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   })
+   // Function to apply global filter on filtered data
+   const applyGlobalFilter = (inputValue) => {
+    const globalFilteredData = data.filter(item => {
+      const lowerCaseInput = inputValue.toLowerCase();
+      const matchValue = lowerCaseInput ? item.activityDate?.toLowerCase().includes(lowerCaseInput) ||
+                                      item.staffName?.toLowerCase().includes(lowerCaseInput) ||
+                                      item.functionalRole?.toLowerCase().includes(lowerCaseInput) ||
+                                      item.formName?.toLowerCase().includes(lowerCaseInput) ||
+                                      item.countNo?.toString().toLowerCase().includes(lowerCaseInput) : true;
+      return matchValue && dateFilter(item.activityDate);
+    });
+
+    setFilteredData(globalFilteredData);
+  };
 // const [data, setData] = useState({
 //     fromDate: '',
 //     toDate: ''
@@ -54,14 +69,7 @@ const ReportPageComponent = () => {
     const handleFilterChange = () => {
         setFilteredData(data.filter(item => dateFilter(item.date)));
     };
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      setData({
-        ...data,
-        [name]: value,
-      });
-  
-    };
+   
 
 const exportToPDF = () => {
         const doc = new jsPDF();
@@ -79,10 +87,9 @@ const exportToPDF = () => {
         // Convert rows of data to `autoTable` format
         doc.autoTable({
             columns: columns,
-            body: data,
+            body: filteredData,
             startY: 20,
-            theme: 'grid',
-        });
+            theme: 'grid',        });
 
         doc.save('UserProductivityReport.pdf');
     };
@@ -90,7 +97,7 @@ const exportToPDF = () => {
 
   const exportExcel = () => {
     import("xlsx").then((xlsx) => {
-      const workSheet = xlsx.utils.json_to_sheet(data);
+      const workSheet = xlsx.utils.json_to_sheet(filteredData);
       const workBook = { Sheets: { data: workSheet }, SheetNames: ["data"]}
       const excelBuffer = xlsx.write(workBook, {
        bookType: "xlsx",
@@ -124,14 +131,14 @@ const exportToPDF = () => {
         const fetchedData = response.data
         const flattenedData = fetchedData.map(item => ({
 
-          activityDate: format(new Date(item.userProductivityReportPK.activityDate), 'yyyy/MM/dd'),
+          activityDate: format(new Date(item.userProductivityReportPK.activityDate), 'MM/dd/yyyy'),
           countNo: item.userProductivityReportPK.countNo,
           divisionName: item.userProductivityReportPK.divisionName,
           formName: item.userProductivityReportPK.formName,
           staffName: item.userProductivityReportPK.staffName,
           functionalRole: item.functionalRole
       }));
-        console.log(response.data);
+      
         setData(flattenedData);
         setFilteredData(flattenedData);
         setLoading(false);
@@ -156,7 +163,22 @@ console.log(filtered);
     setFilteredData(filtered);
 };
 
+const resetFilters = () => {
+  console.log('resetFilters invoked');
+  setFromDate(null); // Reset from date
+  setToDate(null); // Reset to date
+  setFilteredData(data); // Reset filtered data to original data
+};
 
+const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  if (name === 'fromDate') {
+    setFromDate(value);
+  } else if (name === 'toDate') {
+    setToDate(value);
+  }
+};
   const header = (
  
     <div className='data-table1' style={{ border:'1px' }}>
@@ -190,7 +212,7 @@ console.log(filtered);
                 className="custom-input"
                 name="fromDate"
                 onChange={handleChange}
-                value={data.fromDate || ''}
+                value={fromDate || ''}
                 floating
               />
             </div>
@@ -201,7 +223,7 @@ console.log(filtered);
                 onChange={handleChange}
                 className="custom-input"
                 name="toDate"
-                value={data.toDate || ''}
+                value={toDate || ''}
                 floating
               />
             </div>
@@ -216,10 +238,10 @@ console.log(filtered);
                     className="p-button-secondary p-ml-3"
                 /> */}
             <div className="col-md-1">
-              <Button label="Reset" icon="pi pi-refresh" size="small" />
+              <Button label="Reset" icon="pi pi-refresh" size="small" onClick={resetFilters} />
             </div>
             <div className="col-md-2">
-              <Button label="Generete Report" icon="pi pi-check" size="small" />
+              <Button label="Generete Report" icon="pi pi-check" size="small" onClick={filterData}/>
             </div>
             {/* <div className="col-md-2">
             <Button
@@ -285,11 +307,8 @@ console.log(filtered);
       > */}
  <div style={{ backgroundColor: "skyblue", display: 'flex', justifyContent: 'flex-start', padding: '4px' }}>
         <InputText
-          onInput={(e) =>
-            setFilters({
-              global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
-            })
-          }
+           onInput={(e) => applyGlobalFilter(e.target.value)}
+          placeholder="Search"
         />
       </div>
 <DataTable value={filteredData} sortMode="multiple" filters={filters}
@@ -300,6 +319,8 @@ console.log(filtered);
           // totalRecords={500}
           stripedRows
           scrollable 
+          scrollHeight="400px"  // Defines vertical scroll height
+          responsiveLayout="scroll" 
         >
          <Column field="activityDate" header="Date" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%' }} ></Column>
                 {/* <Column field="divisionName" header="Division Name" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px'  }} ></Column> */}
