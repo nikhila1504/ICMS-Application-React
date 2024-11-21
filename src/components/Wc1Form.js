@@ -648,14 +648,14 @@ const Wc1FormComponent = () => {
       if (formData.sectionB) {
         const sectionBRequired = ['incomeBenefits'];
         Object.assign(newErrors, validateRequiredFields(formData, sectionBRequired));
-        if (formData.incomeBenefits === 'incomeBenefitsPaid') {
+        if (formData.incomeBenefits === 'Y') {
           const incomeBenefitsRequiredFields = [
             'averageWeeklyWage', 'dateOfFirstPayment',
             'compensationPaid', 'dateBenefitsPayableFrom', 'disabilityTypes', 'weeklyBenefit'
           ];
           Object.assign(newErrors, validateRequiredFields(formData, incomeBenefitsRequiredFields));
         }
-        if (formData.incomeBenefits === 'salaryInLieu') {
+        if (formData.incomeBenefits === 'N') {
           const salaryInLieuRequiredFields = [
             'dateSalaryPaid', 'benefitsPayableFromDate', 'benefitsPayableFor'
           ];
