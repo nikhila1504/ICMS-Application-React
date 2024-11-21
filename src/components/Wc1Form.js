@@ -502,12 +502,14 @@ const Wc1FormComponent = () => {
       }
     });
     if (!Object.keys(stateMappings).some(key => name.includes(key))) {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    } else {
-      if (numericFields.includes(name)) {
+      if (name === 'incomeBenefits') {
+        const mappedValue = value === 'incomeBenefitsPaid' ? 'Y' : 'N'; 
+        setFormData((prevData) => ({
+          ...prevData,
+          // name:value,
+          incomeBenefits: mappedValue,
+        }));
+      } else if (numericFields.includes(name)) {
         let numericValue = value.replace(/[^0-9.]/g, '');
         const parts = numericValue.split('.');
         if (parts.length > 2) {
@@ -2229,7 +2231,7 @@ const Wc1FormComponent = () => {
                           value="incomeBenefitsPaid"
                           disabled={!formData.sectionB}
                           style={{ marginTop: '12px' }}
-                          checked={formData.incomeBenefits === 'incomeBenefitsPaid'}
+                          checked={formData.incomeBenefits === 'Y'}
                           onChange={handleChange}
                           required
                         />
@@ -2250,7 +2252,7 @@ const Wc1FormComponent = () => {
                           value="salaryInLieu"
                           disabled={!formData.sectionB}
                           style={{ marginTop: '12px' }}
-                          checked={formData.incomeBenefits === 'salaryInLieu'}
+                          checked={formData.incomeBenefits === 'N'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: '12px' }} htmlFor="salaryInLieu">
@@ -2265,7 +2267,7 @@ const Wc1FormComponent = () => {
                     </div>
                   </div>
                 </div>
-                {formData.incomeBenefits === 'incomeBenefitsPaid' && (
+                {formData.incomeBenefits === 'Y' && (
                   <div className="form-group Income-Benifits-Form mt-2">
                     <div className="d-flex flex-wrap">
                       <div className="form-section" style={{ marginLeft: '10px' }}>
@@ -2576,7 +2578,7 @@ const Wc1FormComponent = () => {
                     </div>
                   </div>
                 )}
-                {formData.incomeBenefits === 'salaryInLieu' && (
+                {formData.incomeBenefits === 'N' && (
                   <div className="d-flex flex-wrap">
                     <div className="form-section flex-fill">
                       <div className="form-group row mb-1">
