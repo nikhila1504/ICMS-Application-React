@@ -1,10 +1,24 @@
 import axios from "axios";
 
+// const authHeader = () => {
+//   const user = localStorage.getItem("token");
+//   if (user) {
+//     console.log(`Bearer ${user}`);
+//     return { Authorization: `Bearer ${user}` };
+//   } else {
+//     return {};
+//   }
+// };
+
 const authHeader = () => {
   const user = localStorage.getItem("token");
   if (user) {
-    console.log(user);
-    return { Authorization: `Bearer ${user}` };
+    console.log(`Bearer ${user}`);
+    return {
+      Authorization: `Bearer ${user}`,
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+    };
   } else {
     return {};
   }
@@ -18,8 +32,8 @@ class ClaimService {
           headers: authHeader(),
         });
       }
-      saveClaim(claim){
-        return axios.get(CLAIM_URL + "/saveWc1Form" , claim ,{
+      saveClaim(formData){
+        return axios.post(CLAIM_URL + "/saveWc1Form" , formData ,{
           headers: authHeader(),
         });
       }

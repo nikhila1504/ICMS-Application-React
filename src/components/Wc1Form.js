@@ -362,7 +362,7 @@ const Wc1FormComponent = () => {
     timeOfInjury: '',
     dateEmployerNotified: '',
     dateFailedToWorkFullDay: '',
-    receivedFullPay: 'Yes',
+    receivedFullPay: 'Y',
     injuredInEmpPermises: '',
     bodyPartAffected: [],
     treatmentTypes: [],
@@ -723,16 +723,15 @@ const Wc1FormComponent = () => {
         life: 3000,
       });
       const claim = { };
+      console.log("formData",formData);
       ClaimService.saveClaim(formData).then((response) => {
         alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
       }).catch((error) => {
         console.log(error);
       });
       console.log('Submitting form with data:', formData);
-      setIsActive(false); // Reset active state if needed
+      setIsActive(false); 
     }
-
-    // Reset active state after submission
     setIsActive(false);
     console.log("Form is valid. Proceeding with submission...");
     setFormData(prev => ({
@@ -1329,8 +1328,8 @@ const Wc1FormComponent = () => {
                           type="radio"
                           name="daysOff"
                           id="daysOffYes"
-                          value="Yes"
-                          checked={formData.daysOff === 'Yes'}
+                          value="Y"
+                          checked={formData.daysOff === 'Y'}
                           onChange={handleChange}
                           required
                           style={{ marginTop: '14px' }}
@@ -1346,8 +1345,8 @@ const Wc1FormComponent = () => {
                           type="radio"
                           name="daysOff"
                           id="daysOffNo"
-                          value="No"
-                          checked={formData.daysOff === 'No'}
+                          value="N"
+                          checked={formData.daysOff === 'N'}
                           onChange={handleChange}
                           required
                           style={{ marginTop: '14px' }}
@@ -1562,8 +1561,8 @@ const Wc1FormComponent = () => {
                               className={`form-check-input ${errors.receivedFullPay ? 'p-invalid' : ''}`}
                               type="radio"
                               name="receivedFullPay"
-                              value="Yes"
-                              checked={formData.receivedFullPay === 'Yes'}
+                              value="Y"
+                              checked={formData.receivedFullPay === 'Y'}
                               onChange={handleChange}
                               required
                             />
@@ -1576,8 +1575,8 @@ const Wc1FormComponent = () => {
                               className={`form-check-input ${errors.receivedFullPay ? 'p-invalid' : ''}`}
                               type="radio"
                               name="receivedFullPay"
-                              value="No"
-                              checked={formData.receivedFullPay === 'No'}
+                              value="N"
+                              checked={formData.receivedFullPay === 'N'}
                               onChange={handleChange}
                             />
                             <label className="form-check-label custom-label" htmlFor="No">No</label>
@@ -1589,8 +1588,8 @@ const Wc1FormComponent = () => {
                               className={`form-check-input ${errors.receivedFullPay ? 'p-invalid' : ''}`}
                               type="radio"
                               name="receivedFullPay"
-                              value="None"
-                              checked={formData.receivedFullPay === 'None'}
+                              value="NA"
+                              checked={formData.receivedFullPay === 'NA'}
                               onChange={handleChange}
                             />
                             <label className="form-check-label custom-label" htmlFor="None">None</label>
@@ -1614,8 +1613,8 @@ const Wc1FormComponent = () => {
                               className={`form-check-input ${errors.injuredInEmpPermises ? 'p-invalid' : ''}`}
                               type="radio"
                               name="injuredInEmpPermises"
-                              value="Yes"
-                              checked={formData.injuredInEmpPermises === 'Yes'}
+                              value="Y"
+                              checked={formData.injuredInEmpPermises === 'Y'}
                               onChange={handleChange}
                               required
                             />
@@ -1628,8 +1627,8 @@ const Wc1FormComponent = () => {
                               className={`form-check-input ${errors.injuredInEmpPermises ? 'p-invalid' : ''}`}
                               type="radio"
                               name="injuredInEmpPermises"
-                              value="No"
-                              checked={formData.injuredInEmpPermises === 'No'}
+                              value="N"
+                              checked={formData.injuredInEmpPermises === 'N'}
                               onChange={handleChange}
                             />
                             <label className="form-check-label custom-label" htmlFor="No">No</label>
@@ -1641,8 +1640,8 @@ const Wc1FormComponent = () => {
                               className={`form-check-input ${errors.injuredInEmpPermises ? 'p-invalid' : ''}`}
                               type="radio"
                               name="injuredInEmpPermises"
-                              value="None"
-                              checked={formData.injuredInEmpPermises === 'None'}
+                              value="NA"
+                              checked={formData.injuredInEmpPermises === 'NA'}
                               onChange={handleChange}
                             />
                             <label className="form-check-label custom-label" htmlFor="None">None</label>
@@ -2279,7 +2278,7 @@ const Wc1FormComponent = () => {
                                 className="form-check-input"
                                 name="previousMedicalOnly"
                                 id="previouslyMedicalYes"
-                                value="Yes"
+                                value="Y"
                                 onChange={handleChange}
                                 style={{ fontSize: '10px', color: 'black' }}
                               />
@@ -2291,7 +2290,7 @@ const Wc1FormComponent = () => {
                                 className="form-check-input"
                                 name="previousMedicalOnly"
                                 id="previouslyMedicalNo"
-                                value="No"
+                                value="N"
                                 onChange={handleChange}
                                 style={{ fontSize: '10px', color: 'black' }}
                               />
@@ -2590,7 +2589,7 @@ const Wc1FormComponent = () => {
                                 className="form-check-input"
                                 name="previouslyMedicalOnly"
                                 id="previouslyMedicalYes"
-                                value="Yes"
+                                value="Y"
                                 onChange={handleChange}
                                 style={{ fontSize: '10px', color: 'black', marginTop: '8px' }}
                               />
@@ -2602,7 +2601,7 @@ const Wc1FormComponent = () => {
                                 className="form-check-input"
                                 name="previouslyMedicalOnly"
                                 id="previouslyMedicalNo"
-                                value="No"
+                                value="N"
                                 onChange={handleChange}
                                 style={{ fontSize: '10px', color: 'black', marginTop: '8px' }}
                               />
