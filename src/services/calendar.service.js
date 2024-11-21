@@ -42,6 +42,11 @@ class CalendarService {
       headers: authHeader(),
     });
   }
+  updateSlot(slot) {
+    return axios.put(SLOT_URL + "/updateSlot/" + slot.slotId, slot, {
+      headers: authHeader(),
+    });
+  }
 }
 
 /* eslint import/no-anonymous-default-export: [2, {"allowNew": true}] */
