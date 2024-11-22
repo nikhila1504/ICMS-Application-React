@@ -27,6 +27,13 @@ class CalendarService {
       headers: authHeader(),
     });
   }
+
+  getSlotList(id) {
+    return axios.get(SLOT_URL + "/listAllSlots"+"/" + id, {
+      headers: authHeader(),
+    });
+  }
+
   getSlotById(id) {
     return axios.get(SLOT_URL + "/" + id, {
       headers: authHeader(),

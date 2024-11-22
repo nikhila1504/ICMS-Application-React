@@ -32,13 +32,14 @@ const CalendarComponent = () => {
     // Fetch events on mount
     const fetchEvents = async () => {
       try {
-        const response = await CalendarService.getEventById(id);
-        const fetchedEvents = response.data.slot.map((slot) => ({
+        const response = await CalendarService.getSlotList(id);
+        const fetchedEvents = response.data.map((slot) => ({
           id: slot.slotId,
           title: slot.title || "Title is not Available",
           start: slot.startTime,
           end: slot.endTime,
         }));
+        console.log("fetchedEvents..",fetchedEvents);
         setEvents(fetchedEvents);
       } catch (error) {
         console.log(error);
@@ -91,13 +92,13 @@ const CalendarComponent = () => {
       title: title,
       startTime: startDateTime,
       endTime: endDateTime,
-      deactiveDate: endDateTime,
+      // deactiveDate: endDateTime,
       createdDate: new Date().toISOString(),
       createdBy: username,
       lastUpdatedDate: new Date().toISOString(),
       lastUpdatedBy: username,
       calendar: {
-        calendarId: id,
+        calendarId: 41,
       },
     };
   
@@ -113,25 +114,25 @@ const CalendarComponent = () => {
       } else {
         // Create new event
         const calendarData = {
-          party: { id: id },
-          calenderDate: startDateTime,
-          deactiveDate: endDateTime,
-          createdDate: new Date().toISOString(),
-          createdBy: username,
-          lastUpdatedDate: new Date().toISOString(),
-          lastUpdatedBy: username,
+          // party: { id: id },
+          // calenderDate: startDateTime,
+          // deactiveDate: endDateTime,
+          // createdDate: new Date().toISOString(),
+          // createdBy: username,
+          // lastUpdatedDate: new Date().toISOString(),
+          // lastUpdatedBy: username,
           slot: [slotData],
         };
-        await CalendarService.saveCalendar(calendarData);
+        await CalendarService.saveSlot(slotData);
       }
   
       // Close the modal
       setModalShow(false);
   
       // Refresh events after saving
-      const response = await CalendarService.getEventById(id);
-      if (response && response.data && response.data.slot) {
-        const updatedEvents = response.data.slot.map((slot) => ({
+      const response = await CalendarService.getSlotList(id);
+      if (response && response.data) {
+        const updatedEvents = response.data.map((slot) => ({
           id: slot.slotId,
           title: slot.title || "Title is not Available",
           start: slot.startTime,
@@ -167,15 +168,19 @@ const CalendarComponent = () => {
           selectable={true} // Allow selection
           nowIndicator={true} // Highlight the current time
           initialDate={new Date()} // Start with today's date
+          dayCellClassNames={(date) =>
+            date.date.toDateString() === new Date().toDateString()
+              ? "highlight-today"
+              : ""}
           dateClick={handleDateClick}
           eventClick={handleEventClick}
-          contentHeight={500}
+          contentHeight={450}
         />
 
         {/* Modal for editing or creating an event */}
         <Modal className="calendar" show={modalShow} onHide={() => setModalShow(false)} centered>
           <Modal.Header closeButton>
-            <Modal.Title><h3>{modalMode === 'edit' ? 'Edit Event' : 'Create New Event'}</h3></Modal.Title>
+            <Modal.Title><h3>{modalMode === 'edit' ? 'Edit Event' : 'Create Event'}</h3></Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
@@ -211,11 +216,65 @@ const CalendarComponent = () => {
               Cancel
             </Button>
             <Button variant="primary" onClick={handleSaveSlot}>
-              {modalMode === 'edit' ? 'Save Changes' : 'Save Slot'}
+              {modalMode === 'edit' ? 'Save Slot' : 'Save Slot'}
             </Button>
           </Modal.Footer>
         </Modal>
       </div>
+      <div style={{ flex: 1,marginTop:"200px"  }}>
+        {/* <h3>Legend</h3> */}
+        <ul style={{ listStyle: "none", padding: 10}}>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#007bff",
+                marginRight: "10px",
+              }}
+            ></span>
+            Appointment
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#28a745",
+                marginRight: "10px",
+              }}
+            ></span>
+            Holiday
+          </li>
+          <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#dc3545",
+                marginRight: "10px",
+              }}
+            ></span>
+            Doctor's Appointment
+          </li>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            <span
+              style={{
+                display: "inline-block",
+                width: "20px",
+                height: "20px",
+                backgroundColor: "#f7f8b4",
+                border: "2px solid #007bff",
+                marginRight: "10px",
+              }}
+            ></span>
+            Today
+          </li>
+        </ul>
+        </div>
     </div>
   );
 };

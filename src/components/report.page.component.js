@@ -19,7 +19,7 @@ import { saveAs } from 'file-saver';
 import { Button } from 'primereact/button';
 import ReportService from "../services/report.service";
 import { format } from 'date-fns';
-import { isEmpty } from 'validator';
+import { ProgressSpinner } from 'primereact/progressspinner'; // Import ProgressSpinner from PrimeReact
 
 const ReportPageComponent = () => {
   const [filters, setFilters] = useState({
@@ -28,7 +28,7 @@ const ReportPageComponent = () => {
    // Function to apply global filter on filtered data
    const applyGlobalFilter = (inputValue) => {
     const globalFilteredData = data.filter(item => {
-      const lowerCaseInput = inputValue.toLowerCase();
+      const lowerCaseInput = inputValue?.toLowerCase();
       const matchValue = lowerCaseInput ? item.activityDate?.toLowerCase().includes(lowerCaseInput) ||
                                       item.staffName?.toLowerCase().includes(lowerCaseInput) ||
                                       item.functionalRole?.toLowerCase().includes(lowerCaseInput) ||
@@ -47,8 +47,10 @@ const ReportPageComponent = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredData, setFilteredData] = useState(data);  // The state for the filtered data
-    const [fromDate, setFromDate] = useState(null);  // From date state
-    const [toDate, setToDate] = useState(null);  // To date state
+  const [fromDate, setFromDate] = useState(null);  // From date state
+  const [toDate, setToDate] = useState(null);  // To date state
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
+
 
     // Function to filter data based on the date range
     const dateFilter = (value) => {
@@ -69,7 +71,7 @@ const ReportPageComponent = () => {
     const handleFilterChange = () => {
         setFilteredData(data.filter(item => dateFilter(item.date)));
     };
-   
+
 
 const exportToPDF = () => {
         const doc = new jsPDF();
@@ -109,7 +111,7 @@ const exportToPDF = () => {
 
   const saveAsExcelFile = (buffer, fileName) => {
     import("file-saver").then((FileSaver) => {
-      let EXCEL_TYPE = 
+      let EXCEL_TYPE =
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8";
       let EXCEL_EXTENSION = ".xlsx";
       const data = new Blob([buffer], {
@@ -122,7 +124,7 @@ const exportToPDF = () => {
         // fileName + '_export_' + new Date().getTime() + EXCEL_EXTENSION
       );
     }) ;
-  
+
   };
 
 
@@ -139,13 +141,14 @@ const exportToPDF = () => {
           formName: item.userProductivityReportPK.formName,
           countNo: item.userProductivityReportPK.countNo,
       }));
-      
+
         setData(flattenedData);
         setFilteredData(flattenedData);
         setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false); // In case of an error, stop the loading spinner
       });
 }, []);
 
@@ -168,7 +171,14 @@ const resetFilters = () => {
   console.log('resetFilters invoked');
   setFromDate(null); // Reset from date
   setToDate(null); // Reset to date
+  setSearchTerm("");
   setFilteredData(data); // Reset filtered data to original data
+};
+// Handle search input change
+const handleSearchChange = (e) => {
+  const value = e.target.value;
+  setSearchTerm(value);
+  applyGlobalFilter(value);
 };
 
 const handleChange = (e) => {
@@ -180,23 +190,31 @@ const handleChange = (e) => {
     setToDate(value);
   }
 };
+
+  // Spinner Component
+  const spinner = loading ? (
+    <div className="spinner-container" style={{ textAlign: 'center', marginTop: '50px' }}>
+      <ProgressSpinner />
+    </div>
+  ) : null;
+
   const header = (
- 
+
     <div className='data-table1' style={{ border:'1px' }}>
       <Button
-      type="button" 
+      type="button"
       icon="pi pi-file-excel"
       onClick={exportExcel}
       className="p-button-success mr-2"
       label="Export to Xcel"
       data-pr-tooltip="XLS"
       />
-      
+
       {/* <Button label="Export to Xcel" icon="pi pi-file-excel" onClick={exportExcel} className="p-mb-3" /> */}
       <Button label="Export to PDF" icon="pi pi-file-pdf" onClick={exportToPDF} className="p-mb-3" />
      </div>
   );
-  
+
   return (
     <div>
       <h1></h1>
@@ -256,7 +274,7 @@ const handleChange = (e) => {
                     className="p-button-secondary p-ml-3"
                 />
             </div> */}
-            
+
           </div>
         </div>
         <h1></h1>
@@ -293,7 +311,7 @@ const handleChange = (e) => {
                     }}
                     className="p-button-secondary p-ml-3"
                 /> */}
-       
+
       {/* <DataTable value={filteredData} sortMode="multiple" filters={filters}
       loading={loading}
      paginator 
@@ -302,16 +320,19 @@ const handleChange = (e) => {
       rowsPerPageOptions={[1,2,3,4,5,10,20,50,100]}
       totalRecords={500}
       stripedRows
-      scrollable 
+      scrollable
       scrollHeight="400px"  // Defines vertical scroll height
-      responsiveLayout="scroll" 
+      responsiveLayout="scroll"
       > */}
  <div style={{ backgroundColor: "skyblue", display: 'flex', justifyContent: 'flex-start', padding: '4px' }}>
         <InputText
-           onInput={(e) => applyGlobalFilter(e.target.value)}
+          value={searchTerm}  // Bind the input value to the searchTerm state
+          onInput={handleSearchChange}
           placeholder="Search"
         />
-      </div>
+  </div>
+      {spinner}
+      {!loading && (
 <DataTable value={filteredData} sortMode="multiple" filters={filters}
           paginator
           footer={header}
@@ -319,9 +340,9 @@ const handleChange = (e) => {
           rowsPerPageOptions={[1,2,3,4,5,10,20,50,100]}
           // totalRecords={500}
           stripedRows
-          scrollable 
+          scrollable
           scrollHeight="400px"  // Defines vertical scroll height
-          responsiveLayout="scroll" 
+          responsiveLayout="scroll"
         >
          <Column field="activityDate" header="Date" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%' }} ></Column>
                 {/* <Column field="divisionName" header="Division Name" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px'  }} ></Column> */}
@@ -330,7 +351,7 @@ const handleChange = (e) => {
                 <Column field="formName" header="Form Name" sortable headerStyle={{ backgroundColor: '#4babf55e' ,padding: '16px',paddingLeft:'52px'}} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'30%' }} ></Column>
                 <Column field="countNo" header="Count" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%'  }} ></Column>
       </DataTable>
-
+      )}
     </div>
     </div>
   );

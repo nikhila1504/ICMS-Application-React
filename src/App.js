@@ -13,7 +13,7 @@ import PartyListComponent from "./components/PartyListComponent";
 import Wc1FormComponent from "./components/Wc1Form";
 import Wc1Form from "./components/Wc1FormComponent";
 import Wc1Component from "./components/Wc1Component";
-import ReportComponent from "./components/report.component";
+import ReportPageComponent from "./components/report.page.component";
 
 import manageMatchingClaims from "./components/manageMatchingClaims";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -39,7 +39,7 @@ function App() {
               <Route path="/Wc1poc" element={<Wc1Component />} />
               <Route path="/calendar/:id" element={<CalendarComponent />} />
               <Route path="/manageMatchingClaims" element={<manageMatchingClaims />} />
-              <Route path="/reports" element={<ReportComponent />} />
+              <Route path="/reports" element={<ReportPageComponent />} />
             </Routes>
           </div>
           <FooterComponent />
