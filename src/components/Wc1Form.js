@@ -459,15 +459,7 @@ const Wc1FormComponent = () => {
       }
     });
   };
-  const numericFields = [
-    'wagePerWeekAfterReturn',
-    'averageWeeklyWage',
-    'weeklyBenefitAmount',
-    'averageWeeklyWageAmount',
-    'compensationPaid',
-    'penalityPaid',
-    'weeklyBenefit'
-  ];
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -543,7 +535,9 @@ const Wc1FormComponent = () => {
     if (numericFields.includes(name)) {
       setFormData((prev) => {
         let newValue = prev[name];
-        newValue = newValue ? newValue.replace('$', '') : '';
+        if (!newValue) return prev;
+       // newValue = newValue ? newValue.replace('$', '') : '';
+       newValue = newValue.replace('$', '').trim();
         if (newValue && !newValue.includes('.')) {
           newValue = `${newValue}.00`;
         }
@@ -632,7 +626,15 @@ const Wc1FormComponent = () => {
     'isMedicalInjuryEnabled': 'tab5',
     // Add more mappings as needed
   };
-
+  const numericFields = [
+    'wagePerWeekAfterReturn',
+    'averageWeeklyWage',
+    'weeklyBenefitAmount',
+    'averageWeeklyWageAmount',
+    'compensationPaid',
+    'penalityPaid',
+    'weeklyBenefit'
+  ];
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
@@ -643,22 +645,28 @@ const Wc1FormComponent = () => {
       'daysOff', 'dateOfInjury', 'countyOfInjury.description', 'receivedFullPay',
       'injuredInEmpPermises', 'otherInjuryCause', 'typeOfInjury'
     ];
+    const incomeBenefitsRequiredFields = [
+      'averageWeeklyWage', 'dateOfFirstPayment',
+      'compensationPaid', 'dateBenefitsPayableFrom', 'disabilityTypes', 'weeklyBenefit'
+    ];
+    const salaryInLieuRequiredFields = [
+      'dateSalaryPaid', 'benefitsPayableFromDate', 'benefitsPayableFor'
+    ];
     const newErrors = validateRequiredFields(formData, requiredFields);
     const validateConditionalFields = () => {
       if (formData.sectionB) {
         const sectionBRequired = ['incomeBenefits'];
         Object.assign(newErrors, validateRequiredFields(formData, sectionBRequired));
-        if (formData.incomeBenefits === 'Y') {
-          const incomeBenefitsRequiredFields = [
-            'averageWeeklyWage', 'dateOfFirstPayment',
-            'compensationPaid', 'dateBenefitsPayableFrom', 'disabilityTypes', 'weeklyBenefit'
-          ];
+        if (formData.incomeBenefits === 'Y') {       
+          salaryInLieuRequiredFields.forEach(field => {
+            delete formData[field]; 
+          });
           Object.assign(newErrors, validateRequiredFields(formData, incomeBenefitsRequiredFields));
         }
-        if (formData.incomeBenefits === 'N') {
-          const salaryInLieuRequiredFields = [
-            'dateSalaryPaid', 'benefitsPayableFromDate', 'benefitsPayableFor'
-          ];
+        if (formData.incomeBenefits === 'N') {          
+          incomeBenefitsRequiredFields.forEach(field => {
+            delete formData[field];
+          });
           Object.assign(newErrors, validateRequiredFields(formData, salaryInLieuRequiredFields));
         }
       }
@@ -716,9 +724,15 @@ const Wc1FormComponent = () => {
         return;
       }
     } else {
-      const claim = {};
-      console.log("formData", formData);
-      ClaimService.saveClaim(formData).then((response) => {
+      const sanitizedFormData = { ...formData };
+      numericFields.forEach(field => {
+        if (sanitizedFormData[field]) {
+          sanitizedFormData[field] = sanitizedFormData[field].replace(/[^0-9.]/g, '');
+          console.log(field,sanitizedFormData[field].replace(/[^0-9.]/g, ''));
+        }
+      });
+      console.log("formData", sanitizedFormData);
+      ClaimService.saveClaim(sanitizedFormData).then((response) => {
         alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
         //If form is valid, show success toast and submit the form
         // toastRef.current.show({
