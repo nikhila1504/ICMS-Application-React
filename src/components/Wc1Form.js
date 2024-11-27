@@ -357,7 +357,7 @@ const Wc1FormComponent = () => {
     naicsTypes: [],
     typeOfInjury: [],
     injuryCauseTypes: [],
-    controvertTypes: [],
+    controvertType: [],
     dateOfInjury: '',
     timeOfInjury: '',
     dateEmployerNotified: '',
@@ -424,12 +424,12 @@ const Wc1FormComponent = () => {
     { partyType: 'Attorney', partyName: 'DAVID IMAHARA', parentParty: '', selfInsured: '', selfAdministered: '', groupFundMember: '' },
   ]);
 
-  const controvertType = [
-    { label: 'ALL THE ENTIRE CASE IS CONTROVERTED', value: 'ALL THE ENTIRE CASE IS CONTROVERTED' },
-    { label: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED', value: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED' },
-    { label: 'MEDICAL IS DENIED', value: 'MEDICAL IS DENIED' },
-    { label: 'PARTIAL DENIAL OF MEDICAL', value: 'PARTIAL DENIAL OF MEDICAL' }
-  ]
+  // const controvertType = [
+  //   { label: 'ALL THE ENTIRE CASE IS CONTROVERTED', value: 'ALL THE ENTIRE CASE IS CONTROVERTED' },
+  //   { label: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED', value: 'LOST TIME IS CONTROVERTED, HOWEVER MEDICAL OR OTHER BENEFITS HAVE BEEN ACCEPTED' },
+  //   { label: 'MEDICAL IS DENIED', value: 'MEDICAL IS DENIED' },
+  //   { label: 'PARTIAL DENIAL OF MEDICAL', value: 'PARTIAL DENIAL OF MEDICAL' }
+  // ]
 
   const [benefitsPayableFor, setBenefitsPayableFor] = useState([
     { label: 'Total Disability', value: { id: 2, code: 'TOTALDIS', description: 'Total Disability' } },
@@ -536,8 +536,8 @@ const Wc1FormComponent = () => {
       setFormData((prev) => {
         let newValue = prev[name];
         if (!newValue) return prev;
-       // newValue = newValue ? newValue.replace('$', '') : '';
-       newValue = newValue.replace('$', '').trim();
+        // newValue = newValue ? newValue.replace('$', '') : '';
+        newValue = newValue.replace('$', '').trim();
         if (newValue && !newValue.includes('.')) {
           newValue = `${newValue}.00`;
         }
@@ -616,6 +616,7 @@ const Wc1FormComponent = () => {
     'compensationPaid': 'tab5',
     'dateBenefitsPayableFrom': 'tab5',
     'disabilityTypes': 'tab5',
+    'controvertType':'tab5',
     'weeklyBenefit': 'tab5',
     'dateSalaryPaid': 'tab5',
     'benefitsPayableFromDate': 'tab5',
@@ -657,13 +658,13 @@ const Wc1FormComponent = () => {
       if (formData.sectionB) {
         const sectionBRequired = ['incomeBenefits'];
         Object.assign(newErrors, validateRequiredFields(formData, sectionBRequired));
-        if (formData.incomeBenefits === 'Y') {       
+        if (formData.incomeBenefits === 'Y') {
           salaryInLieuRequiredFields.forEach(field => {
-            delete formData[field]; 
+            delete formData[field];
           });
           Object.assign(newErrors, validateRequiredFields(formData, incomeBenefitsRequiredFields));
         }
-        if (formData.incomeBenefits === 'N') {          
+        if (formData.incomeBenefits === 'N') {
           incomeBenefitsRequiredFields.forEach(field => {
             delete formData[field];
           });
@@ -671,7 +672,7 @@ const Wc1FormComponent = () => {
         }
       }
       if (formData.isControvertEnabled) {
-        const controvertRequiredFields = ['convertType'];
+        const controvertRequiredFields = ['controvertType'];
         Object.assign(newErrors, validateRequiredFields(formData, controvertRequiredFields));
       }
       if (formData.isMedicalInjuryEnabled) {
@@ -728,12 +729,20 @@ const Wc1FormComponent = () => {
       numericFields.forEach(field => {
         if (sanitizedFormData[field]) {
           sanitizedFormData[field] = sanitizedFormData[field].replace(/[^0-9.]/g, '');
-          console.log(field,sanitizedFormData[field].replace(/[^0-9.]/g, ''));
+          console.log(field, sanitizedFormData[field].replace(/[^0-9.]/g, ''));
         }
       });
       console.log("formData", sanitizedFormData);
       ClaimService.saveClaim(sanitizedFormData).then((response) => {
         alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
+        // if (response.pdfUrl) {
+        //   window.open(response.pdfUrl, '_blank');
+        // } else if (response.pdfBlob) {
+        //   const url = URL.createObjectURL(response.pdfBlob);
+        //   window.open(url, '_blank');
+        // }
+        // const pdfUrl = 'https://www.example.com/static/sample.pdf';
+        // window.open(pdfUrl, '_blank');
         //If form is valid, show success toast and submit the form
         // toastRef.current.show({
         //   severity: 'success',
@@ -922,8 +931,12 @@ const Wc1FormComponent = () => {
           >
             Attachments
           </button>
-
-
+          <button type="button"
+            className={activeTab === 'tab9' ? 'active' : ''}
+            onClick={(e) => { e.preventDefault(); handleTabClick('tab9'); }}
+          >
+            Review
+          </button>
         </div>
         <div className="tab-content">
           {activeTab === 'tab1' && (
@@ -1680,7 +1693,7 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               options={typeOfInjury.map(type => ({
                                 label: type.description,
-                                value: { id: type.id, code: type.code }
+                                value: { id: type.id, code: type.code, description: type.description }
                               }))}
                               placeholder="---Select One---"
                               filter
@@ -1725,7 +1738,7 @@ const Wc1FormComponent = () => {
                             onChange={handleChange}
                             options={injuryCauseTypes.map(type => ({
                               label: type.description,
-                              value: type.value
+                              value: { id: type.id, code: type.code, description: type.description }
                             }))}
                             placeholder="---Select One---"
                             filter
@@ -2776,14 +2789,15 @@ const Wc1FormComponent = () => {
                 <label htmlFor="controvertTypes" className="col-md-2 col-form-label custom-label">Controvert Type:<span style={{ color: 'red' }}>*</span></label>
                 <div className="col-md-3">
                   <Dropdown
-                    value={formData.controvertTypes}
+                    value={formData.controvertType}
                     id="controvertTypes"
-                    name="controvertTypes"
+                    name="controvertType"
                     onChange={handleChange}
                     //options={controvertTypes}
                     options={controvertTypes.map(part => ({
                       label: part.description,
-                      value: part.value
+                      //value: part.value
+                      value: { id: part.id, code: part.code, description: part.description }
                     }))}
                     placeholder="---Select One---"
                     disabled={!formData.isControvertEnabled}
@@ -2923,10 +2937,529 @@ const Wc1FormComponent = () => {
 
             </div>
           )}
+          {activeTab === 'tab9' && (
+            <div className="card">
+              <div className="form-section flex-fill mb-0">
+                <div className="form-group row mb-0 mt-3">
+                  <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Claimant Information</h1>
+                  <div className="row">
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>First Name:</label>
+                      <span>{formData.claimant.firstName || ' '}</span>
+                    </div>
 
+                    <div className="col-md-2 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Last Name:</label>
+                      <span>{formData.claimant.lastName || ' '}</span>
+                    </div>
+
+                    <div className="col-md-2 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>M.I.:</label>
+                      <span>{formData.claimant.middleInitial || ' '}</span>
+                    </div>
+
+                    <div className="col-md-1 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Gender:</label>
+                      <span>{formData.claimant.gender || ' '}</span>
+                    </div>
+
+                    <div className="col-md-4 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Birthdate:</label>
+                      <span>{formData.claimant.dateOfBirth || ' '}</span>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Mailing Address 1:</label>
+                      <span>{formData.claimant.address1 || ' '}</span>
+                    </div>
+                    <div className="col-md-2 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Mailing Address 2:</label>
+                      <span>{formData.claimant.address2 || ' '}</span>
+                    </div>
+                    <div className="col-md-2 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>City:</label>
+                      <span>{formData.claimant.city || ' '}</span>
+                    </div>
+
+                    <div className="col-md-1 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>State:</label>
+                      <span>{formData.claimant.state || ' '}</span>
+                    </div>
+                    <div className="col-md-2 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Zip:</label>
+                      <span>{formData.claimant.zip || ' '}</span>
+                    </div>
+
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Email:</label>
+                      <span>{formData.claimant.primaryEmail || ' '}</span>
+                    </div>
+
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Phone:</label>
+                      <span>{formData.claimant.primaryPhone || ' '}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="form-group row mb-0">
+                  <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Employment/Wage</h1>
+                  <div className="d-flex flex-wrap">
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Hired Date:</label>
+                      <span>{formData.hiredDate || ' '}</span>
+                    </div>
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Job Classified Code No:</label>
+                      <span>{formData.jobClssifiedCodeNo || ' '}</span>
+                    </div>
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Insurer/Self Insurer File#:</label>
+                      <span>{formData.insurerFile || ' '}</span>
+                    </div>
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Days Worked Per Week:</label>
+                      <span>{formData.daysWorkedPerWeek || ' '}</span>
+                    </div>
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Wage Rate at time of Injury or Disease:</label>
+                      <span>{formData.wageRate || ' '}</span>
+                    </div>
+                    <div className="col-md-3 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Do you have any days Off?:</label>
+                      <span>{formData.daysOff === 'Y' ? 'Yes' : formData.daysOff === 'N' ? 'No' : ' '}</span>
+                    </div>
+                    <div className="col-md-4 mb-2">
+                      <label style={{ fontWeight: 'bold' }}>Wage Rate Frequency:</label>
+                      <span>{formData.wageRateFrequency || ' '}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="form-group row mb-0">
+                  <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Injury/Illness</h1>
+                  <div className="row">
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>NAICS Type:</label>
+                      <span>{formData.naicsTypes ? formData.naicsTypes.description : ' '}</span>
+                    </div>
+
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Date of Injury:</label>
+                      <span>{formData.dateOfInjury ? formatDateForInput(formData.dateOfInjury) : ' '}</span>
+                    </div>
+
+                    <div className="col-md-2 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Time of Injury:</label>
+                      <span>{formData.timeOfInjury || ' '}</span>
+                    </div>
+
+                    <div className="col-md-2 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>County of Injury:</label>
+                      <span>{formData.countyOfInjury.description || ' '}</span>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Date Employer had Knowledge of Injury:</label>
+                      <span>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span>
+                    </div>
+
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>First Date Employee Failed to Work:</label>
+                      <span>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span>
+                    </div>
+
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Did Employee Receive Full Pay on Date of Injury:</label>
+                      <span>{formData.receivedFullPay ? formData.receivedFullPay : ' '}</span>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Did Injury/Illness Occur on Employer's Premises:</label>
+                      <span>{formData.injuredInEmpPermises ? formData.injuredInEmpPermises : ' '}</span>
+                    </div>
+
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Type of Injury/Illness:</label>
+                      <span>{formData.typeOfInjury ? formData.typeOfInjury.description : ' '}</span>
+                    </div>
+
+                    <div className="col-md-4 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>How Injury or Illness / Abnormal Health Condition Occurred:</label>
+                      {/* <span>{formData.otherInjuryCause || ' '}</span> */}
+                      <span>
+                        {formData.otherInjuryCause && formData.injuryCauseTypes
+                          ? `${formData.otherInjuryCause}, ${formData.injuryCauseTypes.description}`
+                          : formData.otherInjuryCause || formData.injuryCauseTypes?.description || ' '}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-md-12 mb-3">
+                      <label style={{ fontWeight: 'bold' }}>Body Part Affected:</label>
+                      {/* <span>{formData.bodyPartAffected ? formData.bodyPartAffected : ' '}</span> */}
+                      <span>
+                        {Array.isArray(formData.bodyPartAffected)
+                          ? formData.bodyPartAffected.join(', ')
+                          : formData.bodyPartAffected || ' '}
+                      </span>
+                    </div>
+                  </div>
+                  <hr></hr>
+                </div>
+                <div className="form-group row mb-0">
+                  <div className="flex-fill">
+                    <div className="form-group row mb-1 mt-2">
+                      <div className="col-md-3">
+                        <label htmlFor="tPhysicianName" style={{ fontWeight: 'bold' }}>Treating Physician Name:</label>
+                        <span id="tPhysicianName">{formData.tPhysicianName || ' '}</span>
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="tPhysicianAddress1" style={{ fontWeight: 'bold' }}>Treating Physician Address 1:</label>
+                        <span id="tPhysicianAddress1">{formData.tPhysicianAddress1 || ' '}</span>
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="tPhysicianAddress2" style={{ fontWeight: 'bold' }}>Treating Physician Address 2:</label>
+                        <span id="tPhysicianAddress2">{formData.tPhysicianAddress2 || ' '}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="tPhysicianCity" style={{ fontWeight: 'bold' }}>Treating Physician City:</label>
+                        <span id="tPhysicianCity">{formData.tPhysicianCity || ' '}</span>
+                      </div>
+
+                    </div>
+
+                    <div className="form-group row mb-1 mt-3">
+                      <div className="col-md-3">
+                        <label htmlFor="selectedPhysicianState" style={{ fontWeight: 'bold' }}>State:</label>
+                        <span id="selectedPhysicianState">{formData.selectedPhysicianState || 'GA'}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="tPhysicianZIP" style={{ fontWeight: 'bold' }}>Treating Physician ZIP:</label>
+                        <span id="tPhysicianZIP">{formData.tPhysicianZIP || ' '}</span>
+                      </div>
+                      <div className="col-md-1">
+                        <label htmlFor="tPhysicianZIPExt" style={{ fontWeight: 'bold' }}>Ext:</label>
+                        <span id="tPhysicianZIPExt">{formData.tPhysicianZIPExt || ' '}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="tPhysicianPhone" style={{ fontWeight: 'bold' }}>Treating Physician Phone:</label>
+                        <span id="tPhysicianPhone">{formData.tPhysicianPhone || ' '}</span>
+                      </div>
+                      <div className="col-md-1">
+                        <label htmlFor="tPhysicianPhoneExt" style={{ fontWeight: 'bold' }}>Ext:</label>
+                        <span id="tPhysicianPhoneExt">{formData.tPhysicianPhoneExt || ' '}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="treatmentTypes" style={{ fontWeight: 'bold' }}>Initial Treatment:</label>
+                        <span id="treatmentTypes">{formData.treatmentTypes || ' '}</span>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div className="flex-fill">
+                    <div className="form-group row mb-1 mt-2">
+                      <div className="col-md-3">
+                        <label htmlFor="treatingFacility" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility:</label>
+                        <span id="treatingFacility">{formData.treatingFacility || ' '}</span>
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="treatingFacilityAddress1" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility Address 1:</label>
+                        <span id="treatingFacilityAddress1">{formData.treatingFacilityAddress1 || ' '}</span>
+                      </div>
+                      <div className="col-md-3">
+                        <label htmlFor="treatingFacilityAddress2" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility Address 2:</label>
+                        <span id="treatingFacilityAddress2">{formData.treatingFacilityAddress2 || ' '}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="treatingFacilityCity" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility City:</label>
+                        <span id="treatingFacilityCity">{formData.treatingFacilityCity || ' '}</span>
+                      </div>
+
+                    </div>
+
+                    <div className="form-group row mb-1 mt-2">
+                      <div className="col-md-3">
+                        <label htmlFor="selectedHospitalState" style={{ fontWeight: 'bold' }}>State:</label>
+                        <span id="selectedHospitalState">{formData.selectedHospitalState || 'GA'}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="treatingFacilityZIP" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility ZIP:</label>
+                        <span id="treatingFacilityZIP">{formData.treatingFacilityZIP || ' '}</span>
+                      </div>
+                      <div className="col-md-1">
+                        <label htmlFor="treatingFacilityZIPExt" style={{ fontWeight: 'bold' }}>Ext:</label>
+                        <span id="treatingFacilityZIPExt">{formData.treatingFacilityZIPExt || ' '}</span>
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="hospitalPhone" style={{ fontWeight: 'bold' }}>Hospital Phone:</label>
+                        <span id="hospitalPhone">{formData.hospitalPhone || ' '}</span>
+                      </div>
+                      <div className="col-md-1">
+                        <label htmlFor="hospitalPhoneExt" style={{ fontWeight: 'bold' }}>Ext:</label>
+                        <span id="hospitalPhoneExt">{formData.hospitalPhoneExt || ' '}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <hr></hr>
+                  <div className="form-group row mb-1">
+                    <div className="col-md-3">
+                      <label htmlFor="RtwDate" style={{ fontWeight: 'bold' }}>If Returned to Work, Give Date:</label>
+                      <span id="RtwDate">{formData.RtwDate || ' '}</span>
+                    </div>
+                    <div className="col-md-3">
+                      <label htmlFor="ReturnedWagePerWeek" style={{ fontWeight: 'bold' }}>Returned at what wage per week:</label>
+                      <span id="ReturnedWagePerWeek">{formData.ReturnedWagePerWeek || ' '}</span>
+                    </div>
+                    <div className="col-md-3">
+                      <label htmlFor="FatalDeathDate" style={{ fontWeight: 'bold' }}>If Fatal, Enter Complete Date of Death:</label>
+                      <span id="FatalDeathDate">{formData.FatalDeathDate || ' '}</span>
+                    </div>
+                  </div>
+                  <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '0px 0' }} />
+                  <div className="form-group row mb-2 mt-1">
+                    <div className="col-md-3">
+                      <label htmlFor="reportPreparedBy" style={{ fontWeight: 'bold' }}>Report Prepared By (Print or Type):</label>
+                      <span id="reportPreparedBy">{formData.reportPreparedBy || ' '}</span>
+                    </div>
+                    <div className="col-md-3">
+                      <label htmlFor="telePhoneNumber" style={{ fontWeight: 'bold' }}>Telephone Number:</label>
+                      <span id="telePhoneNumber">{formData.telePhoneNumber || ' '}</span>
+                    </div>
+                    <div className="col-md-2 d-flex align-items-center">
+                      <label htmlFor="telePhoneExt" style={{ fontWeight: 'bold' }}>Ext:</label>
+                      <span id="telePhoneExt">{formData.telePhoneExt || ' '}</span>
+                    </div>
+                    <div className="col-md-4">
+                      <label htmlFor="DateOfReport" style={{ fontWeight: 'bold' }}>Date of Report:</label>
+                      <span id="DateOfReport">{formData.DateOfReport || ' '}</span>
+                    </div>
+                  </div>
+                </div>
+                {formData.sectionB && (
+                  <div className="form-group row mb-0">
+                    <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum</h1>
+                    <div className="col-md-5">
+                      <label style={{ fontWeight: 'bold' }}>
+                        Check which benefits are being paid:
+                      </label>
+                      <span id="incomeBenefits" className="ml-3">
+                        {formData.incomeBenefits?.label || formData.incomeBenefits?.value || ' '}
+                      </span>
+                    </div>
+                    {formData.incomeBenefits === 'Y' && (
+                      <div className="form-group Income-Benefits-Form mt-2">
+                        <div className="d-flex flex-wrap">
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Previously Medical Only:
+                            </label>
+                            <span id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : 'No'}</span>
+                          </div>
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Average Weekly Wage:
+                            </label>
+                            <span id="averageWeeklyWage">{formData.averageWeeklyWage || ' '}</span>
+                          </div>
+
+                          <div className="col-md-3">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Weekly Benefit: $
+                            </label>
+                            <span id="weeklyBenefit">{formData.weeklyBenefit || ' '}</span>
+                          </div>
+
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Date of Disability:
+                            </label>
+                            <span id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
+                          </div>
+                        </div>
+
+                        <div className="d-flex flex-wrap mt-3">
+                          {/* Row 3 */}
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Date Of First Payment:
+                            </label>
+                            <span id="dateOfFirstPayment">{formData.dateOfFirstPayment || ' '}</span>
+                          </div>
+
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Compensation Paid: $
+                            </label>
+                            <span id="compensationPaid">{formData.compensationPaid || ' '}</span>
+                          </div>
+
+                          <div className="col-md-3">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Penalty Paid: $
+                            </label>
+                            <span id="penalityPaid">{formData.penalityPaid || ' '}</span>
+                          </div>
+
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Benefits Payable From Date:
+                            </label>
+                            <span id="dateBenefitsPayableFrom">{formData.dateBenefitsPayableFrom || ' '}</span>
+                          </div>
+                        </div>
+
+                        <div className="d-flex flex-wrap mt-3">
+                          {/* Row 4 */}
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Benefits Payable For:
+                            </label>
+                            <span id="disabilityTypes">{formData.disabilityTypes || ' '}</span>
+                          </div>
+
+                          <div className="col-md-3 ">
+                            <label style={{ fontWeight: 'bold' }}>
+                              Pay Benefit Until:
+                            </label>
+                            <span id="PayBenefitUntil">{formData.PayBenefitUntil || ' '}</span>
+                          </div>
+                        </div>
+
+                        {/* Additional fields for permanent disability (if applicable) */}
+                        {formData.disabilityTypes?.trim().toLowerCase() === 'permanen' && (
+                          <div className="d-flex flex-wrap mt-3">
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>
+                                Disability %:
+                              </label>
+                              <span id="disabilityPercentage">{formData.disabilityPercentage || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>
+                                Disabled Body Part:
+                              </label>
+                              <span id="disabledBodyPart">{formData.disabledBodyPart || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3 ">
+                              <label style={{ fontWeight: 'bold' }}>
+                                Duration of Disability:
+                              </label>
+                              <span id="durationOfDisability">{formData.durationOfDisability || ' '}</span>
+                              <span style={{ marginLeft: '5px' }}>(Weeks)</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {formData.incomeBenefits === 'N' && (
+                      <div className="d-flex flex-wrap">
+                        <div className="form-section flex-fill">
+                          <div className="form-group row mb-1">
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>Previously Medical Only:</label>
+                              <span id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : formData.previouslyMedicalOnly === 'N' ? 'No' : 'None'}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>Average Weekly Wage Amount ($):</label>
+                              <span id="averageWeeklyWageAmount">{formData.averageWeeklyWageAmount || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>Weekly Benefit Amount ($):</label>
+                              <span id="weeklyBenefitAmount">{formData.weeklyBenefitAmount || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>Date of Disability:</label>
+                              <span id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
+                            </div>
+                          </div>
+
+                          <div className="form-group row mb-2 mt-2">
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>
+                                Date Salary Paid:
+                              </label>
+                              <span id="dateSalaryPaid">{formData.dateSalaryPaid || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>
+                                Benefits Payable From Date:
+                              </label>
+                              <span id="benefitsPayableFromDate">{formData.benefitsPayableFromDate || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>
+                                Benefits Payable For:
+                                <span style={{ color: 'red' }}>*</span>
+                              </label>
+                              <span id="benefitsPayableFor">{formData.benefitsPayableFor || ' '}</span>
+                            </div>
+
+                            <div className="col-md-3">
+                              <label style={{ fontWeight: 'bold' }}>Pay Benefit Until:</label>
+                              <span id="payBenefitUntil">{formData.payBenefitUntil || ' '}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {formData.isControvertEnabled && (
+                 <div className="form-group row mb-0 mt-3">
+                 <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>
+                   C. Notice To Convert Payment Of Compensation
+                 </h1>
+               
+                 <div className="row mb-3"> {/* Wrap first section in a row */}
+                   <div className="col-md-12">
+                     <label style={{ fontWeight: 'bold' }}>Controvert Type:</label>
+                     <span id="controvertTypes">
+                       {formData.controvertType ? formData.controvertType.description : '' || ' '}
+                     </span>
+                   </div>
+                 </div>
+               
+                 <div className="row mb-3"> {/* Wrap second section in a row */}
+                   <div className="col-md-12">
+                     <label style={{ fontWeight: 'bold' }}>Reason Benefits will not be paid:</label>
+                     <span id="BenifitsNPReasons">{formData.BenifitsNPReasons || ' '}</span>
+                   </div>
+                 </div>
+               </div>
+                )}
+                {formData.isMedicalInjuryEnabled && (
+                  <div className="form-group row mb-0 mt-3">
+                    <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>D. Medical Only Injury</h1>
+                    <div className="col-md-6" style={{ display: 'flex', alignItems: 'center' }}>
+                      <input
+                        autoComplete="off"
+                        type="checkbox"
+                        name="controverted"
+                        checked={formData.controverted}
+                        onChange={() => setFormData((prev) => ({ ...prev, controverted: !prev.controverted }))}
+                        disabled={!formData.isMedicalInjuryEnabled}
+                        ref={getFieldRef('convertType')}
+                        className={`large-checkbox ${errors.convertType ? 'p-invalid' : ''} style={{ marginRight: '8px' }}`}
+                      />
+                      <label style={{ fontWeight: 'bold', marginLeft: '10px' }}>
+                        No indemnity benefits are due and/or have NOT been controverted.
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
-
-
         <div className="card-content">
           <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Submitter Information</h1>
           <div className="d-flex flex-wrap">
