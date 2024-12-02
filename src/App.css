@@ -343,7 +343,7 @@
 .pi-exclamation-circle {
   color: red;
   font-size: 20px;
-  margin-left: 5px;
+  margin-left: 2px;
 }
 /* Optional: Custom styles for disabled state */
 .custom-border:disabled {
@@ -489,7 +489,9 @@
 .font-bold{
   margin: 0% !important;
 }
-
+.custom-span{
+  font-weight:bold;
+}
 .container {
   padding-right: 4px !important;
   padding-left: 4px  !important;

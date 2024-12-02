@@ -146,7 +146,8 @@ const CalendarComponent = () => {
   };
 
   return (
-    <div style={{display: "flex",gap: "20px", padding: "20px", width:'100%' }}>
+    <div style={{border:'1px' }}>
+    <div style={{display: "flex",  padding: "20px", width:'100%' }}>
       <div style={{ flex: 3 }}>
         <h1>
           <Link to="/wc1" className="heading btn  btn-dark mb-2">
@@ -154,7 +155,7 @@ const CalendarComponent = () => {
           </Link>
           Calendar
         </h1>
-        <FullCalendar 
+        <FullCalendar  className="calendar"
           headerToolbar={{
             start: "today prev next",
             center: "title", 
@@ -174,7 +175,7 @@ const CalendarComponent = () => {
               : ""}
           dateClick={handleDateClick}
           eventClick={handleEventClick}
-          contentHeight={450}
+          contentHeight={460}
         />
 
         {/* Modal for editing or creating an event */}
@@ -275,6 +276,7 @@ const CalendarComponent = () => {
           </li>
         </ul>
         </div>
+    </div>
     </div>
   );
 };

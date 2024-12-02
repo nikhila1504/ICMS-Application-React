@@ -2056,20 +2056,20 @@ const Wc1FormComponent = () => {
                       </div>
                     </div>
                   </div>
-                </AccordionTab>
-                <AccordionTab header="Report" onClick={() => handleToggle(0)}>
-                  <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
-                    <div>
+                {/* </AccordionTab>
+                <AccordionTab header="Report" onClick={() => handleToggle(0)}> */}
+                  {/* <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
+                    <div> */}
                       {/* First Row: NAICS Code, Date of Injury, Time of Injury */}
 
-                      {/* <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} /> */}
+                      <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
 
 
 
                       {/* <hr style={{ height: '1px', backgroundColor: 'black', border: 'none' }} /> */}
-                      <div className="d-flex flex-wrap">
-                        <div className="form-section flex-fill">
-                          <div className="form-group row mb-1 " >
+                      {/* <div className="d-flex flex-wrap">*/}
+                        {/* <div className="form-section flex-fill">  */}
+                        <div className="form-group row mb-1 mt-3">
                             <div className="col-md-3">
                               <div className="form-outline">
                                 {/* <MDBFloatingLabel label="If Returned to Work, Give Date:" className="custom-label"> */}
@@ -2126,11 +2126,11 @@ const Wc1FormComponent = () => {
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
-                      <div className="d-flex flex-wrap">
-                        <div className="form-section flex-fill">
+                        {/* </div> */}
+                      {/* </div> */}
+                      <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} /> 
+                      {/* <div className="d-flex flex-wrap">
+                        <div className="form-section flex-fill"> */}
                           <div className="form-group row mb-1 mt-2" >
                             <div className="col-md-3">
                               <div className="form-outline">
@@ -2201,13 +2201,13 @@ const Wc1FormComponent = () => {
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div>
+                        {/* </div> */}
+                      {/* </div> */}
+                      {/* <div> */}
 
-                      </div>
-                    </div>
-                  </div>
+                      {/* </div> */}
+                    {/* </div>
+                  </div> */}
                 </AccordionTab>
               </Accordion>
 
@@ -2770,7 +2770,8 @@ const Wc1FormComponent = () => {
                   onChange={() => setFormData((prev) => {
                     const updatedData = { ...prev, isControvertEnabled: !prev.isControvertEnabled };
                     if (!updatedData.isControvertEnabled) {
-                      updatedData.controvertTypes = '';
+                      updatedData.controvertType = {};
+                      updatedData.BenifitsNPReasons = ''; 
                     }
                     return updatedData;
                   })}
@@ -2779,7 +2780,7 @@ const Wc1FormComponent = () => {
                   style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
                 />
                 C. Notice To Convert Payment Of Compensation</h1>
-              {formData.isControvertEnabled && !formData.controvertTypes && (
+              {formData.isControvertEnabled && !formData.controvertType && (
                 <div style={{ color: 'red', fontSize: '14px' }}>
                   <i className="pi pi-exclamation-triangle-down" style={{ fontSize: '1rem', color: 'red', marginRight: '15px' }}></i>
                   Controvert Type is required.
@@ -2944,61 +2945,61 @@ const Wc1FormComponent = () => {
                   <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Claimant Information</h1>
                   <div className="row">
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>First Name:</label>
-                      <span>{formData.claimant.firstName || ' '}</span>
+                      <label className=" col-form-label custom-label">First Name:</label>
+                      <span className='custom-span'>{formData.claimant.firstName || ' '}</span>
                     </div>
 
                     <div className="col-md-2 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Last Name:</label>
-                      <span>{formData.claimant.lastName || ' '}</span>
+                      <label className=" col-form-label custom-label">Last Name:</label>
+                      <span className='custom-span'>{formData.claimant.lastName || ' '}</span>
                     </div>
 
                     <div className="col-md-2 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>M.I.:</label>
-                      <span>{formData.claimant.middleInitial || ' '}</span>
+                      <label className=" col-form-label custom-label">M.I.:</label>
+                      <span className='custom-span'>{formData.claimant.middleInitial || ' '}</span>
                     </div>
 
                     <div className="col-md-1 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Gender:</label>
-                      <span>{formData.claimant.gender || ' '}</span>
+                      <label className=" col-form-label custom-label">Gender:</label>
+                      <span className='custom-span'>{formData.claimant.gender || ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Birthdate:</label>
-                      <span>{formData.claimant.dateOfBirth || ' '}</span>
+                      <label className=" col-form-label custom-label">Birthdate:</label>
+                      <span className='custom-span'>{formData.claimant.dateOfBirth ? formatDateForInput(formData.claimant.dateOfBirth) : ' '}</span>
                     </div>
                   </div>
                   <div className="row">
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Mailing Address 1:</label>
-                      <span>{formData.claimant.address1 || ' '}</span>
+                      <label className=" col-form-label custom-label">Mailing Address 1:</label>
+                      <span className='custom-span'>{formData.claimant.address1 || ' '}</span>
                     </div>
                     <div className="col-md-2 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Mailing Address 2:</label>
-                      <span>{formData.claimant.address2 || ' '}</span>
+                      <label className=" col-form-label custom-label">Mailing Address 2:</label>
+                      <span className='custom-span'>{formData.claimant.address2 || ' '}</span>
                     </div>
                     <div className="col-md-2 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>City:</label>
-                      <span>{formData.claimant.city || ' '}</span>
+                      <label className=" col-form-label custom-label">City:</label>
+                      <span className='custom-span'>{formData.claimant.city || ' '}</span>
                     </div>
 
                     <div className="col-md-1 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>State:</label>
-                      <span>{formData.claimant.state || ' '}</span>
+                      <label className=" col-form-label custom-label">State:</label>
+                      <span className='custom-span'>{formData.claimant.state || ' '}</span>
                     </div>
                     <div className="col-md-2 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Zip:</label>
-                      <span>{formData.claimant.zip || ' '}</span>
+                      <label className=" col-form-label custom-label">Zip:</label>
+                      <span className='custom-span'>{formData.claimant.zip || ' '}</span>
                     </div>
 
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Email:</label>
-                      <span>{formData.claimant.primaryEmail || ' '}</span>
+                      <label className=" col-form-label custom-label">Email:</label>
+                      <span className='custom-span'>{formData.claimant.primaryEmail || ' '}</span>
                     </div>
 
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Phone:</label>
-                      <span>{formData.claimant.primaryPhone || ' '}</span>
+                      <label className=" col-form-label custom-label">Phone:</label>
+                      <span className='custom-span'>{formData.claimant.primaryPhone || ' '}</span>
                     </div>
                   </div>
                 </div>
@@ -3006,32 +3007,32 @@ const Wc1FormComponent = () => {
                   <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Employment/Wage</h1>
                   <div className="d-flex flex-wrap">
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Hired Date:</label>
-                      <span>{formData.hiredDate || ' '}</span>
+                      <label className=" col-form-label custom-label">Hired Date:</label>
+                      <span className='custom-span'>{formData.hiredDate || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Job Classified Code No:</label>
-                      <span>{formData.jobClssifiedCodeNo || ' '}</span>
+                      <label className=" col-form-label custom-label">Job Classified Code No:</label>
+                      <span className='custom-span'>{formData.jobClssifiedCodeNo || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Insurer/Self Insurer File#:</label>
-                      <span>{formData.insurerFile || ' '}</span>
+                      <label className=" col-form-label custom-label">Insurer/Self Insurer File#:</label>
+                      <span className='custom-span'>{formData.insurerFile || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Days Worked Per Week:</label>
-                      <span>{formData.daysWorkedPerWeek || ' '}</span>
+                      <label className=" col-form-label custom-label">Days Worked Per Week:</label>
+                      <span className='custom-span'>{formData.daysWorkedPerWeek || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Wage Rate at time of Injury or Disease:</label>
-                      <span>{formData.wageRate || ' '}</span>
+                      <label className=" col-form-label custom-label">Wage Rate at time of Injury or Disease:</label>
+                      <span className='custom-span'>{formData.wageRate || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Do you have any days Off?:</label>
-                      <span>{formData.daysOff === 'Y' ? 'Yes' : formData.daysOff === 'N' ? 'No' : ' '}</span>
+                      <label className=" col-form-label custom-label">Do you have any days Off?:</label>
+                      <span className='custom-span'>{formData.daysOff === 'Y' ? 'Yes' : formData.daysOff === 'N' ? 'No' : ' '}</span>
                     </div>
                     <div className="col-md-4 mb-2">
-                      <label style={{ fontWeight: 'bold' }}>Wage Rate Frequency:</label>
-                      <span>{formData.wageRateFrequency || ' '}</span>
+                      <label className=" col-form-label custom-label">Wage Rate Frequency:</label>
+                      <span className='custom-span'>{formData.wageRateFrequency || ' '}</span>
                     </div>
                   </div>
                 </div>
@@ -3039,56 +3040,56 @@ const Wc1FormComponent = () => {
                   <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Injury/Illness</h1>
                   <div className="row">
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>NAICS Type:</label>
-                      <span>{formData.naicsTypes ? formData.naicsTypes.description : ' '}</span>
+                      <label className=" col-form-label custom-label">NAICS Type:</label>
+                      <span className='custom-span'>{formData.naicsTypes ? formData.naicsTypes.description : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Date of Injury:</label>
-                      <span>{formData.dateOfInjury ? formatDateForInput(formData.dateOfInjury) : ' '}</span>
+                      <label className=" col-form-label custom-label">Date of Injury:</label>
+                      <span className='custom-span'>{formData.dateOfInjury ? formatDateForInput(formData.dateOfInjury) : ' '}</span>
                     </div>
 
                     <div className="col-md-2 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Time of Injury:</label>
-                      <span>{formData.timeOfInjury || ' '}</span>
+                      <label className=" col-form-label custom-label">Time of Injury:</label>
+                      <span className='custom-span'>{formData.timeOfInjury || ' '}</span>
                     </div>
 
                     <div className="col-md-2 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>County of Injury:</label>
-                      <span>{formData.countyOfInjury.description || ' '}</span>
+                      <label className=" col-form-label custom-label">County of Injury:</label>
+                      <span className='custom-span'>{formData.countyOfInjury.description || ' '}</span>
                     </div>
                   </div>
                   <div className="row">
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Date Employer had Knowledge of Injury:</label>
-                      <span>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span>
+                      <label className=" col-form-label custom-label">Date Employer had Knowledge of Injury:</label>
+                      <span className='custom-span'>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>First Date Employee Failed to Work:</label>
-                      <span>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span>
+                      <label className=" col-form-label custom-label">First Date Employee Failed to Work:</label>
+                      <span className='custom-span'>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Did Employee Receive Full Pay on Date of Injury:</label>
-                      <span>{formData.receivedFullPay ? formData.receivedFullPay : ' '}</span>
+                      <label className=" col-form-label custom-label">Did Employee Receive Full Pay on Date of Injury:</label>
+                      <span className='custom-span'>{formData.receivedFullPay ? formData.receivedFullPay : ' '}</span>
                     </div>
                   </div>
                   <div className="row">
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Did Injury/Illness Occur on Employer's Premises:</label>
-                      <span>{formData.injuredInEmpPermises ? formData.injuredInEmpPermises : ' '}</span>
+                      <label className=" col-form-label custom-label">Did Injury/Illness Occur on Employer's Premises:</label>
+                      <span className='custom-span'>{formData.injuredInEmpPermises ? formData.injuredInEmpPermises : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Type of Injury/Illness:</label>
-                      <span>{formData.typeOfInjury ? formData.typeOfInjury.description : ' '}</span>
+                      <label className=" col-form-label custom-label">Type of Injury/Illness:</label>
+                      <span className='custom-span'>{formData.typeOfInjury ? formData.typeOfInjury.description : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>How Injury or Illness / Abnormal Health Condition Occurred:</label>
-                      {/* <span>{formData.otherInjuryCause || ' '}</span> */}
-                      <span>
+                      <label className=" col-form-label custom-label">How Injury or Illness / Abnormal Health Condition Occurred:</label>
+                      {/* <span className='custom-span'>{formData.otherInjuryCause || ' '}</span> */}
+                      <span className='custom-span'>
                         {formData.otherInjuryCause && formData.injuryCauseTypes
                           ? `${formData.otherInjuryCause}, ${formData.injuryCauseTypes.description}`
                           : formData.otherInjuryCause || formData.injuryCauseTypes?.description || ' '}
@@ -3097,9 +3098,9 @@ const Wc1FormComponent = () => {
                   </div>
                   <div className="row">
                     <div className="col-md-12 mb-3">
-                      <label style={{ fontWeight: 'bold' }}>Body Part Affected:</label>
-                      {/* <span>{formData.bodyPartAffected ? formData.bodyPartAffected : ' '}</span> */}
-                      <span>
+                      <label className=" col-form-label custom-label">Body Part Affected:</label>
+                      {/* <span className='custom-span'>{formData.bodyPartAffected ? formData.bodyPartAffected : ' '}</span> */}
+                      <span className='custom-span'>
                         {Array.isArray(formData.bodyPartAffected)
                           ? formData.bodyPartAffected.join(', ')
                           : formData.bodyPartAffected || ' '}
@@ -3112,48 +3113,48 @@ const Wc1FormComponent = () => {
                   <div className="flex-fill">
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
-                        <label htmlFor="tPhysicianName" style={{ fontWeight: 'bold' }}>Treating Physician Name:</label>
-                        <span id="tPhysicianName">{formData.tPhysicianName || ' '}</span>
+                        <label htmlFor="tPhysicianName" className=" col-form-label custom-label">Treating Physician Name:</label>
+                        <span className='custom-span'  id="tPhysicianName">{formData.tPhysicianName || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="tPhysicianAddress1" style={{ fontWeight: 'bold' }}>Treating Physician Address 1:</label>
-                        <span id="tPhysicianAddress1">{formData.tPhysicianAddress1 || ' '}</span>
+                        <label htmlFor="tPhysicianAddress1" className=" col-form-label custom-label">Treating Physician Address 1:</label>
+                        <span className='custom-span'  id="tPhysicianAddress1">{formData.tPhysicianAddress1 || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="tPhysicianAddress2" style={{ fontWeight: 'bold' }}>Treating Physician Address 2:</label>
-                        <span id="tPhysicianAddress2">{formData.tPhysicianAddress2 || ' '}</span>
+                        <label htmlFor="tPhysicianAddress2" className=" col-form-label custom-label">Treating Physician Address 2:</label>
+                        <span className='custom-span'  id="tPhysicianAddress2">{formData.tPhysicianAddress2 || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="tPhysicianCity" style={{ fontWeight: 'bold' }}>Treating Physician City:</label>
-                        <span id="tPhysicianCity">{formData.tPhysicianCity || ' '}</span>
+                        <label htmlFor="tPhysicianCity" className=" col-form-label custom-label">Treating Physician City:</label>
+                        <span className='custom-span'  id="tPhysicianCity">{formData.tPhysicianCity || ' '}</span>
                       </div>
 
                     </div>
 
                     <div className="form-group row mb-1 mt-3">
                       <div className="col-md-3">
-                        <label htmlFor="selectedPhysicianState" style={{ fontWeight: 'bold' }}>State:</label>
-                        <span id="selectedPhysicianState">{formData.selectedPhysicianState || 'GA'}</span>
+                        <label htmlFor="selectedPhysicianState" className=" col-form-label custom-label">State:</label>
+                        <span className='custom-span'  id="selectedPhysicianState">{formData.selectedPhysicianState || 'GA'}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="tPhysicianZIP" style={{ fontWeight: 'bold' }}>Treating Physician ZIP:</label>
-                        <span id="tPhysicianZIP">{formData.tPhysicianZIP || ' '}</span>
+                        <label htmlFor="tPhysicianZIP" className=" col-form-label custom-label">Treating Physician ZIP:</label>
+                        <span className='custom-span'  id="tPhysicianZIP">{formData.tPhysicianZIP || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="tPhysicianZIPExt" style={{ fontWeight: 'bold' }}>Ext:</label>
-                        <span id="tPhysicianZIPExt">{formData.tPhysicianZIPExt || ' '}</span>
+                        <label htmlFor="tPhysicianZIPExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span'  id="tPhysicianZIPExt">{formData.tPhysicianZIPExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="tPhysicianPhone" style={{ fontWeight: 'bold' }}>Treating Physician Phone:</label>
-                        <span id="tPhysicianPhone">{formData.tPhysicianPhone || ' '}</span>
+                        <label htmlFor="tPhysicianPhone" className=" col-form-label custom-label">Treating Physician Phone:</label>
+                        <span className='custom-span'  id="tPhysicianPhone">{formData.tPhysicianPhone || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="tPhysicianPhoneExt" style={{ fontWeight: 'bold' }}>Ext:</label>
-                        <span id="tPhysicianPhoneExt">{formData.tPhysicianPhoneExt || ' '}</span>
+                        <label htmlFor="tPhysicianPhoneExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span'  id="tPhysicianPhoneExt">{formData.tPhysicianPhoneExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="treatmentTypes" style={{ fontWeight: 'bold' }}>Initial Treatment:</label>
-                        <span id="treatmentTypes">{formData.treatmentTypes || ' '}</span>
+                        <label htmlFor="treatmentTypes" className=" col-form-label custom-label">Initial Treatment:</label>
+                        <span className='custom-span'  id="treatmentTypes">{formData.treatmentTypes || ' '}</span>
                       </div>
 
                     </div>
@@ -3161,79 +3162,79 @@ const Wc1FormComponent = () => {
                   <div className="flex-fill">
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
-                        <label htmlFor="treatingFacility" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility:</label>
-                        <span id="treatingFacility">{formData.treatingFacility || ' '}</span>
+                        <label htmlFor="treatingFacility" className=" col-form-label custom-label">Hospital/Treating Facility:</label>
+                        <span className='custom-span'  id="treatingFacility">{formData.treatingFacility || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="treatingFacilityAddress1" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility Address 1:</label>
-                        <span id="treatingFacilityAddress1">{formData.treatingFacilityAddress1 || ' '}</span>
+                        <label htmlFor="treatingFacilityAddress1" className=" col-form-label custom-label">Hospital/Treating Facility Address 1:</label>
+                        <span className='custom-span'  id="treatingFacilityAddress1">{formData.treatingFacilityAddress1 || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="treatingFacilityAddress2" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility Address 2:</label>
-                        <span id="treatingFacilityAddress2">{formData.treatingFacilityAddress2 || ' '}</span>
+                        <label htmlFor="treatingFacilityAddress2" className=" col-form-label custom-label">Hospital/Treating Facility Address 2:</label>
+                        <span className='custom-span'  id="treatingFacilityAddress2">{formData.treatingFacilityAddress2 || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="treatingFacilityCity" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility City:</label>
-                        <span id="treatingFacilityCity">{formData.treatingFacilityCity || ' '}</span>
+                        <label htmlFor="treatingFacilityCity" className=" col-form-label custom-label">Hospital/Treating Facility City:</label>
+                        <span className='custom-span'  id="treatingFacilityCity">{formData.treatingFacilityCity || ' '}</span>
                       </div>
 
                     </div>
 
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
-                        <label htmlFor="selectedHospitalState" style={{ fontWeight: 'bold' }}>State:</label>
-                        <span id="selectedHospitalState">{formData.selectedHospitalState || 'GA'}</span>
+                        <label htmlFor="selectedHospitalState" className=" col-form-label custom-label">State:</label>
+                        <span className='custom-span'  id="selectedHospitalState">{formData.selectedHospitalState || 'GA'}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="treatingFacilityZIP" style={{ fontWeight: 'bold' }}>Hospital/Treating Facility ZIP:</label>
-                        <span id="treatingFacilityZIP">{formData.treatingFacilityZIP || ' '}</span>
+                        <label htmlFor="treatingFacilityZIP" className=" col-form-label custom-label">Hospital/Treating Facility ZIP:</label>
+                        <span className='custom-span'  id="treatingFacilityZIP">{formData.treatingFacilityZIP || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="treatingFacilityZIPExt" style={{ fontWeight: 'bold' }}>Ext:</label>
-                        <span id="treatingFacilityZIPExt">{formData.treatingFacilityZIPExt || ' '}</span>
+                        <label htmlFor="treatingFacilityZIPExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span'  id="treatingFacilityZIPExt">{formData.treatingFacilityZIPExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="hospitalPhone" style={{ fontWeight: 'bold' }}>Hospital Phone:</label>
-                        <span id="hospitalPhone">{formData.hospitalPhone || ' '}</span>
+                        <label htmlFor="hospitalPhone" className=" col-form-label custom-label">Hospital Phone:</label>
+                        <span className='custom-span'  id="hospitalPhone">{formData.hospitalPhone || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="hospitalPhoneExt" style={{ fontWeight: 'bold' }}>Ext:</label>
-                        <span id="hospitalPhoneExt">{formData.hospitalPhoneExt || ' '}</span>
+                        <label htmlFor="hospitalPhoneExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span'  id="hospitalPhoneExt">{formData.hospitalPhoneExt || ' '}</span>
                       </div>
                     </div>
                   </div>
                   <hr></hr>
                   <div className="form-group row mb-1">
                     <div className="col-md-3">
-                      <label htmlFor="RtwDate" style={{ fontWeight: 'bold' }}>If Returned to Work, Give Date:</label>
-                      <span id="RtwDate">{formData.RtwDate || ' '}</span>
+                      <label htmlFor="RtwDate" className=" col-form-label custom-label">If Returned to Work, Give Date:</label>
+                      <span className='custom-span'  id="RtwDate">{formData.RtwDate || ' '}</span>
                     </div>
                     <div className="col-md-3">
-                      <label htmlFor="ReturnedWagePerWeek" style={{ fontWeight: 'bold' }}>Returned at what wage per week:</label>
-                      <span id="ReturnedWagePerWeek">{formData.ReturnedWagePerWeek || ' '}</span>
+                      <label htmlFor="ReturnedWagePerWeek" className=" col-form-label custom-label">Returned at what wage per week:</label>
+                      <span className='custom-span'  id="ReturnedWagePerWeek">{formData.ReturnedWagePerWeek || ' '}</span>
                     </div>
                     <div className="col-md-3">
-                      <label htmlFor="FatalDeathDate" style={{ fontWeight: 'bold' }}>If Fatal, Enter Complete Date of Death:</label>
-                      <span id="FatalDeathDate">{formData.FatalDeathDate || ' '}</span>
+                      <label htmlFor="FatalDeathDate" className=" col-form-label custom-label">If Fatal, Enter Complete Date of Death:</label>
+                      <span className='custom-span'  id="FatalDeathDate">{formData.FatalDeathDate || ' '}</span>
                     </div>
                   </div>
                   <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '0px 0' }} />
                   <div className="form-group row mb-2 mt-1">
                     <div className="col-md-3">
-                      <label htmlFor="reportPreparedBy" style={{ fontWeight: 'bold' }}>Report Prepared By (Print or Type):</label>
-                      <span id="reportPreparedBy">{formData.reportPreparedBy || ' '}</span>
+                      <label htmlFor="reportPreparedBy" className=" col-form-label custom-label">Report Prepared By (Print or Type):</label>
+                      <span className='custom-span'  id="reportPreparedBy">{formData.reportPreparedBy || ' '}</span>
                     </div>
                     <div className="col-md-3">
-                      <label htmlFor="telePhoneNumber" style={{ fontWeight: 'bold' }}>Telephone Number:</label>
-                      <span id="telePhoneNumber">{formData.telePhoneNumber || ' '}</span>
+                      <label htmlFor="telePhoneNumber" className=" col-form-label custom-label">Telephone Number:</label>
+                      <span className='custom-span'  id="telePhoneNumber">{formData.telePhoneNumber || ' '}</span>
                     </div>
                     <div className="col-md-2 d-flex align-items-center">
-                      <label htmlFor="telePhoneExt" style={{ fontWeight: 'bold' }}>Ext:</label>
-                      <span id="telePhoneExt">{formData.telePhoneExt || ' '}</span>
+                      <label htmlFor="telePhoneExt" className=" col-form-label custom-label">Ext:</label>
+                      <span className='custom-span'  id="telePhoneExt">{formData.telePhoneExt || ' '}</span>
                     </div>
                     <div className="col-md-4">
-                      <label htmlFor="DateOfReport" style={{ fontWeight: 'bold' }}>Date of Report:</label>
-                      <span id="DateOfReport">{formData.DateOfReport || ' '}</span>
+                      <label htmlFor="DateOfReport" className=" col-form-label custom-label">Date of Report:</label>
+                      <span className='custom-span'  id="DateOfReport">{formData.DateOfReport || ' '}</span>
                     </div>
                   </div>
                 </div>
@@ -3241,10 +3242,10 @@ const Wc1FormComponent = () => {
                   <div className="form-group row mb-0">
                     <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum</h1>
                     <div className="col-md-5">
-                      <label style={{ fontWeight: 'bold' }}>
+                      <label className=" col-form-label custom-label">
                         Check which benefits are being paid:
                       </label>
-                      <span id="incomeBenefits" className="ml-3">
+                      <span className='custom-span ml-3'  id="incomeBenefits">
                         {formData.incomeBenefits?.label || formData.incomeBenefits?.value || ' '}
                       </span>
                     </div>
@@ -3252,78 +3253,78 @@ const Wc1FormComponent = () => {
                       <div className="form-group Income-Benefits-Form mt-2">
                         <div className="d-flex flex-wrap">
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Previously Medical Only:
                             </label>
-                            <span id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : 'No'}</span>
+                            <span className='custom-span'  id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : 'No'}</span>
                           </div>
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Average Weekly Wage:
                             </label>
-                            <span id="averageWeeklyWage">{formData.averageWeeklyWage || ' '}</span>
+                            <span className='custom-span'  id="averageWeeklyWage">{formData.averageWeeklyWage || ' '}</span>
                           </div>
 
                           <div className="col-md-3">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Weekly Benefit: $
                             </label>
-                            <span id="weeklyBenefit">{formData.weeklyBenefit || ' '}</span>
+                            <span className='custom-span'  id="weeklyBenefit">{formData.weeklyBenefit || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Date of Disability:
                             </label>
-                            <span id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
+                            <span className='custom-span'  id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
                           </div>
                         </div>
 
                         <div className="d-flex flex-wrap mt-3">
                           {/* Row 3 */}
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Date Of First Payment:
                             </label>
-                            <span id="dateOfFirstPayment">{formData.dateOfFirstPayment || ' '}</span>
+                            <span className='custom-span'  id="dateOfFirstPayment">{formData.dateOfFirstPayment || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Compensation Paid: $
                             </label>
-                            <span id="compensationPaid">{formData.compensationPaid || ' '}</span>
+                            <span className='custom-span'  id="compensationPaid">{formData.compensationPaid || ' '}</span>
                           </div>
 
                           <div className="col-md-3">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Penalty Paid: $
                             </label>
-                            <span id="penalityPaid">{formData.penalityPaid || ' '}</span>
+                            <span className='custom-span'  id="penalityPaid">{formData.penalityPaid || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Benefits Payable From Date:
                             </label>
-                            <span id="dateBenefitsPayableFrom">{formData.dateBenefitsPayableFrom || ' '}</span>
+                            <span className='custom-span'  id="dateBenefitsPayableFrom">{formData.dateBenefitsPayableFrom || ' '}</span>
                           </div>
                         </div>
 
                         <div className="d-flex flex-wrap mt-3">
                           {/* Row 4 */}
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Benefits Payable For:
                             </label>
-                            <span id="disabilityTypes">{formData.disabilityTypes || ' '}</span>
+                            <span className='custom-span'  id="disabilityTypes">{formData.disabilityTypes || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
-                            <label style={{ fontWeight: 'bold' }}>
+                            <label className=" col-form-label custom-label">
                               Pay Benefit Until:
                             </label>
-                            <span id="PayBenefitUntil">{formData.PayBenefitUntil || ' '}</span>
+                            <span className='custom-span'  id="PayBenefitUntil">{formData.PayBenefitUntil || ' '}</span>
                           </div>
                         </div>
 
@@ -3331,24 +3332,24 @@ const Wc1FormComponent = () => {
                         {formData.disabilityTypes?.trim().toLowerCase() === 'permanen' && (
                           <div className="d-flex flex-wrap mt-3">
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>
+                              <label className=" col-form-label custom-label">
                                 Disability %:
                               </label>
-                              <span id="disabilityPercentage">{formData.disabilityPercentage || ' '}</span>
+                              <span className='custom-span'  id="disabilityPercentage">{formData.disabilityPercentage || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>
+                              <label className=" col-form-label custom-label">
                                 Disabled Body Part:
                               </label>
-                              <span id="disabledBodyPart">{formData.disabledBodyPart || ' '}</span>
+                              <span className='custom-span'  id="disabledBodyPart">{formData.disabledBodyPart || ' '}</span>
                             </div>
 
                             <div className="col-md-3 ">
-                              <label style={{ fontWeight: 'bold' }}>
+                              <label className=" col-form-label custom-label">
                                 Duration of Disability:
                               </label>
-                              <span id="durationOfDisability">{formData.durationOfDisability || ' '}</span>
+                              <span className='custom-span'  id="durationOfDisability">{formData.durationOfDisability || ' '}</span>
                               <span style={{ marginLeft: '5px' }}>(Weeks)</span>
                             </div>
                           </div>
@@ -3360,52 +3361,52 @@ const Wc1FormComponent = () => {
                         <div className="form-section flex-fill">
                           <div className="form-group row mb-1">
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>Previously Medical Only:</label>
-                              <span id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : formData.previouslyMedicalOnly === 'N' ? 'No' : 'None'}</span>
+                              <label className=" col-form-label custom-label">Previously Medical Only:</label>
+                              <span className='custom-span'  id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : formData.previouslyMedicalOnly === 'N' ? 'No' : 'None'}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>Average Weekly Wage Amount ($):</label>
-                              <span id="averageWeeklyWageAmount">{formData.averageWeeklyWageAmount || ' '}</span>
+                              <label className=" col-form-label custom-label">Average Weekly Wage Amount ($):</label>
+                              <span className='custom-span'  id="averageWeeklyWageAmount">{formData.averageWeeklyWageAmount || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>Weekly Benefit Amount ($):</label>
-                              <span id="weeklyBenefitAmount">{formData.weeklyBenefitAmount || ' '}</span>
+                              <label className=" col-form-label custom-label">Weekly Benefit Amount ($):</label>
+                              <span className='custom-span'  id="weeklyBenefitAmount">{formData.weeklyBenefitAmount || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>Date of Disability:</label>
-                              <span id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
+                              <label className=" col-form-label custom-label">Date of Disability:</label>
+                              <span className='custom-span'  id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
                             </div>
                           </div>
 
                           <div className="form-group row mb-2 mt-2">
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>
+                              <label className=" col-form-label custom-label">
                                 Date Salary Paid:
                               </label>
-                              <span id="dateSalaryPaid">{formData.dateSalaryPaid || ' '}</span>
+                              <span className='custom-span'  id="dateSalaryPaid">{formData.dateSalaryPaid || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>
+                              <label className=" col-form-label custom-label">
                                 Benefits Payable From Date:
                               </label>
-                              <span id="benefitsPayableFromDate">{formData.benefitsPayableFromDate || ' '}</span>
+                              <span className='custom-span'  id="benefitsPayableFromDate">{formData.benefitsPayableFromDate || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>
+                              <label className=" col-form-label custom-label">
                                 Benefits Payable For:
                                 <span style={{ color: 'red' }}>*</span>
                               </label>
-                              <span id="benefitsPayableFor">{formData.benefitsPayableFor || ' '}</span>
+                              <span className='custom-span'  id="benefitsPayableFor">{formData.benefitsPayableFor || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
-                              <label style={{ fontWeight: 'bold' }}>Pay Benefit Until:</label>
-                              <span id="payBenefitUntil">{formData.payBenefitUntil || ' '}</span>
+                              <label className=" col-form-label custom-label">Pay Benefit Until:</label>
+                              <span className='custom-span'  id="payBenefitUntil">{formData.payBenefitUntil || ' '}</span>
                             </div>
                           </div>
                         </div>
@@ -3421,8 +3422,8 @@ const Wc1FormComponent = () => {
                
                  <div className="row mb-3"> {/* Wrap first section in a row */}
                    <div className="col-md-12">
-                     <label style={{ fontWeight: 'bold' }}>Controvert Type:</label>
-                     <span id="controvertTypes">
+                     <label className=" col-form-label custom-label">Controvert Type:</label>
+                     <span className='custom-span'  id="controvertTypes">
                        {formData.controvertType ? formData.controvertType.description : '' || ' '}
                      </span>
                    </div>
@@ -3430,8 +3431,8 @@ const Wc1FormComponent = () => {
                
                  <div className="row mb-3"> {/* Wrap second section in a row */}
                    <div className="col-md-12">
-                     <label style={{ fontWeight: 'bold' }}>Reason Benefits will not be paid:</label>
-                     <span id="BenifitsNPReasons">{formData.BenifitsNPReasons || ' '}</span>
+                     <label className=" col-form-label custom-label">Reason Benefits will not be paid:</label>
+                     <span className='custom-span'  id="BenifitsNPReasons">{formData.BenifitsNPReasons || ' '}</span>
                    </div>
                  </div>
                </div>

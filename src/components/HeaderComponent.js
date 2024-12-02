@@ -34,7 +34,7 @@ const HeaderComponent = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
         {/* <NewClaimComponent /> */}
         <DataTableComponent />
-        <CalendarHeader />
+        {/* <CalendarHeader /> */}
           <div className="ms-auto">
             {path ? (
               <button

@@ -33,7 +33,7 @@ class ClaimService {
         });
       }
       saveClaim(formData){
-        return axios.post(CLAIM_URL + "/saveWc1Form" , formData ,{
+        return axios.post(CLAIM_URL + "/submitWc1Form" , formData ,{
           headers: authHeader(),
         });
       }
