@@ -187,7 +187,7 @@ const Wc1FormComponent = () => {
   useEffect(() => {
     TreatmentTypeService.getAllTreatmentTypes()
       .then((response) => {
-        console.log(response);
+        console.log("treatmentTypes ....:",response);
         setTreatmentTypes(response.data);
         console.log("treatmentTypes", treatmentTypes);
       })
@@ -1481,9 +1481,13 @@ const Wc1FormComponent = () => {
                               value={formData.naicsTypes}
                               name="naicsTypes"
                               onChange={handleChange}
+                              // options={naicsTypes.map(type => ({
+                              //   label: type.description,
+                              //   value: type.value
+                              // }))}
                               options={naicsTypes.map(type => ({
                                 label: type.description,
-                                value: type.value
+                                value: { id: type.id, code: type.code, description: type.description }
                               }))}
                               placeholder="---Select One---"
                               filter
@@ -1915,9 +1919,13 @@ const Wc1FormComponent = () => {
                               value={formData.treatmentTypes}
                               name="treatmentTypes"
                               onChange={handleChange}
+                              // options={treatmentTypes.map(type => ({
+                              //   label: type.description, // Displayed in the dropdown
+                              //   value: type.id // Value sent on change
+                              // }))}
                               options={treatmentTypes.map(type => ({
-                                label: type.description, // Displayed in the dropdown
-                                value: type.value // Value sent on change
+                                label: type.description,
+                                value: { id: type.id, description: type.description }
                               }))}
                               filter
                               className="dropdown-select"
@@ -1991,7 +1999,8 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               options={hospitalStateTypes.map(type => ({
                                 label: type.description,
-                                value: type.code
+                                //value: type.code
+                                value: { value: type.code, description: type.description }
                               }))}
                               filter
                               className="dropdown-select "
@@ -2486,19 +2495,19 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               options={disabilityTypes.map(type => ({
                                 label: type.description,
-                                value: type.code
+                                //value: type.code
+                                value:  type.description
+                                //value: { id: type.id, code: type.code, description: type.description }
                               }))}
                               placeholder="---Select One---"
                               filter
                               // className="select-dropdown custom-input col-md-12"
                               className={`select-dropdown  custom-input col-md-10 ${errors.disabilityTypes ? 'p-invalid' : ''}`}
                               ref={getFieldRef('disabilityTypes')}
-
                               label="Benefits Payable For"
                               dropdownClassName="custom-dropdown-panel"
                             />
                             <label htmlFor="disabilityTypes" style={{ marginLeft: '15px' }}>Benefits Payable For<span style={{ color: 'red' }}>*</span></label>
-
                           </FloatLabel>
                           {errors.disabilityTypes && (
                             <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -3154,7 +3163,7 @@ const Wc1FormComponent = () => {
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="treatmentTypes" className=" col-form-label custom-label">Initial Treatment:</label>
-                        <span className='custom-span'  id="treatmentTypes">{formData.treatmentTypes || ' '}</span>
+                        <span className='custom-span'  id="treatmentTypes">{formData.treatmentTypes?.description || ' '}</span>
                       </div>
 
                     </div>
@@ -3267,7 +3276,7 @@ const Wc1FormComponent = () => {
 
                           <div className="col-md-3">
                             <label className=" col-form-label custom-label">
-                              Weekly Benefit: $
+                              Weekly Benefit: 
                             </label>
                             <span className='custom-span'  id="weeklyBenefit">{formData.weeklyBenefit || ' '}</span>
                           </div>
@@ -3291,14 +3300,14 @@ const Wc1FormComponent = () => {
 
                           <div className="col-md-3 ">
                             <label className=" col-form-label custom-label">
-                              Compensation Paid: $
+                              Compensation Paid: 
                             </label>
                             <span className='custom-span'  id="compensationPaid">{formData.compensationPaid || ' '}</span>
                           </div>
 
                           <div className="col-md-3">
                             <label className=" col-form-label custom-label">
-                              Penalty Paid: $
+                              Penalty Paid: 
                             </label>
                             <span className='custom-span'  id="penalityPaid">{formData.penalityPaid || ' '}</span>
                           </div>
@@ -3317,7 +3326,7 @@ const Wc1FormComponent = () => {
                             <label className=" col-form-label custom-label">
                               Benefits Payable For:
                             </label>
-                            <span className='custom-span'  id="disabilityTypes">{formData.disabilityTypes || ' '}</span>
+                            <span className='custom-span'  id="disabilityTypes">{formData.disabilityTypes|| ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
@@ -3401,7 +3410,7 @@ const Wc1FormComponent = () => {
                                 Benefits Payable For:
                                 <span style={{ color: 'red' }}>*</span>
                               </label>
-                              <span className='custom-span'  id="benefitsPayableFor">{formData.benefitsPayableFor || ' '}</span>
+                              <span className='custom-span'  id="benefitsPayableFor">{formData.benefitsPayableFor.label || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
