@@ -18,10 +18,8 @@ const CalendarComponent = () => {
   const [endTime, setEndTime] = useState("01:00");
   const [title, setTitle] = useState("");
   const [modalShow, setModalShow] = useState(false);
-  const [modalMode, setModalMode] = useState('');  
+  const [modalMode, setModalMode] = useState('');  // 'edit' or 'create'
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [claimNo, setClaimNo] = useState(""); 
-  const [calendarList, setCalendarList] = useState([]); 
 
   useEffect(() => {
     // Get username from token
@@ -48,18 +46,7 @@ const CalendarComponent = () => {
       }
     };
 
-    // Fetch calendar list to get claimNo
-    const fetchCalendarList = async () => {
-      try {
-        const response = await CalendarService.getCalendarList();
-        setCalendarList(response.data);  // Save the calendar list in state
-      } catch (error) {
-        console.log("Error fetching calendar list:", error);
-      }
-    };
-
     fetchEvents();
-    fetchCalendarList();
   }, [id]);
 
   // Date click handler to open modal for creating a new event
@@ -79,28 +66,19 @@ const CalendarComponent = () => {
       const response = await CalendarService.getSlotById(eventId);
       const event = response.data;
 
-      // Set event details for editing
       setSelectedEvent(event);  // Set the clicked event for editing
       setTitle(event.title || "");  // Pre-populate title
       setStartTime(event.startTime.slice(11, 16));  // Pre-populate start time (HH:MM)
       setEndTime(event.endTime.slice(11, 16));  // Pre-populate end time (HH:MM)
+
       setSelectedDate(new Date(event.startTime));  // Set the date to the event's start date
       setModalMode('edit');  // Set modal mode to "edit"
       setModalShow(true);  // Show the modal for editing
-
-      // Find the corresponding claimNo by slotId
-      const foundCalendar = calendarList.find(item => item.slotId === event.slotId);
-      if (foundCalendar) {
-        setClaimNo(foundCalendar.claimNo || "Not Available");  // Set the claimNo for modal
-      } else {
-        setClaimNo("Not Available");
-      }
     } catch (error) {
       console.log("Error fetching event for editing:", error);
     }
   };
 
-  // Save slot data (either create or edit)
   const handleSaveSlot = async () => {
     if (!startTime || !endTime || !title) {
       alert("Please fill in all fields.");
@@ -114,6 +92,7 @@ const CalendarComponent = () => {
       title: title,
       startTime: startDateTime,
       endTime: endDateTime,
+      // deactiveDate: endDateTime,
       createdDate: new Date().toISOString(),
       createdBy: username,
       lastUpdatedDate: new Date().toISOString(),
@@ -121,16 +100,33 @@ const CalendarComponent = () => {
       calendar: {
         calendarId: 41,
       },
-      claimNo: claimNo, // Include claimNo when saving the event
     };
+
+    // Only add slotId if it's an edit operation
+    if (modalMode === 'edit' && selectedEvent) {
+      slotData.slotId = selectedEvent.slotId;  // Make sure to include the existing slotId for updating
+    }
 
     try {
       if (modalMode === 'edit') {
-        await CalendarService.updateSlot(slotData);  // Update existing event
+        // Update existing event
+        await CalendarService.updateSlot(slotData);  // Ensure updateSlot is handling the slotId properly
       } else {
-        await CalendarService.saveSlot(slotData);  // Create new event
+        // Create new event
+        const calendarData = {
+          // party: { id: id },
+          // calenderDate: startDateTime,
+          // deactiveDate: endDateTime,
+          // createdDate: new Date().toISOString(),
+          // createdBy: username,
+          // lastUpdatedDate: new Date().toISOString(),
+          // lastUpdatedBy: username,
+          slot: [slotData],
+        };
+        await CalendarService.saveSlot(slotData);
       }
 
+      // Close the modal
       setModalShow(false);
 
       // Refresh events after saving
@@ -154,13 +150,12 @@ const CalendarComponent = () => {
       <div style={{ display: "flex", padding: "20px", width: '100%' }}>
         <div style={{ flex: 3 }}>
           <h1>
-            <Link to="/wc1" className="heading btn btn-dark mb-2">
+            <Link to="/wc1" className="heading btn  btn-dark mb-2">
               Back
             </Link>
             Calendar
           </h1>
-          <FullCalendar
-            className="calendar"
+          <FullCalendar className="calendar"
             headerToolbar={{
               start: "today prev next",
               center: "title",
@@ -169,11 +164,11 @@ const CalendarComponent = () => {
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             weekends={false}
-            events={events}
-            editable={true}
-            selectable={true}
-            nowIndicator={true}
-            initialDate={new Date()}
+            events={events} // Pass events array
+            editable={true} // Allow drag-and-drop
+            selectable={true} // Allow selection
+            nowIndicator={true} // Highlight the current time
+            initialDate={new Date()} // Start with today's date
             dayCellClassNames={(date) =>
               date.date.toDateString() === new Date().toDateString()
                 ? "highlight-today"
@@ -190,17 +185,6 @@ const CalendarComponent = () => {
             </Modal.Header>
             <Modal.Body>
               <Form>
-                {modalMode === 'edit' && (
-                  <Form.Group controlId="formClaimNo">
-                    <Form.Label>Claim Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      readOnly
-                      value={claimNo}  // Display the claimNo in the modal
-                    />
-                  </Form.Group>
-                )}
-
                 <Form.Group controlId="formTitle">
                   <Form.Label>Title</Form.Label>
                   <Form.Control
