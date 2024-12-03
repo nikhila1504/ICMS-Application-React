@@ -187,7 +187,7 @@ const Wc1FormComponent = () => {
   useEffect(() => {
     TreatmentTypeService.getAllTreatmentTypes()
       .then((response) => {
-        console.log("treatmentTypes ....:",response);
+        console.log("treatmentTypes ....:", response);
         setTreatmentTypes(response.data);
         console.log("treatmentTypes", treatmentTypes);
       })
@@ -616,7 +616,7 @@ const Wc1FormComponent = () => {
     'compensationPaid': 'tab5',
     'dateBenefitsPayableFrom': 'tab5',
     'disabilityTypes': 'tab5',
-    'controvertType':'tab5',
+    'controvertType': 'tab5',
     'weeklyBenefit': 'tab5',
     'dateSalaryPaid': 'tab5',
     'benefitsPayableFromDate': 'tab5',
@@ -807,10 +807,13 @@ const Wc1FormComponent = () => {
   const formatDateForInput = (date) => {
     if (!date) return '';
     const d = new Date(date);
+    if (isNaN(d.getTime())) {
+      return '';
+    }
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const day = String(d.getDate() + 1).padStart(2, '0');
+    return `${month}-${day}-${year}`;
   };
 
 
@@ -1002,7 +1005,7 @@ const Wc1FormComponent = () => {
                       className="custom-border"
                       id="dateOfBirth"
                       name="dateOfBirth"
-                      value={formatDateForInput(formData.claimant.dateOfBirth) || ' '}
+                      value={formData.claimant.dateOfBirth ? new Date(formData.claimant.dateOfBirth).toISOString().split('T')[0] : ''}
                       onChange={handleChange}
                       onClick={(e) => e.target.showPicker()}
                       disabled
@@ -1506,7 +1509,8 @@ const Wc1FormComponent = () => {
                           // onClick={(e) => e.target.showPicker()}
                           id="dateOfInjury"
                           name="dateOfInjury"
-                          value={formatDateForInput(formData.dateOfInjury)}
+                          //value={formatDateForInput(formData.dateOfInjury)}
+                          value={formData.dateOfInjury ? new Date(formData.dateOfInjury).toISOString().split('T')[0] : ''}
                           onChange={handleChange}
                           className="custom-border"
                           required
@@ -2065,157 +2069,157 @@ const Wc1FormComponent = () => {
                       </div>
                     </div>
                   </div>
-                {/* </AccordionTab>
+                  {/* </AccordionTab>
                 <AccordionTab header="Report" onClick={() => handleToggle(0)}> */}
                   {/* <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
                     <div> */}
-                      {/* First Row: NAICS Code, Date of Injury, Time of Injury */}
+                  {/* First Row: NAICS Code, Date of Injury, Time of Injury */}
 
-                      <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
+                  <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
 
 
 
-                      {/* <hr style={{ height: '1px', backgroundColor: 'black', border: 'none' }} /> */}
-                      {/* <div className="d-flex flex-wrap">*/}
-                        {/* <div className="form-section flex-fill">  */}
-                        <div className="form-group row mb-1 mt-3">
-                            <div className="col-md-3">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="If Returned to Work, Give Date:" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="If Returned to Work, Give Date:"
-                                  type="date"
-                                  className="form-control custom-input"
-                                  id="RtwDate"
-                                  name="RtwDate"
-                                  value={formData.RtwDate}
-                                  onChange={handleChange}
-                                // onClick={(e) => e.target.showPicker()}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
+                  {/* <hr style={{ height: '1px', backgroundColor: 'black', border: 'none' }} /> */}
+                  {/* <div className="d-flex flex-wrap">*/}
+                  {/* <div className="form-section flex-fill">  */}
+                  <div className="form-group row mb-1 mt-3">
+                    <div className="col-md-3">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="If Returned to Work, Give Date:" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="If Returned to Work, Give Date:"
+                          type="date"
+                          className="form-control custom-input"
+                          id="RtwDate"
+                          name="RtwDate"
+                          value={formData.RtwDate}
+                          onChange={handleChange}
+                        // onClick={(e) => e.target.showPicker()}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
 
-                            <div className="col-md-3">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="Returned at what wage per week:" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="Returned at what wage per week:"
-                                  type="text"
-                                  className="form-control custom-input"
-                                  id="ReturnedWagePerWeek"
-                                  name="ReturnedWagePerWeek"
-                                  value={formData.ReturnedWagePerWeek || ' '}
-                                  onBlur={handleBlur}
-                                  onFocus={handleFocus}
-                                  onChange={handleChange}
-                                  style={{ marginRight: '5px' }}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
+                    <div className="col-md-3">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="Returned at what wage per week:" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="Returned at what wage per week:"
+                          type="text"
+                          className="form-control custom-input"
+                          id="ReturnedWagePerWeek"
+                          name="ReturnedWagePerWeek"
+                          value={formData.ReturnedWagePerWeek || ' '}
+                          onBlur={handleBlur}
+                          onFocus={handleFocus}
+                          onChange={handleChange}
+                          style={{ marginRight: '5px' }}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
 
-                            <div className="col-md-3">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="If Fatal, Enter Complete Date of Death:" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="If Fatal, Enter Complete Date of Death:"
-                                  type="date"
-                                  className="form-control custom-input"
-                                  id="FatalDeathDate"
-                                  name="FatalDeathDate"
-                                  value={formData.FatalDeathDate}
-                                  onChange={handleChange}
-                                  onClick={(e) => e.target.showPicker()}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
-                          </div>
-                        {/* </div> */}
-                      {/* </div> */}
-                      <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} /> 
-                      {/* <div className="d-flex flex-wrap">
+                    <div className="col-md-3">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="If Fatal, Enter Complete Date of Death:" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="If Fatal, Enter Complete Date of Death:"
+                          type="date"
+                          className="form-control custom-input"
+                          id="FatalDeathDate"
+                          name="FatalDeathDate"
+                          value={formData.FatalDeathDate}
+                          onChange={handleChange}
+                          onClick={(e) => e.target.showPicker()}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
+                  </div>
+                  {/* </div> */}
+                  {/* </div> */}
+                  <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '20px 0' }} />
+                  {/* <div className="d-flex flex-wrap">
                         <div className="form-section flex-fill"> */}
-                          <div className="form-group row mb-1 mt-2" >
-                            <div className="col-md-3">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="Report Prepared By (Print or Type):" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="Report Prepared By (Print or Type):"
-                                  type="text"
-                                  className="form-control custom-input mb-2"
-                                  id="reportPreparedBy"
-                                  name="reportPreparedBy"
-                                  value={formData.reportPreparedBy || ' '}
-                                  onChange={handleChange}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
+                  <div className="form-group row mb-1 mt-2" >
+                    <div className="col-md-3">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="Report Prepared By (Print or Type):" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="Report Prepared By (Print or Type):"
+                          type="text"
+                          className="form-control custom-input mb-2"
+                          id="reportPreparedBy"
+                          name="reportPreparedBy"
+                          value={formData.reportPreparedBy || ' '}
+                          onChange={handleChange}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
 
-                            <div className="col-md-3">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="Telephone Number:" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="Telephone Number:"
-                                  type="text"
-                                  className="form-control custom-input mb-2"
-                                  id="telePhoneNumber"
-                                  name="telePhoneNumber"
-                                  value={formData.telePhoneNumber || ' '}
-                                  onChange={handleChange}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
+                    <div className="col-md-3">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="Telephone Number:" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="Telephone Number:"
+                          type="text"
+                          className="form-control custom-input mb-2"
+                          id="telePhoneNumber"
+                          name="telePhoneNumber"
+                          value={formData.telePhoneNumber || ' '}
+                          onChange={handleChange}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
 
-                            <div className="col-md-1 d-flex align-items-center">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="Ext:" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="Ext:"
-                                  type="text"
-                                  className="form-control custom-input mb-2"
-                                  id="telePhoneExt"
-                                  name="telePhoneExt"
-                                  value={formData.telePhoneExt || ' '}
-                                  onChange={handleChange}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
+                    <div className="col-md-1 d-flex align-items-center">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="Ext:" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="Ext:"
+                          type="text"
+                          className="form-control custom-input mb-2"
+                          id="telePhoneExt"
+                          name="telePhoneExt"
+                          value={formData.telePhoneExt || ' '}
+                          onChange={handleChange}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
 
-                            <div className="col-md-2">
-                              <div className="form-outline">
-                                {/* <MDBFloatingLabel label="Date of Report:" className="custom-label"> */}
-                                <MDBInput
-                                  autoComplete="off"
-                                  label="Date of Report:"
-                                  type="date"
-                                  className="form-control custom-input"
-                                  id="DateOfReport"
-                                  name="DateOfReport"
-                                  value={formData.DateOfReport}
-                                  onChange={handleChange}
-                                // onClick={(e) => e.target.showPicker()}
-                                />
-                                {/* </MDBFloatingLabel> */}
-                              </div>
-                            </div>
-                          </div>
-                        {/* </div> */}
-                      {/* </div> */}
-                      {/* <div> */}
+                    <div className="col-md-2">
+                      <div className="form-outline">
+                        {/* <MDBFloatingLabel label="Date of Report:" className="custom-label"> */}
+                        <MDBInput
+                          autoComplete="off"
+                          label="Date of Report:"
+                          type="date"
+                          className="form-control custom-input"
+                          id="DateOfReport"
+                          name="DateOfReport"
+                          value={formData.DateOfReport}
+                          onChange={handleChange}
+                        // onClick={(e) => e.target.showPicker()}
+                        />
+                        {/* </MDBFloatingLabel> */}
+                      </div>
+                    </div>
+                  </div>
+                  {/* </div> */}
+                  {/* </div> */}
+                  {/* <div> */}
 
-                      {/* </div> */}
-                    {/* </div>
+                  {/* </div> */}
+                  {/* </div>
                   </div> */}
                 </AccordionTab>
               </Accordion>
@@ -2287,7 +2291,7 @@ const Wc1FormComponent = () => {
                           value="salaryInLieu"
                           disabled={!formData.sectionB}
                           style={{ marginTop: '12px' }}
-                          checked={formData.incomeBenefits === 'N'}
+                          checked={formData.incomeBenefits  === 'N'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: '12px' }} htmlFor="salaryInLieu">
@@ -2496,7 +2500,7 @@ const Wc1FormComponent = () => {
                               options={disabilityTypes.map(type => ({
                                 label: type.description,
                                 //value: type.code
-                                value:  type.description
+                                value: type.description
                                 //value: { id: type.id, code: type.code, description: type.description }
                               }))}
                               placeholder="---Select One---"
@@ -2780,7 +2784,7 @@ const Wc1FormComponent = () => {
                     const updatedData = { ...prev, isControvertEnabled: !prev.isControvertEnabled };
                     if (!updatedData.isControvertEnabled) {
                       updatedData.controvertType = {};
-                      updatedData.BenifitsNPReasons = ''; 
+                      updatedData.BenifitsNPReasons = '';
                     }
                     return updatedData;
                   })}
@@ -2975,7 +2979,11 @@ const Wc1FormComponent = () => {
 
                     <div className="col-md-4 mb-2">
                       <label className=" col-form-label custom-label">Birthdate:</label>
-                      <span className='custom-span'>{formData.claimant.dateOfBirth ? formatDateForInput(formData.claimant.dateOfBirth) : ' '}</span>
+                      <span className='custom-span'>{formData.claimant.dateOfBirth
+                        ? `${new Date(formData.claimant.dateOfBirth).getMonth() + 1}`.padStart(2, '0') + '-' +
+                        `${new Date(formData.claimant.dateOfBirth).getDate()}`.padStart(2, '0') + '-' +
+                        new Date(formData.claimant.dateOfBirth).getFullYear()
+                        : ' '}</span>
                     </div>
                   </div>
                   <div className="row">
@@ -3017,7 +3025,8 @@ const Wc1FormComponent = () => {
                   <div className="d-flex flex-wrap">
                     <div className="col-md-3 mb-2">
                       <label className=" col-form-label custom-label">Hired Date:</label>
-                      <span className='custom-span'>{formData.hiredDate || ' '}</span>
+                      <span className='custom-span'>{formData.hiredDate ? formatDateForInput(formData.hiredDate) : ' '}</span>
+                      {/* {formData.claimant.dateOfBirth ? formatDateForInput(formData.claimant.dateOfBirth) : ' '} */}
                     </div>
                     <div className="col-md-3 mb-2">
                       <label className=" col-form-label custom-label">Job Classified Code No:</label>
@@ -3055,7 +3064,12 @@ const Wc1FormComponent = () => {
 
                     <div className="col-md-4 mb-3">
                       <label className=" col-form-label custom-label">Date of Injury:</label>
-                      <span className='custom-span'>{formData.dateOfInjury ? formatDateForInput(formData.dateOfInjury) : ' '}</span>
+                      <span className='custom-span'>{formData.dateOfInjury
+                        ? `${new Date(formData.dateOfInjury).getMonth() + 1}`.padStart(2, '0') + '-' +
+                        `${new Date(formData.dateOfInjury).getDate()}`.padStart(2, '0') + '-' +
+                        new Date(formData.dateOfInjury).getFullYear()
+                        : ' '}</span>
+                      {/* <span className='custom-span'>{formData.dateOfInjury ? formatDateForInput(formData.dateOfInjury) : ' '}</span> */}
                     </div>
 
                     <div className="col-md-2 mb-3">
@@ -3072,10 +3086,12 @@ const Wc1FormComponent = () => {
                     <div className="col-md-4 mb-3">
                       <label className=" col-form-label custom-label">Date Employer had Knowledge of Injury:</label>
                       <span className='custom-span'>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span>
+                      {/* <span className='custom-span'>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span> */}
                     </div>
 
                     <div className="col-md-4 mb-3">
                       <label className=" col-form-label custom-label">First Date Employee Failed to Work:</label>
+                      {/* <span className='custom-span'>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span> */}
                       <span className='custom-span'>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span>
                     </div>
 
@@ -3123,19 +3139,19 @@ const Wc1FormComponent = () => {
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
                         <label htmlFor="tPhysicianName" className=" col-form-label custom-label">Treating Physician Name:</label>
-                        <span className='custom-span'  id="tPhysicianName">{formData.tPhysicianName || ' '}</span>
+                        <span className='custom-span' id="tPhysicianName">{formData.tPhysicianName || ' '}</span>
                       </div>
                       <div className="col-md-3">
                         <label htmlFor="tPhysicianAddress1" className=" col-form-label custom-label">Treating Physician Address 1:</label>
-                        <span className='custom-span'  id="tPhysicianAddress1">{formData.tPhysicianAddress1 || ' '}</span>
+                        <span className='custom-span' id="tPhysicianAddress1">{formData.tPhysicianAddress1 || ' '}</span>
                       </div>
                       <div className="col-md-3">
                         <label htmlFor="tPhysicianAddress2" className=" col-form-label custom-label">Treating Physician Address 2:</label>
-                        <span className='custom-span'  id="tPhysicianAddress2">{formData.tPhysicianAddress2 || ' '}</span>
+                        <span className='custom-span' id="tPhysicianAddress2">{formData.tPhysicianAddress2 || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="tPhysicianCity" className=" col-form-label custom-label">Treating Physician City:</label>
-                        <span className='custom-span'  id="tPhysicianCity">{formData.tPhysicianCity || ' '}</span>
+                        <span className='custom-span' id="tPhysicianCity">{formData.tPhysicianCity || ' '}</span>
                       </div>
 
                     </div>
@@ -3143,27 +3159,27 @@ const Wc1FormComponent = () => {
                     <div className="form-group row mb-1 mt-3">
                       <div className="col-md-3">
                         <label htmlFor="selectedPhysicianState" className=" col-form-label custom-label">State:</label>
-                        <span className='custom-span'  id="selectedPhysicianState">{formData.selectedPhysicianState || 'GA'}</span>
+                        <span className='custom-span' id="selectedPhysicianState">{formData.selectedPhysicianState || 'GA'}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="tPhysicianZIP" className=" col-form-label custom-label">Treating Physician ZIP:</label>
-                        <span className='custom-span'  id="tPhysicianZIP">{formData.tPhysicianZIP || ' '}</span>
+                        <span className='custom-span' id="tPhysicianZIP">{formData.tPhysicianZIP || ' '}</span>
                       </div>
                       <div className="col-md-1">
                         <label htmlFor="tPhysicianZIPExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span'  id="tPhysicianZIPExt">{formData.tPhysicianZIPExt || ' '}</span>
+                        <span className='custom-span' id="tPhysicianZIPExt">{formData.tPhysicianZIPExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="tPhysicianPhone" className=" col-form-label custom-label">Treating Physician Phone:</label>
-                        <span className='custom-span'  id="tPhysicianPhone">{formData.tPhysicianPhone || ' '}</span>
+                        <span className='custom-span' id="tPhysicianPhone">{formData.tPhysicianPhone || ' '}</span>
                       </div>
                       <div className="col-md-1">
                         <label htmlFor="tPhysicianPhoneExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span'  id="tPhysicianPhoneExt">{formData.tPhysicianPhoneExt || ' '}</span>
+                        <span className='custom-span' id="tPhysicianPhoneExt">{formData.tPhysicianPhoneExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="treatmentTypes" className=" col-form-label custom-label">Initial Treatment:</label>
-                        <span className='custom-span'  id="treatmentTypes">{formData.treatmentTypes?.description || ' '}</span>
+                        <span className='custom-span' id="treatmentTypes">{formData.treatmentTypes?.description || ' '}</span>
                       </div>
 
                     </div>
@@ -3172,19 +3188,19 @@ const Wc1FormComponent = () => {
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
                         <label htmlFor="treatingFacility" className=" col-form-label custom-label">Hospital/Treating Facility:</label>
-                        <span className='custom-span'  id="treatingFacility">{formData.treatingFacility || ' '}</span>
+                        <span className='custom-span' id="treatingFacility">{formData.treatingFacility || ' '}</span>
                       </div>
                       <div className="col-md-3">
                         <label htmlFor="treatingFacilityAddress1" className=" col-form-label custom-label">Hospital/Treating Facility Address 1:</label>
-                        <span className='custom-span'  id="treatingFacilityAddress1">{formData.treatingFacilityAddress1 || ' '}</span>
+                        <span className='custom-span' id="treatingFacilityAddress1">{formData.treatingFacilityAddress1 || ' '}</span>
                       </div>
                       <div className="col-md-3">
                         <label htmlFor="treatingFacilityAddress2" className=" col-form-label custom-label">Hospital/Treating Facility Address 2:</label>
-                        <span className='custom-span'  id="treatingFacilityAddress2">{formData.treatingFacilityAddress2 || ' '}</span>
+                        <span className='custom-span' id="treatingFacilityAddress2">{formData.treatingFacilityAddress2 || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="treatingFacilityCity" className=" col-form-label custom-label">Hospital/Treating Facility City:</label>
-                        <span className='custom-span'  id="treatingFacilityCity">{formData.treatingFacilityCity || ' '}</span>
+                        <span className='custom-span' id="treatingFacilityCity">{formData.treatingFacilityCity || ' '}</span>
                       </div>
 
                     </div>
@@ -3192,23 +3208,23 @@ const Wc1FormComponent = () => {
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
                         <label htmlFor="selectedHospitalState" className=" col-form-label custom-label">State:</label>
-                        <span className='custom-span'  id="selectedHospitalState">{formData.selectedHospitalState || 'GA'}</span>
+                        <span className='custom-span' id="selectedHospitalState">{formData.selectedHospitalState || 'GA'}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="treatingFacilityZIP" className=" col-form-label custom-label">Hospital/Treating Facility ZIP:</label>
-                        <span className='custom-span'  id="treatingFacilityZIP">{formData.treatingFacilityZIP || ' '}</span>
+                        <span className='custom-span' id="treatingFacilityZIP">{formData.treatingFacilityZIP || ' '}</span>
                       </div>
                       <div className="col-md-1">
                         <label htmlFor="treatingFacilityZIPExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span'  id="treatingFacilityZIPExt">{formData.treatingFacilityZIPExt || ' '}</span>
+                        <span className='custom-span' id="treatingFacilityZIPExt">{formData.treatingFacilityZIPExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="hospitalPhone" className=" col-form-label custom-label">Hospital Phone:</label>
-                        <span className='custom-span'  id="hospitalPhone">{formData.hospitalPhone || ' '}</span>
+                        <span className='custom-span' id="hospitalPhone">{formData.hospitalPhone || ' '}</span>
                       </div>
                       <div className="col-md-1">
                         <label htmlFor="hospitalPhoneExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span'  id="hospitalPhoneExt">{formData.hospitalPhoneExt || ' '}</span>
+                        <span className='custom-span' id="hospitalPhoneExt">{formData.hospitalPhoneExt || ' '}</span>
                       </div>
                     </div>
                   </div>
@@ -3216,34 +3232,38 @@ const Wc1FormComponent = () => {
                   <div className="form-group row mb-1">
                     <div className="col-md-3">
                       <label htmlFor="RtwDate" className=" col-form-label custom-label">If Returned to Work, Give Date:</label>
-                      <span className='custom-span'  id="RtwDate">{formData.RtwDate || ' '}</span>
+                      {/* <span className='custom-span' id="RtwDate">{formData.RtwDate || ' '}</span> */}
+                      <span className='custom-span'>{formData.RtwDate ? formatDateForInput(formData.RtwDate) : ' '}</span>
                     </div>
                     <div className="col-md-3">
                       <label htmlFor="ReturnedWagePerWeek" className=" col-form-label custom-label">Returned at what wage per week:</label>
-                      <span className='custom-span'  id="ReturnedWagePerWeek">{formData.ReturnedWagePerWeek || ' '}</span>
+                      <span className='custom-span' id="ReturnedWagePerWeek">{formData.ReturnedWagePerWeek || ' '}</span>
                     </div>
                     <div className="col-md-3">
                       <label htmlFor="FatalDeathDate" className=" col-form-label custom-label">If Fatal, Enter Complete Date of Death:</label>
-                      <span className='custom-span'  id="FatalDeathDate">{formData.FatalDeathDate || ' '}</span>
+                      {/* <span className='custom-span' id="FatalDeathDate">{formData.FatalDeathDate || ' '}</span> */}
+                      <span className='custom-span'>{formData.FatalDeathDate ? formatDateForInput(formData.FatalDeathDate) : ' '}</span>
+
                     </div>
                   </div>
                   <hr style={{ height: '1px', backgroundColor: 'black', border: 'none', margin: '0px 0' }} />
                   <div className="form-group row mb-2 mt-1">
                     <div className="col-md-3">
                       <label htmlFor="reportPreparedBy" className=" col-form-label custom-label">Report Prepared By (Print or Type):</label>
-                      <span className='custom-span'  id="reportPreparedBy">{formData.reportPreparedBy || ' '}</span>
+                      <span className='custom-span' id="reportPreparedBy">{formData.reportPreparedBy || ' '}</span>
                     </div>
                     <div className="col-md-3">
                       <label htmlFor="telePhoneNumber" className=" col-form-label custom-label">Telephone Number:</label>
-                      <span className='custom-span'  id="telePhoneNumber">{formData.telePhoneNumber || ' '}</span>
+                      <span className='custom-span' id="telePhoneNumber">{formData.telePhoneNumber || ' '}</span>
                     </div>
                     <div className="col-md-2 d-flex align-items-center">
                       <label htmlFor="telePhoneExt" className=" col-form-label custom-label">Ext:</label>
-                      <span className='custom-span'  id="telePhoneExt">{formData.telePhoneExt || ' '}</span>
+                      <span className='custom-span' id="telePhoneExt">{formData.telePhoneExt || ' '}</span>
                     </div>
                     <div className="col-md-4">
                       <label htmlFor="DateOfReport" className=" col-form-label custom-label">Date of Report:</label>
-                      <span className='custom-span'  id="DateOfReport">{formData.DateOfReport || ' '}</span>
+                      {/* <span className='custom-span' id="DateOfReport">{formData.DateOfReport || ' '}</span> */}
+                      <span className='custom-span'>{formData.DateOfReport ? formatDateForInput(formData.DateOfReport) : ' '}</span>
                     </div>
                   </div>
                 </div>
@@ -3254,8 +3274,11 @@ const Wc1FormComponent = () => {
                       <label className=" col-form-label custom-label">
                         Check which benefits are being paid:
                       </label>
-                      <span className='custom-span ml-3'  id="incomeBenefits">
-                        {formData.incomeBenefits?.label || formData.incomeBenefits?.value || ' '}
+                      <span className='custom-span ml-3' id="incomeBenefits">
+                        {/* {formData?.incomeBenefits?.label || formData?.incomeBenefits?.value || ' '} */}
+                        {formData.incomeBenefits === 'Y' ? 'Income benefits ' : 
+       formData.incomeBenefits === 'N' ? 'Salary in Lieu ' : ' '}
+                        {/* {formData.incomeBenefits?.label || formData.incomeBenefits?.value || ' '} */}
                       </span>
                     </div>
                     {formData.incomeBenefits === 'Y' && (
@@ -3265,27 +3288,28 @@ const Wc1FormComponent = () => {
                             <label className=" col-form-label custom-label">
                               Previously Medical Only:
                             </label>
-                            <span className='custom-span'  id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : 'No'}</span>
+                            <span className='custom-span' id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : 'No'}</span>
                           </div>
                           <div className="col-md-3 ">
                             <label className=" col-form-label custom-label">
                               Average Weekly Wage:
                             </label>
-                            <span className='custom-span'  id="averageWeeklyWage">{formData.averageWeeklyWage || ' '}</span>
+                            <span className='custom-span' id="averageWeeklyWage">{formData.averageWeeklyWage || ' '}</span>
                           </div>
 
                           <div className="col-md-3">
                             <label className=" col-form-label custom-label">
-                              Weekly Benefit: 
+                              Weekly Benefit:
                             </label>
-                            <span className='custom-span'  id="weeklyBenefit">{formData.weeklyBenefit || ' '}</span>
+                            <span className='custom-span' id="weeklyBenefit">{formData.weeklyBenefit || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
                             <label className=" col-form-label custom-label">
                               Date of Disability:
                             </label>
-                            <span className='custom-span'  id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
+                            {/* <span className='custom-span' id="dateOfDisability">{formData.dateOfDisability || ' '}</span> */}
+                            <span className='custom-span'>{formData.dateOfDisability ? formatDateForInput(formData.dateOfDisability) : ' '}</span>
                           </div>
                         </div>
 
@@ -3295,28 +3319,30 @@ const Wc1FormComponent = () => {
                             <label className=" col-form-label custom-label">
                               Date Of First Payment:
                             </label>
-                            <span className='custom-span'  id="dateOfFirstPayment">{formData.dateOfFirstPayment || ' '}</span>
+                            <span className='custom-span'>{formData.dateOfFirstPayment ? formatDateForInput(formData.dateOfFirstPayment) : ' '}</span>
+                            {/* <span className='custom-span' id="dateOfFirstPayment">{formData.dateOfFirstPayment || ' '}</span> */}
                           </div>
 
                           <div className="col-md-3 ">
                             <label className=" col-form-label custom-label">
-                              Compensation Paid: 
+                              Compensation Paid:
                             </label>
-                            <span className='custom-span'  id="compensationPaid">{formData.compensationPaid || ' '}</span>
+                            <span className='custom-span' id="compensationPaid">{formData.compensationPaid || ' '}</span>
                           </div>
 
                           <div className="col-md-3">
                             <label className=" col-form-label custom-label">
-                              Penalty Paid: 
+                              Penalty Paid:
                             </label>
-                            <span className='custom-span'  id="penalityPaid">{formData.penalityPaid || ' '}</span>
+                            <span className='custom-span' id="penalityPaid">{formData.penalityPaid || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
                             <label className=" col-form-label custom-label">
                               Benefits Payable From Date:
                             </label>
-                            <span className='custom-span'  id="dateBenefitsPayableFrom">{formData.dateBenefitsPayableFrom || ' '}</span>
+                            <span className='custom-span'>{formData.dateBenefitsPayableFrom ? formatDateForInput(formData.dateBenefitsPayableFrom) : ' '}</span>
+                            {/* <span className='custom-span' id="dateBenefitsPayableFrom">{formData.dateBenefitsPayableFrom || ' '}</span> */}
                           </div>
                         </div>
 
@@ -3326,14 +3352,16 @@ const Wc1FormComponent = () => {
                             <label className=" col-form-label custom-label">
                               Benefits Payable For:
                             </label>
-                            <span className='custom-span'  id="disabilityTypes">{formData.disabilityTypes|| ' '}</span>
+                            <span className='custom-span' id="disabilityTypes">{formData.disabilityTypes || ' '}</span>
                           </div>
 
                           <div className="col-md-3 ">
                             <label className=" col-form-label custom-label">
                               Pay Benefit Until:
                             </label>
-                            <span className='custom-span'  id="PayBenefitUntil">{formData.PayBenefitUntil || ' '}</span>
+                            {/* <span className='custom-span' id="PayBenefitUntil">{formData.PayBenefitUntil || ' '}</span> */}
+                            <span className='custom-span'>{formData.PayBenefitUntil ? formatDateForInput(formData.PayBenefitUntil) : ' '}</span>
+
                           </div>
                         </div>
 
@@ -3344,21 +3372,21 @@ const Wc1FormComponent = () => {
                               <label className=" col-form-label custom-label">
                                 Disability %:
                               </label>
-                              <span className='custom-span'  id="disabilityPercentage">{formData.disabilityPercentage || ' '}</span>
+                              <span className='custom-span' id="disabilityPercentage">{formData.disabilityPercentage || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">
                                 Disabled Body Part:
                               </label>
-                              <span className='custom-span'  id="disabledBodyPart">{formData.disabledBodyPart || ' '}</span>
+                              <span className='custom-span' id="disabledBodyPart">{formData.disabledBodyPart || ' '}</span>
                             </div>
 
                             <div className="col-md-3 ">
                               <label className=" col-form-label custom-label">
                                 Duration of Disability:
                               </label>
-                              <span className='custom-span'  id="durationOfDisability">{formData.durationOfDisability || ' '}</span>
+                              <span className='custom-span' id="durationOfDisability">{formData.durationOfDisability || ' '}</span>
                               <span style={{ marginLeft: '5px' }}>(Weeks)</span>
                             </div>
                           </div>
@@ -3371,22 +3399,24 @@ const Wc1FormComponent = () => {
                           <div className="form-group row mb-1">
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">Previously Medical Only:</label>
-                              <span className='custom-span'  id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : formData.previouslyMedicalOnly === 'N' ? 'No' : 'None'}</span>
+                              <span className='custom-span' id="previouslyMedicalOnly">{formData.previouslyMedicalOnly === 'Y' ? 'Yes' : formData.previouslyMedicalOnly === 'N' ? 'No' : 'None'}</span>
                             </div>
 
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">Average Weekly Wage Amount ($):</label>
-                              <span className='custom-span'  id="averageWeeklyWageAmount">{formData.averageWeeklyWageAmount || ' '}</span>
+                              <span className='custom-span' id="averageWeeklyWageAmount">{formData.averageWeeklyWageAmount || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">Weekly Benefit Amount ($):</label>
-                              <span className='custom-span'  id="weeklyBenefitAmount">{formData.weeklyBenefitAmount || ' '}</span>
+                              <span className='custom-span' id="weeklyBenefitAmount">{formData.weeklyBenefitAmount || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">Date of Disability:</label>
-                              <span className='custom-span'  id="dateOfDisability">{formData.dateOfDisability || ' '}</span>
+                              <span className='custom-span'>{formData.dateOfDisability ? formatDateForInput(formData.dateOfDisability) : ' '}</span>
+
+                              {/* <span className='custom-span' id="dateOfDisability">{formData.dateOfDisability || ' '}</span> */}
                             </div>
                           </div>
 
@@ -3395,14 +3425,18 @@ const Wc1FormComponent = () => {
                               <label className=" col-form-label custom-label">
                                 Date Salary Paid:
                               </label>
-                              <span className='custom-span'  id="dateSalaryPaid">{formData.dateSalaryPaid || ' '}</span>
+                              <span className='custom-span'>{formData.dateSalaryPaid ? formatDateForInput(formData.dateSalaryPaid) : ' '}</span>
+
+                              {/* <span className='custom-span' id="dateSalaryPaid">{formData.dateSalaryPaid || ' '}</span> */}
                             </div>
 
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">
                                 Benefits Payable From Date:
                               </label>
-                              <span className='custom-span'  id="benefitsPayableFromDate">{formData.benefitsPayableFromDate || ' '}</span>
+                              {/* <span className='custom-span' id="benefitsPayableFromDate">{formData.benefitsPayableFromDate || ' '}</span> */}
+                              <span className='custom-span'>{formData.benefitsPayableFromDate ? formatDateForInput(formData.benefitsPayableFromDate) : ' '}</span>
+
                             </div>
 
                             <div className="col-md-3">
@@ -3410,12 +3444,14 @@ const Wc1FormComponent = () => {
                                 Benefits Payable For:
                                 <span style={{ color: 'red' }}>*</span>
                               </label>
-                              <span className='custom-span'  id="benefitsPayableFor">{formData.benefitsPayableFor.label || ' '}</span>
+                              <span className='custom-span' id="benefitsPayableFor">{formData.benefitsPayableFor?.label || ' '}</span>
                             </div>
 
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">Pay Benefit Until:</label>
-                              <span className='custom-span'  id="payBenefitUntil">{formData.payBenefitUntil || ' '}</span>
+                              <span className='custom-span'>{formData.payBenefitUntil ? formatDateForInput(formData.payBenefitUntil) : ' '}</span>
+
+                              {/* <span className='custom-span' id="payBenefitUntil">{formData.payBenefitUntil || ' '}</span> */}
                             </div>
                           </div>
                         </div>
@@ -3424,27 +3460,27 @@ const Wc1FormComponent = () => {
                   </div>
                 )}
                 {formData.isControvertEnabled && (
-                 <div className="form-group row mb-0 mt-3">
-                 <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>
-                   C. Notice To Convert Payment Of Compensation
-                 </h1>
-               
-                 <div className="row mb-3"> {/* Wrap first section in a row */}
-                   <div className="col-md-12">
-                     <label className=" col-form-label custom-label">Controvert Type:</label>
-                     <span className='custom-span'  id="controvertTypes">
-                       {formData.controvertType ? formData.controvertType.description : '' || ' '}
-                     </span>
-                   </div>
-                 </div>
-               
-                 <div className="row mb-3"> {/* Wrap second section in a row */}
-                   <div className="col-md-12">
-                     <label className=" col-form-label custom-label">Reason Benefits will not be paid:</label>
-                     <span className='custom-span'  id="BenifitsNPReasons">{formData.BenifitsNPReasons || ' '}</span>
-                   </div>
-                 </div>
-               </div>
+                  <div className="form-group row mb-0 mt-3">
+                    <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>
+                      C. Notice To Convert Payment Of Compensation
+                    </h1>
+
+                    <div className="row mb-3"> {/* Wrap first section in a row */}
+                      <div className="col-md-12">
+                        <label className=" col-form-label custom-label">Controvert Type:</label>
+                        <span className='custom-span' id="controvertTypes">
+                          {formData.controvertType ? formData.controvertType.description : '' || ' '}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="row mb-3"> {/* Wrap second section in a row */}
+                      <div className="col-md-12">
+                        <label className=" col-form-label custom-label">Reason Benefits will not be paid:</label>
+                        <span className='custom-span' id="BenifitsNPReasons">{formData.BenifitsNPReasons || ' '}</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
                 {formData.isMedicalInjuryEnabled && (
                   <div className="form-group row mb-0 mt-3">
