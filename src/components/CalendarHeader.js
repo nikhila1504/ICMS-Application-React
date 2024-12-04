@@ -28,7 +28,7 @@ const CalendarHeader = () => {
                     </h2>
                     <div className="dropdown-menu" aria-labelledby="calDropdown">
                         <div className="dropdown-item">
-                            <Link className="dropdown-item" to="/calendar/41">
+                            <Link className="dropdown-item" to="/calendarList">
                                 <i className="pi pi-folder " style={{ color: 'black', fontSize: '20px', paddingRight: '5px' }}></i>
                                 Calendar
                             </Link>

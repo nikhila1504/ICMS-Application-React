@@ -235,13 +235,15 @@
   justify-content: center;
   z-index: 1000; 
 }
-
+.fc-event-time {
+  display: none !important;
+}
 .modal-content {
   background: #ffffff !important; 
   padding: 20px;
   border-radius: 5px;
   width: 100px; 
-  max-width: 30%; 
+  max-width: 100%; 
   text-align: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;

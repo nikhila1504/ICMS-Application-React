@@ -37,7 +37,7 @@ function App() {
               <Route path="/edit-party/:id" element={<AddPartyComponent />} />
               {/* <Route path="/newWc1" element={<NewWc1 />} /> */}
               <Route path="/Wc1poc" element={<Wc1Component />} />
-              <Route path="/calendar/:id" element={<CalendarComponent />} />
+              <Route path="/calendarList" element={<CalendarComponent />} />
               <Route path="/manageMatchingClaims" element={<manageMatchingClaims />} />
               <Route path="/reports" element={<ReportPageComponent />} />
             </Routes>

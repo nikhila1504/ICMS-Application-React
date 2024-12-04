@@ -18,7 +18,7 @@ const SLOT_URL = "http://localhost:9092/slot";
 
 class CalendarService {
   getCalendarList() {
-    return axios.get(CALENDAR_URL + "/calendarList", {
+    return axios.get(SLOT_URL + "/calendarList", {
       headers: authHeader(),
     });
   }
@@ -29,13 +29,13 @@ class CalendarService {
   }
 
   getSlotList(id) {
-    return axios.get(SLOT_URL + "/listAllSlots"+"/" + id, {
+    return axios.get(SLOT_URL + "/listAllSlots/" + id, {
       headers: authHeader(),
     });
   }
 
   getSlotById(id) {
-    return axios.get(SLOT_URL + "/" + id, {
+    return axios.get(SLOT_URL + "/calendarSlots/" + id, {
       headers: authHeader(),
     });
   }
