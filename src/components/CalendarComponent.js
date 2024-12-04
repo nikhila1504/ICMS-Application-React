@@ -275,7 +275,60 @@ const CalendarComponent = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+      <div style={{ flex: 1, marginTop: "200px" }}>
+          <ul style={{ listStyle: "none", padding: 10 }}>
+            <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#007bff",
+                  marginRight: "10px",
+                }}
+              ></span>
+              Appointment
+            </li>
+            <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#28a745",
+                  marginRight: "10px",
+                }}
+              ></span>
+              Holiday
+            </li>
+            <li style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#dc3545",
+                  marginRight: "10px",
+                }}
+              ></span>
+              Doctor's Appointment
+            </li>
+            <li style={{ display: "flex", alignItems: "center" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "20px",
+                  backgroundColor: "#f7f8b4",
+                  border: "2px solid #007bff",
+                  marginRight: "10px",
+                }}
+              ></span>
+              Today
+            </li>
+          </ul>
+        </div>
+    </div> 
   );
 };
 
