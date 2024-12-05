@@ -27,15 +27,22 @@ const authHeader = () => {
 const CLAIM_URL = "http://localhost:9092/wc1";
 
 class ClaimService {
-    getClaimById() {
-        return axios.get(CLAIM_URL + "/claim/2024000100", {
-          headers: authHeader(),
-        });
-      }
-      saveClaim(formData){
-        return axios.post(CLAIM_URL + "/submitWc1Form" , formData ,{
-          headers: authHeader(),
-        });
-      }
+  getClaimById() {
+    return axios.get(CLAIM_URL + "/claim/2024000100", {
+      headers: authHeader(),
+    });
+  }
+  saveClaim(formData){
+    return axios.post(CLAIM_URL + "/submitWc1Form" , formData ,{
+      headers: authHeader(),
+      responseType: 'blob', 
+    });
+  }
+
+  // getClaimForm(formData){
+  //   return axios.post(CLAIM_URL + "/submitWc1Form" , formData ,{
+  //     headers: authHeader(),
+  //   });
+  // }
 }
 export default new ClaimService();

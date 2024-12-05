@@ -22,6 +22,7 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import TreatmentTypeService from "../services/treatment.type.service";
 import DisabilityTypeService from "../services/disability.type.service";
 // import ReactFileViewer from 'react-file-viewer';
+import axios from "axios";
 
 const Wc1FormComponent = () => {
   const [stateTypes, setStateTypes] = useState([]);
@@ -37,6 +38,9 @@ const Wc1FormComponent = () => {
   const [hospitalStateTypes, setHospitalStateTypes] = useState();
   const [disabilityTypes, setDisabilityTypes] = useState([]);
   const [treatmentTypes, setTreatmentTypes] = useState([]);
+  const [generatedPdf, setGeneratedPdf] = useState(null); 
+  const [modalOpen, setModalOpen] = useState(false); // Modal open state
+
   // Handle tab switch
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -732,27 +736,22 @@ const Wc1FormComponent = () => {
           console.log(field, sanitizedFormData[field].replace(/[^0-9.]/g, ''));
         }
       });
-      console.log("formData", sanitizedFormData);
-      ClaimService.saveClaim(sanitizedFormData).then((response) => {
-        alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
-        // if (response.pdfUrl) {
-        //   window.open(response.pdfUrl, '_blank');
-        // } else if (response.pdfBlob) {
-        //   const url = URL.createObjectURL(response.pdfBlob);
-        //   window.open(url, '_blank');
-        // }
-        // const pdfUrl = 'https://www.example.com/static/sample.pdf';
-        // window.open(pdfUrl, '_blank');
-        //If form is valid, show success toast and submit the form
-        // toastRef.current.show({
-        //   severity: 'success',
-        //   summary: 'Submission Successful',
-        //   detail: 'Your form has been successfully submitted!',
-        //   life: 3000,
-        // });
-      }).catch((error) => {
-        console.log(error);
-      });
+      console.log("formData", sanitizedFormData);  
+      try {
+       const response =  ClaimService.saveClaim(sanitizedFormData);
+       console.log(response);
+       const blob = new Blob([response.data], { type: 'application/pdf' });
+       console.log('Blob:', blob);
+       console.log('Blob size:', blob.size);
+       const pdfUrl = window.URL.createObjectURL(blob);
+       window.open(pdfUrl, '_blank');
+       console.log('PDF URL created:', pdfUrl); 
+       setGeneratedPdf(pdfUrl); 
+       setModalOpen(true);  
+       setIsActive(false);
+      }  catch (error) {
+      console.error('Error downloading the file:', error);
+    }
       console.log('Submitting form with data:', formData);
       setIsActive(false);
     }
@@ -761,7 +760,24 @@ const Wc1FormComponent = () => {
     setFormData(prev => ({
       ...prev,
     }));
+  };
 
+  const renderGeneratedContent = () => {
+    if (generatedPdf) {
+      return (
+        <div>
+          <h3>Form Submitted Successfully!</h3>
+          <iframe 
+            src={generatedPdf} 
+            width="100%" 
+            height="600px" 
+            title="Generated PDF"
+            style={{ border: 'none' }}
+          />
+        </div>
+      );
+    }
+    return null;  
   };
 
   const getRequiredFieldsForTab = (tab) => {
@@ -791,10 +807,6 @@ const Wc1FormComponent = () => {
       for (const part of fieldParts) {
         value = value[part];
       }
-      // if (typeof value !== 'string' || value.trim() === '') {
-      //   newErrors[field] = `${field.replace('claimant.', '')} is required.`;
-      // }
-
       if (!value || (Array.isArray(value) && value.length === 0)) {
         newErrors[field] = `${field.replace('claimant.', '')} is required.`;
       } else if (typeof value === 'string' && value.trim() === '') {
@@ -884,7 +896,21 @@ const Wc1FormComponent = () => {
   return (
     <div className="tabs container">
       <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
-
+      {modalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            {/* {renderGeneratedContent()} */}
+            <iframe 
+            src={generatedPdf} 
+            width="100%" 
+            height="600px" 
+            title="Generated PDF"
+            style={{ border: 'none' }}
+          />
+          </div>
+        </div>
+      )}
+       {/* {renderGeneratedContent()} */}
       <form onSubmit={handleSubmit} noValidate>
 
         <Toast ref={toastRef} />
