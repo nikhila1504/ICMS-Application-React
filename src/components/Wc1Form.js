@@ -22,7 +22,6 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 import TreatmentTypeService from "../services/treatment.type.service";
 import DisabilityTypeService from "../services/disability.type.service";
 // import ReactFileViewer from 'react-file-viewer';
-import axios from "axios";
 
 const Wc1FormComponent = () => {
   const [stateTypes, setStateTypes] = useState([]);
@@ -38,9 +37,6 @@ const Wc1FormComponent = () => {
   const [hospitalStateTypes, setHospitalStateTypes] = useState();
   const [disabilityTypes, setDisabilityTypes] = useState([]);
   const [treatmentTypes, setTreatmentTypes] = useState([]);
-  const [generatedPdf, setGeneratedPdf] = useState(null); 
-  const [modalOpen, setModalOpen] = useState(false); // Modal open state
-
   // Handle tab switch
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -100,6 +96,8 @@ const Wc1FormComponent = () => {
   // Keep track of which accordion section is open
   const [activeIndex, setActiveIndex] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [generatedPdf, setGeneratedPdf] = useState(null); 
+  const [modalOpen, setModalOpen] = useState(false); // Modal open state
 
   // Function to toggle the accordion section
   const handleToggle = (index) => {
@@ -299,6 +297,7 @@ const Wc1FormComponent = () => {
   const hideViewModal = () => {
     setViewVisible(false);
     setFileUrl(null);
+    alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
   };
   const confirmDelete = () => {
     setDocuments(documents.filter(doc => doc.id !== docToDelete));
@@ -640,7 +639,7 @@ const Wc1FormComponent = () => {
     'penalityPaid',
     'weeklyBenefit'
   ];
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     setSubmitted(true);
     console.log('Form to be Submitted:', formData);
@@ -736,22 +735,42 @@ const Wc1FormComponent = () => {
           console.log(field, sanitizedFormData[field].replace(/[^0-9.]/g, ''));
         }
       });
-      console.log("formData", sanitizedFormData);  
+      console.log("formData", sanitizedFormData);
       try {
-       const response =  ClaimService.saveClaim(sanitizedFormData);
-       console.log(response);
-       const blob = new Blob([response.data], { type: 'application/pdf' });
-       console.log('Blob:', blob);
-       console.log('Blob size:', blob.size);
-       const pdfUrl = window.URL.createObjectURL(blob);
-       window.open(pdfUrl, '_blank');
-       console.log('PDF URL created:', pdfUrl); 
-       setGeneratedPdf(pdfUrl); 
-       setModalOpen(true);  
-       setIsActive(false);
-      }  catch (error) {
-      console.error('Error downloading the file:', error);
-    }
+        const response =  await ClaimService.saveClaim(sanitizedFormData);
+        console.log(response);
+        console.log(response.data);
+        // const blob = new Blob([response.data], { type: 'application/pdf' });
+        // console.log('Blob:', blob);
+        // console.log('Blob size:', blob.size);
+        // const pdfUrl = window.URL.createObjectURL(blob);
+        // window.open(pdfUrl, '_blank');
+        // console.log('PDF URL created:', pdfUrl); 
+        // setGeneratedPdf(pdfUrl); 
+        // setModalOpen(true);  
+        // setIsActive(false);
+
+        const arrayBuffer = response.data;  // This is the ArrayBuffer you received from the API// Check if the first 4 bytes correspond to the PDF signature (%PDF-)
+        console.log(arrayBuffer);
+        const pdfHeader = new Uint8Array(arrayBuffer, 0, 4);
+        console.log('PDF Header:', pdfHeader);
+
+        const isValidPdf = pdfHeader[0] === 0x25 && pdfHeader[1] === 0x50 && pdfHeader[2] === 0x44 && pdfHeader[3] === 0x46;
+        console.log('Is valid PDF:', isValidPdf);
+
+        if (isValidPdf) {
+          const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+          const pdfUrl = window.URL.createObjectURL(blob);
+          setGeneratedPdf(pdfUrl); 
+          setViewVisible(true);
+          // window.open(pdfUrl, '_blank'); // Open PDF in a new tab
+          
+        } else {
+          console.error('Invalid PDF data.');
+        }
+      } catch (error) {
+        console.error('Error downloading the file:', error);
+      }
       console.log('Submitting form with data:', formData);
       setIsActive(false);
     }
@@ -760,8 +779,8 @@ const Wc1FormComponent = () => {
     setFormData(prev => ({
       ...prev,
     }));
-  };
 
+  };
   const renderGeneratedContent = () => {
     if (generatedPdf) {
       return (
@@ -807,6 +826,10 @@ const Wc1FormComponent = () => {
       for (const part of fieldParts) {
         value = value[part];
       }
+      // if (typeof value !== 'string' || value.trim() === '') {
+      //   newErrors[field] = `${field.replace('claimant.', '')} is required.`;
+      // }
+
       if (!value || (Array.isArray(value) && value.length === 0)) {
         newErrors[field] = `${field.replace('claimant.', '')} is required.`;
       } else if (typeof value === 'string' && value.trim() === '') {
@@ -896,21 +919,35 @@ const Wc1FormComponent = () => {
   return (
     <div className="tabs container">
       <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
-      {modalOpen && (
+ {/* {modalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
+          <button className="close-button" onClick={onClose} style={{ padding: '15px', backgroundColor: 'transparent' }}>&times;</button> */}
             {/* {renderGeneratedContent()} */}
-            <iframe 
+            <Dialog
+                header="View Document"
+                visible={viewVisible}
+                onHide={() => {
+                  hideViewModal();
+                  
+                }}
+                style={{ width: '80%', height: '90%' }}
+                modal
+              >
+ <iframe 
             src={generatedPdf} 
             width="100%" 
             height="600px" 
             title="Generated PDF"
             style={{ border: 'none' }}
           />
-          </div>
-        </div>
-      )}
-       {/* {renderGeneratedContent()} */}
+
+              </Dialog>
+            
+           
+          {/* </div> */}
+        {/* </div>
+      )} */}
       <form onSubmit={handleSubmit} noValidate>
 
         <Toast ref={toastRef} />
@@ -2317,7 +2354,7 @@ const Wc1FormComponent = () => {
                           value="salaryInLieu"
                           disabled={!formData.sectionB}
                           style={{ marginTop: '12px' }}
-                          checked={formData.incomeBenefits  === 'N'}
+                          checked={formData.incomeBenefits === 'N'}
                           onChange={handleChange}
                         />
                         <label className="form-check-label custom-label" style={{ marginTop: '12px' }} htmlFor="salaryInLieu">
@@ -3302,8 +3339,8 @@ const Wc1FormComponent = () => {
                       </label>
                       <span className='custom-span ml-3' id="incomeBenefits">
                         {/* {formData?.incomeBenefits?.label || formData?.incomeBenefits?.value || ' '} */}
-                        {formData.incomeBenefits === 'Y' ? 'Income benefits ' : 
-       formData.incomeBenefits === 'N' ? 'Salary in Lieu ' : ' '}
+                        {formData.incomeBenefits === 'Y' ? 'Income benefits ' :
+                          formData.incomeBenefits === 'N' ? 'Salary in Lieu ' : ' '}
                         {/* {formData.incomeBenefits?.label || formData.incomeBenefits?.value || ' '} */}
                       </span>
                     </div>
