@@ -163,14 +163,6 @@ const CalendarComponent = () => {
             Calendar
           </h1>
           {loading ? <p>Loading...</p> : (
-            // <FullCalendar
-            //   key={events.length}
-            //   events={events}
-            //   plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            //   initialView="dayGridMonth"
-            //   dateClick={handleDateClick}
-            //   eventClick={handleEventClick}
-            // />
             <FullCalendar className="calendar"
               headerToolbar={{
                 start: "today prev next",

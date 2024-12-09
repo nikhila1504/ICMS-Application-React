@@ -23,6 +23,7 @@ import TreatmentTypeService from "../services/treatment.type.service";
 import DisabilityTypeService from "../services/disability.type.service";
 // import ReactFileViewer from 'react-file-viewer';
 import axios from "axios";
+import DataTableComponent from "./DataTableComponent.js";
 
 const Wc1FormComponent = () => {
   const [stateTypes, setStateTypes] = useState([]);
@@ -739,7 +740,7 @@ const Wc1FormComponent = () => {
       console.log("formData", sanitizedFormData);  
       try {
        const response =  ClaimService.saveClaim(sanitizedFormData);
-       console.log(response);
+       console.log(response.data);
        const blob = new Blob([response.data], { type: 'application/pdf' });
        console.log('Blob:', blob);
        console.log('Blob size:', blob.size);
@@ -895,6 +896,7 @@ const Wc1FormComponent = () => {
   };
   return (
     <div className="tabs container">
+       <DataTableComponent />
       <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
       {modalOpen && (
         <div className="modal-overlay">
@@ -1238,8 +1240,7 @@ const Wc1FormComponent = () => {
             </div>
           )}
           {activeTab === 'tab2' && (
-            <div className="card">
-              {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Party Information</h1> */}
+            <div className="card table-responsive">
               <table className="table table-custom table-striped table-bordered w-100">
                 <thead className="thead-light">
                   <tr>
@@ -1520,7 +1521,7 @@ const Wc1FormComponent = () => {
                               }))}
                               placeholder="---Select One---"
                               filter
-                              className="select-dropdown custom-input col-md-12"
+                              className="select-dropdown  col-md-12"
                               label="NAICS Type"
                             />
                             <label htmlFor="naicsTypes">NAICS Code:</label>
@@ -1732,11 +1733,11 @@ const Wc1FormComponent = () => {
                               placeholder="---Select One---"
                               filter
                               // className="select-dropdown custom-input col-md-12"
-                              className={`select-dropdown  custom-input col-md-12 ${errors.typeOfInjury ? 'p-invalid' : ''}`}
+                              className={`select-dropdown custom-input col-md-12 ${errors.typeOfInjury ? 'p-invalid' : ''}`}
                               ref={getFieldRef('typeOfInjury')}
 
                               label="Type of Injury/Illness"
-                              dropdownClassName="custom-dropdown-panel"
+                              // dropdownClassName="custom-dropdown-panel"
                             />
                             <label htmlFor="typeOfInjury">Type of Injury/Illness<span style={{ color: 'red' }}>*</span></label>
 
@@ -1768,7 +1769,7 @@ const Wc1FormComponent = () => {
                           <Dropdown
                             value={formData.injuryCauseTypes}
                             name="injuryCauseTypes"
-                            className='col-md-12'
+                            className='select-dropdown custom-input col-md-12'
                             onChange={handleChange}
                             options={injuryCauseTypes.map(type => ({
                               label: type.description,
@@ -1776,7 +1777,7 @@ const Wc1FormComponent = () => {
                             }))}
                             placeholder="---Select One---"
                             filter
-                            dropdownClassName="custom-dropdown-panel"
+                            // dropdownClassName="custom-dropdown-panel"
                             inputRef={getFieldRef('injuryCauseTypes')}
                           />
                         </div>
@@ -1836,7 +1837,7 @@ const Wc1FormComponent = () => {
                               value={formData.tPhysicianName || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-3">
@@ -1848,7 +1849,7 @@ const Wc1FormComponent = () => {
                               value={formData.tPhysicianAddress1 || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-3">
@@ -1860,7 +1861,7 @@ const Wc1FormComponent = () => {
                               value={formData.tPhysicianAddress2 || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-2">
@@ -1872,7 +1873,7 @@ const Wc1FormComponent = () => {
                               value={formData.tPhysicianCity || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                         </div>
@@ -1889,7 +1890,7 @@ const Wc1FormComponent = () => {
                                 value: type.code
                               }))}
                               filter
-                              className="dropdown-select"
+                              className="dropdown-select mb-2"
                               dropdownClassName="custom-dropdown-panel"
                               placeholder="State"
                             />
@@ -1903,7 +1904,7 @@ const Wc1FormComponent = () => {
                               value={formData.tPhysicianZIP || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-1 d-flex align-items-center">
@@ -1916,7 +1917,7 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-2">
@@ -1928,7 +1929,7 @@ const Wc1FormComponent = () => {
                               value={formData.tPhysicianPhone || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-1 d-flex align-items-center">
@@ -1941,7 +1942,7 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-2">
@@ -1958,7 +1959,7 @@ const Wc1FormComponent = () => {
                                 value: { id: type.id, description: type.description }
                               }))}
                               filter
-                              className="dropdown-select"
+                              className="dropdown-select mb-2"
                               dropdownClassName="custom-dropdown-panel"
                               placeholder="Initial Treatment">
 
@@ -1978,7 +1979,7 @@ const Wc1FormComponent = () => {
                               value={formData.treatingFacility || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-3">
@@ -1990,7 +1991,7 @@ const Wc1FormComponent = () => {
                               value={formData.treatingFacilityAddress1 || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-3">
@@ -2002,7 +2003,7 @@ const Wc1FormComponent = () => {
                               value={formData.treatingFacilityAddress2 || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-2">
@@ -2014,7 +2015,7 @@ const Wc1FormComponent = () => {
                               value={formData.treatingFacilityCity || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                         </div>
@@ -2033,7 +2034,7 @@ const Wc1FormComponent = () => {
                                 value: { value: type.code, description: type.description }
                               }))}
                               filter
-                              className="dropdown-select "
+                              className="dropdown-select mb-2"
                               dropdownClassName="custom-dropdown-panel"
                               placeholder="State"
                             />
@@ -2047,7 +2048,7 @@ const Wc1FormComponent = () => {
                               value={formData.treatingFacilityZIP || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-1 d-flex align-items-center">
@@ -2060,7 +2061,7 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           {/* </div> */}
@@ -2075,7 +2076,7 @@ const Wc1FormComponent = () => {
                               value={formData.hospitalPhone || ' '}
                               onChange={handleChange}
                               floating
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                           <div className="col-md-1 d-flex align-items-center">
@@ -2088,7 +2089,7 @@ const Wc1FormComponent = () => {
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
-                              className="form-control custom-input"
+                              className="form-control custom-input mb-2"
                             />
                           </div>
                         </div>
@@ -2116,7 +2117,7 @@ const Wc1FormComponent = () => {
                           autoComplete="off"
                           label="If Returned to Work, Give Date:"
                           type="date"
-                          className="form-control custom-input"
+                          className="form-control custom-input mb-2"
                           id="RtwDate"
                           name="RtwDate"
                           value={formData.RtwDate}
@@ -2134,7 +2135,7 @@ const Wc1FormComponent = () => {
                           autoComplete="off"
                           label="Returned at what wage per week:"
                           type="text"
-                          className="form-control custom-input"
+                          className="form-control custom-input mb-2"
                           id="ReturnedWagePerWeek"
                           name="ReturnedWagePerWeek"
                           value={formData.ReturnedWagePerWeek || ' '}
@@ -2154,7 +2155,7 @@ const Wc1FormComponent = () => {
                           autoComplete="off"
                           label="If Fatal, Enter Complete Date of Death:"
                           type="date"
-                          className="form-control custom-input"
+                          className="form-control custom-input mb-2"
                           id="FatalDeathDate"
                           name="FatalDeathDate"
                           value={formData.FatalDeathDate}
@@ -2372,7 +2373,7 @@ const Wc1FormComponent = () => {
                             label={<>Average Weekly Wage: <span style={{ color: 'red' }}>*</span> </>}
                             type="text"
                             ref={getFieldRef('averageWeeklyWage')}
-                            className={`form-control custom-input ${errors.averageWeeklyWage ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass ${errors.averageWeeklyWage ? 'p-invalid' : ''}`}
                             id="averageWeeklyWage"
                             name="averageWeeklyWage"
                             value={formData.averageWeeklyWage || ' '}
@@ -2395,7 +2396,7 @@ const Wc1FormComponent = () => {
                             label={<>Weekly Benefit: $ <span style={{ color: 'red' }}>*</span> </>}
                             type="text"
                             ref={getFieldRef('weeklyBenefit')}
-                            className={`form-control custom-input ${errors.weeklyBenefit ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass ${errors.weeklyBenefit ? 'p-invalid' : ''}`}
                             id="weeklyBenefit"
                             name="weeklyBenefit"
                             value={formData.weeklyBenefit || ' '}
@@ -2417,7 +2418,7 @@ const Wc1FormComponent = () => {
                           <MDBInput
                             label="Date of Disability"
                             type="date"
-                            className="form-control custom-input"
+                            className="form-control custom-input inclass"
                             id="dateOfDisability"
                             name="dateOfDisability"
                             value={formData.dateOfDisability || ' '}
@@ -2435,7 +2436,7 @@ const Wc1FormComponent = () => {
                             label={<>Date Of First Payment: <span style={{ color: 'red' }}>*</span> </>}
                             type="date"
                             ref={getFieldRef('dateOfFirstPayment')}
-                            className={`form-control custom-input ${errors.dateOfFirstPayment ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass ${errors.dateOfFirstPayment ? 'p-invalid' : ''}`}
                             id="dateOfFirstPayment"
                             name="dateOfFirstPayment"
                             value={formData.dateOfFirstPayment}
@@ -2460,7 +2461,7 @@ const Wc1FormComponent = () => {
                             label={<>Compensation Paid: $ <span style={{ color: 'red' }}>*</span> </>}
                             type="text"
                             ref={getFieldRef('compensationPaid')}
-                            className={`form-control custom-input ${errors.compensationPaid ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass ${errors.compensationPaid ? 'p-invalid' : ''}`}
                             id="compensationPaid"
                             name="compensationPaid"
                             value={formData.compensationPaid || ' '}
@@ -2482,7 +2483,7 @@ const Wc1FormComponent = () => {
                           <MDBInput
                             label="Penalty Paid: $"
                             type="text"
-                            className="form-control custom-input"
+                            className="form-control custom-input inclass"
                             id="penalityPaid"
                             name="penalityPaid"
                             value={formData.penalityPaid || ' '}
@@ -2499,7 +2500,7 @@ const Wc1FormComponent = () => {
                             label={<>Benefits Payable From Date: <span style={{ color: 'red' }}>*</span> </>}
                             type="date"
                             ref={getFieldRef('dateBenefitsPayableFrom')}
-                            className={`form-control custom-input ${errors.dateBenefitsPayableFrom ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass ${errors.dateBenefitsPayableFrom ? 'p-invalid' : ''}`}
                             id="dateBenefitsPayableFrom"
                             name="dateBenefitsPayableFrom"
                             value={formData.dateBenefitsPayableFrom}
@@ -2532,7 +2533,7 @@ const Wc1FormComponent = () => {
                               placeholder="---Select One---"
                               filter
                               // className="select-dropdown custom-input col-md-12"
-                              className={`select-dropdown  custom-input col-md-10 ${errors.disabilityTypes ? 'p-invalid' : ''}`}
+                              className={`dropcss col-md-10 ${errors.disabilityTypes ? 'p-invalid' : ''}`}
                               ref={getFieldRef('disabilityTypes')}
                               label="Benefits Payable For"
                               dropdownClassName="custom-dropdown-panel"
@@ -2552,7 +2553,7 @@ const Wc1FormComponent = () => {
                             label="Pay Benefit Until: "
                             type="date"
                             ref={getFieldRef('PayBenefitUntil')}
-                            className={`form-control custom-input ${errors.PayBenefitUntil ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass ${errors.PayBenefitUntil ? 'p-invalid' : ''}`}
                             id="PayBenefitUntil"
                             name="PayBenefitUntil"
                             value={formData.PayBenefitUntil}
@@ -2583,7 +2584,7 @@ const Wc1FormComponent = () => {
                                   name="disabilityPercentage"
                                   value={formData.disabilityPercentage || ' '}
                                   onChange={handleChange}
-                                  className={`custom-input  ${errors.disabilityPercentage ? 'p-invalid' : ''}`}
+                                  className={`custom-input  inclass ${errors.disabilityPercentage ? 'p-invalid' : ''}`}
                                 />
                                 {errors.disabilityPercentage && (
                                   <div className="error-message" style={{ color: 'red', fontSize: '12px' }}>
@@ -2604,7 +2605,7 @@ const Wc1FormComponent = () => {
                                       value: part.value
                                     }))}
                                     placeholder="---Select Body Part---"
-                                    className={`select-dropdown custom-input col-md-12 ${errors.disabledBodyPart ? 'p-invalid' : ''}`}
+                                    className={`select-dropdown custom-input inclass col-md-12 ${errors.disabledBodyPart ? 'p-invalid' : ''}`}
                                     ref={getFieldRef('disabledBodyPart')}
                                   />
                                   <label htmlFor="disabilityTypes" style={{ marginLeft: '15px' }}>Disabled Body Part:<span style={{ color: 'red' }}>*</span></label>
@@ -2626,7 +2627,7 @@ const Wc1FormComponent = () => {
                                     name="durationOfDisability"
                                     value={formData.durationOfDisability || ' '}
                                     onChange={handleChange}
-                                    className={`custom-input col-md-12 ${errors.durationOfDisability ? 'p-invalid' : ''}`}
+                                    className={`custom-input inclass col-md-12 ${errors.durationOfDisability ? 'p-invalid' : ''}`}
                                   />
                                   <span style={{ marginLeft: '5px' }}>(Weeks)</span>
                                 </div>
@@ -2650,7 +2651,7 @@ const Wc1FormComponent = () => {
                         <div className="col-md-3">
                           <label className="form-check-label custom-label">Previously Medical Only:</label>
                           <div className="d-flex">
-                            <div className="form-check custom-radio form-check-inline">
+                            <div className="form-check custom-radio form-check-inline mb-2">
                               <input
                                 type="radio"
                                 className="form-check-input"
@@ -2677,7 +2678,7 @@ const Wc1FormComponent = () => {
                             <div className="form-check form-check-inline">
                               <input
                                 type="radio"
-                                className="form-check-input"
+                                className="form-check-input mb-2"
                                 name="previouslyMedicalOnly"
                                 id="previouslyMedicalNone"
                                 value="None"
@@ -2698,6 +2699,7 @@ const Wc1FormComponent = () => {
                             value={formData.averageWeeklyWageAmount || ' '}
                             onBlur={handleBlur} onFocus={handleFocus}
                             onChange={handleChange}
+                            className="form-control custom-input inclass mb-2"
                           />
                         </div>
                         <div className="col-md-3">
@@ -2709,6 +2711,7 @@ const Wc1FormComponent = () => {
                             value={formData.weeklyBenefitAmount || ' '}
                             onBlur={handleBlur} onFocus={handleFocus}
                             onChange={handleChange}
+                            className="form-control custom-input inclass mb-2"
                           />
                         </div>
                         <div className="col-md-3">
@@ -2719,6 +2722,7 @@ const Wc1FormComponent = () => {
                             name="dateOfDisability"
                             onChange={handleChange}
                           // onClick={(e) => e.target.showPicker()}
+                          className="form-control custom-input inclass mb-2"
                           />
                         </div>
                       </div>
@@ -2729,7 +2733,7 @@ const Wc1FormComponent = () => {
                             label={<>Date Salary Paid <span style={{ color: 'red' }}>*</span> </>}
                             type="date"
                             ref={getFieldRef('dateSalaryPaid')}
-                            className={`form-control custom-input ${errors.dateSalaryPaid ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass mb-2 ${errors.dateSalaryPaid ? 'p-invalid' : ''}`}
                             id="dateSalaryPaid"
                             name="dateSalaryPaid"
                             onClick={(e) => e.target.showPicker()}
@@ -2748,7 +2752,7 @@ const Wc1FormComponent = () => {
                             label={<>Benefits Payable From Date <span style={{ color: 'red' }}>*</span> </>}
                             type="date"
                             ref={getFieldRef('benefitsPayableFromDate')}
-                            className={`form-control custom-input ${errors.benefitsPayableFromDate ? 'p-invalid' : ''}`}
+                            className={`form-control custom-input inclass mb-2 ${errors.benefitsPayableFromDate ? 'p-invalid' : ''}`}
                             id="benefitsPayableFromDate"
                             name="benefitsPayableFromDate"
                             onClick={(e) => e.target.showPicker()}
@@ -2773,7 +2777,7 @@ const Wc1FormComponent = () => {
                               filter
                               options={benefitsPayableFor}
                               dropdownClassName="custom-dropdown-panel"
-                              className="select-dropdown custom-input col-md-12"
+                              className="select-dropdown custom-input inclass mb-2 col-md-12"
                               label="Benefits Payable For"
                             />
                             <label htmlFor="benefitsPayableFor">Benefits Payable For<span style={{ color: 'red' }}>*</span></label>
@@ -2923,8 +2927,8 @@ const Wc1FormComponent = () => {
                 <input autoComplete="off" type="file" onChange={handleFileUpload} accept="application/pdf, .doc, .docx, .jpg, .png" style={{ display: 'none' }} />
                 <span className="pi pi-cloud-upload" style={{ fontSize: '1.5rem' }}></span>  Choose File
               </label>
-              <div className="card mt-2">
-                <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable"
+              <div className="card table-responsive mt-2">
+                <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable responsive-datatable" 
                   style={{ minWidth: '600px' }} >
                   <Column field="id" header="#" />
                   <Column field="name" header="Document Name" />
@@ -3375,7 +3379,7 @@ const Wc1FormComponent = () => {
                         <div className="d-flex flex-wrap mt-3">
                           {/* Row 4 */}
                           <div className="col-md-3 ">
-                            <label className=" col-form-label custom-label">
+                            <label className=" col-form-label select-dropdown">
                               Benefits Payable For:
                             </label>
                             <span className='custom-span' id="disabilityTypes">{formData.disabilityTypes || ' '}</span>

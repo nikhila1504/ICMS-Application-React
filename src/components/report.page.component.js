@@ -228,7 +228,7 @@ const handleChange = (e) => {
               <MDBInput
                 type="date"
                 label="From Date"
-                className="custom-input"
+                className="custom-input mb-2"
                 name="fromDate"
                 onChange={handleChange}
                 value={fromDate || ''}
@@ -240,7 +240,7 @@ const handleChange = (e) => {
                 type="date"
                 label="To Date"
                 onChange={handleChange}
-                className="custom-input"
+                className="custom-input mb-2"
                 name="toDate"
                 value={toDate || ''}
                 floating
@@ -256,7 +256,7 @@ const handleChange = (e) => {
                     }}
                     className="p-button-secondary p-ml-3"
                 /> */}
-            <div className="col-md-1">
+            <div className="col-md-1 mb-2">
               <Button label="Reset" icon="pi pi-refresh" size="small" onClick={resetFilters} />
             </div>
             <div className="col-md-2">

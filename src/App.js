@@ -10,11 +10,11 @@ import CalendarComponent from "./components/CalendarComponent";
 import HeaderComponent from "./components/HeaderComponent";
 import FooterComponent from "./components/FooterComponent";
 import PartyListComponent from "./components/PartyListComponent";
+import DataTableComponent from "./components/DataTableComponent";
 import Wc1FormComponent from "./components/Wc1Form";
 import Wc1Form from "./components/Wc1FormComponent";
 import Wc1Component from "./components/Wc1Component";
 import ReportPageComponent from "./components/report.page.component";
-
 import manageMatchingClaims from "./components/manageMatchingClaims";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
@@ -24,7 +24,7 @@ function App() {
     <div>
       <Router>
         <div className="d-flex flex-column min-vh-100">
-          <HeaderComponent />
+         
           <div className="container flex-fill">
             <Routes>
               <Route exact path="/" element={<LoginComponent />} />

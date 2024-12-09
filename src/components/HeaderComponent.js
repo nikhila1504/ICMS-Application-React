@@ -23,7 +23,11 @@ const HeaderComponent = () => {
   };
   return (
 <div>
-<img src={logo} alt="Logo" /><img src={icmslogo} alt="Logo" style={{ marginLeft: '800px'}}/>
+{/* <img src={logo} alt="Logo" /><img src={icmslogo} alt="Logo" style={{ marginLeft: '800px'}}/> */}
+<div className="logo-container">
+  <img src={logo} alt="Logo" className="logo" />
+  <img src={icmslogo} alt="ICMS Logo" className="icms-logo" />
+</div>
   <header>
 
     <nav className="navbar navbar-expand-md">
