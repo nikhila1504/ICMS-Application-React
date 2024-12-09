@@ -14,7 +14,7 @@ const Modal = ({ isOpen, onClose, party }) => {
           <div>
             <p className='custom-label'>
               <span className='label'>Party Type:</span>
-              <span className='value'>{party.partyType}</span>
+              <span className='value'>{party.partyType.code}</span>
             </p>
             <p className='custom-label'>
               <span className='label'>Party Name:</span>
@@ -23,44 +23,44 @@ const Modal = ({ isOpen, onClose, party }) => {
             <h5>Address</h5>
             <p className='custom-label'>
               <span className='label'>Mailing Address1:</span>
-              <span className='value'>{party.address1 || 'N/A'}</span>
+              <span className='value'>{party.address.address1 || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>Mailing Address2:</span>
-              <span className='value'>{party.address2 || 'N/A'}</span>
+              <span className='value'>{party.address.address2 || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>City:</span>
-              <span className='value'>{party.city || 'N/A'}</span>
+              <span className='value'>{party.address.city || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>State:</span>
-              <span className='value'>{party.state || 'N/A'}</span>
+              <span className='value'>{party.address.state || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>Zip:</span>
-              <span className='value'>{party.zip || 'N/A'}</span>
+              <span className='value'>{party.address.zip || 'N/A'}</span>
             </p>
             <h5>Contact</h5>
              <p className='custom-label'>
               <span className='label'>Preferred Contact Name:</span>
-              <span className='value'>{party.contactName || 'N/A'}</span>
+              <span className='value'>{party.contact.preferredContactName || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>Primary Email:</span>
-              <span className='value'>{party.primaryEmail || 'N/A'}</span>
+              <span className='value'>{party.contact.primaryEmail || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>Secondary Email:</span>
-              <span className='value'>{party.secondaryEmail || 'N/A'}</span>
+              <span className='value'>{party.contact.secondaryEmail || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>Primary Phone:</span>
-              <span className='value'>{party.primaryPhone || 'N/A'}</span>
+              <span className='value'>{party.contact.primaryPhone || 'N/A'}</span>
             </p>
              <p className='custom-label'>
               <span className='label'>Secondary Phone:</span>
-              <span className='value'>{party.secondaryPhone || 'N/A'}</span>
+              <span className='value'>{party.contact.secondaryPhone || 'N/A'}</span>
             </p>
           </div>
         )}
