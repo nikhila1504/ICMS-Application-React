@@ -148,6 +148,7 @@ const Wc1FormComponent = () => {
       .then((response) => {
         console.log(response);
         setFormData(response.data);
+        console.log("claimNo",formData.claimNo);
         console.log("formData", formData);
       })
       .catch((error) => {
@@ -302,7 +303,7 @@ const Wc1FormComponent = () => {
   const hideViewModal = () => {
     setViewVisible(false);
     setFileUrl(null);
-    alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
+   // alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
   };
   const confirmDelete = () => {
     setDocuments(documents.filter(doc => doc.id !== docToDelete));
@@ -390,6 +391,7 @@ const Wc1FormComponent = () => {
     hospitalName: '',
     hospitalAddress1: '',
     hospitalAddress2: '',
+    claimNo:'',
     hospitalCity: '',
     hospitalState: '',
     hospitalZip: '',
@@ -931,7 +933,8 @@ const Wc1FormComponent = () => {
           <button className="close-button" onClick={onClose} style={{ padding: '15px', backgroundColor: 'transparent' }}>&times;</button> */}
             {/* {renderGeneratedContent()} */}
             <Dialog
-                header="View Document"
+                // header="Your form has been successfully submitted! Your claim number is:{formData.claimNo}"
+                header={`Your form has been successfully submitted! Your claim number is: ${formData.claimNo}`}
                 visible={viewVisible}
                 onHide={() => {
                   hideViewModal();
