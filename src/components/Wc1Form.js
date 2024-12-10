@@ -97,10 +97,10 @@ const Wc1FormComponent = () => {
   // Keep track of which accordion section is open
   const [activeIndex, setActiveIndex] = useState(null);
   const [submitted, setSubmitted] = useState(false);
-  const [generatedPdf, setGeneratedPdf] = useState(null); 
+  const [generatedPdf, setGeneratedPdf] = useState(null);
   const [modalOpen, setModalOpen] = useState(false); // Modal open state
-   const [claimParties, setClaimParties] = useState([]);
-   
+  const [claimParties, setClaimParties] = useState([]);
+
   // Function to toggle the accordion section
   const handleToggle = (index) => {
     setActiveIndex(activeIndex === index ? null : index);
@@ -148,7 +148,7 @@ const Wc1FormComponent = () => {
       .then((response) => {
         console.log(response);
         setFormData(response.data);
-        console.log("claimNo",formData.claimNo);
+        console.log("claimNo", formData.claimNo);
         console.log("formData", formData);
       })
       .catch((error) => {
@@ -303,7 +303,7 @@ const Wc1FormComponent = () => {
   const hideViewModal = () => {
     setViewVisible(false);
     setFileUrl(null);
-   // alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
+    // alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
   };
   const confirmDelete = () => {
     setDocuments(documents.filter(doc => doc.id !== docToDelete));
@@ -391,7 +391,7 @@ const Wc1FormComponent = () => {
     hospitalName: '',
     hospitalAddress1: '',
     hospitalAddress2: '',
-    claimNo:'',
+    claimNo: '',
     hospitalCity: '',
     hospitalState: '',
     hospitalZip: '',
@@ -646,7 +646,7 @@ const Wc1FormComponent = () => {
     'penalityPaid',
     'weeklyBenefit'
   ];
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
     console.log('Form to be Submitted:', formData);
@@ -744,7 +744,7 @@ const Wc1FormComponent = () => {
       });
       console.log("formData", sanitizedFormData);
       try {
-        const response =  await ClaimService.saveClaim(sanitizedFormData);
+        const response = await ClaimService.saveClaim(sanitizedFormData);
         console.log(response);
         console.log(response.data);
         // const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -768,10 +768,10 @@ const Wc1FormComponent = () => {
         if (isValidPdf) {
           const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
           const pdfUrl = window.URL.createObjectURL(blob);
-          setGeneratedPdf(pdfUrl); 
+          setGeneratedPdf(pdfUrl);
           setViewVisible(true);
           // window.open(pdfUrl, '_blank'); // Open PDF in a new tab
-          
+
         } else {
           console.error('Invalid PDF data.');
         }
@@ -793,17 +793,17 @@ const Wc1FormComponent = () => {
       return (
         <div>
           <h3>Form Submitted Successfully!</h3>
-          <iframe 
-            src={generatedPdf} 
-            width="100%" 
-            height="600px" 
+          <iframe
+            src={generatedPdf}
+            width="100%"
+            height="600px"
             title="Generated PDF"
             style={{ border: 'none' }}
           />
         </div>
       );
     }
-    return null;  
+    return null;
   };
 
   const getRequiredFieldsForTab = (tab) => {
@@ -925,37 +925,37 @@ const Wc1FormComponent = () => {
   };
   return (
     <div className="tabs container">
-       <DataTableComponent />
+      <DataTableComponent />
       <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
- {/* {modalOpen && (
+      {/* {modalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
           <button className="close-button" onClick={onClose} style={{ padding: '15px', backgroundColor: 'transparent' }}>&times;</button> */}
-            {/* {renderGeneratedContent()} */}
-            <Dialog
-                // header="Your form has been successfully submitted! Your claim number is:{formData.claimNo}"
-                header={`Your form has been successfully submitted! Your claim number is: ${formData.claimNo}`}
-                visible={viewVisible}
-                onHide={() => {
-                  hideViewModal();
-                  
-                }}
-                style={{ width: '80%', height: '90%' }}
-                modal
-              >
- <iframe 
-            src={generatedPdf} 
-            width="100%" 
-            height="600px" 
-            title="Generated PDF"
-            style={{ border: 'none' }}
-          />
+      {/* {renderGeneratedContent()} */}
+      <Dialog
+        // header="Your form has been successfully submitted! Your claim number is:{formData.claimNo}"
+        header={`Your form has been successfully submitted! Your claim number is: ${formData.claimNo}`}
+        visible={viewVisible}
+        onHide={() => {
+          hideViewModal();
 
-              </Dialog>
-            
-           
-          {/* </div> */}
-        {/* </div>
+        }}
+        style={{ width: '80%', height: '90%' }}
+        modal
+      >
+        <iframe
+          src={generatedPdf}
+          width="100%"
+          height="600px"
+          title="Generated PDF"
+          style={{ border: 'none' }}
+        />
+
+      </Dialog>
+
+
+      {/* </div> */}
+      {/* </div>
       )} */}
       <form onSubmit={handleSubmit} noValidate>
 
@@ -1015,9 +1015,9 @@ const Wc1FormComponent = () => {
         </div>
         <div className="tab-content">
           {activeTab === 'tab1' && (
-            <div className="card">
+            <div className=" card-content">
               {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Claimant Information</h1> */}
-              <div className="form-section flex-fill mb-0">
+              <div className="form-section  flex-fill mb-0">
                 <div className="form-group row mb-0 mt-3">
                   <div className="col-md-2 mb-2">
                     <MDBInput
@@ -1303,7 +1303,7 @@ const Wc1FormComponent = () => {
                       <td>{claimParty.party.partyType?.code}</td>
                       <td><a href="#" onClick={(e) => { e.preventDefault(); openModal(claimParty.party); }}>{claimParty.party.partyName}</a></td>
                       <td>{claimParty.parentParty?.partyName}</td>
-                      <td>{claimParty.party.selfInsured != null || claimParty.party.selfInsured !=='' ? claimParty.party.selfInsured ? 'Yes' : 'No' : ''}</td>
+                      <td>{claimParty.party.selfInsured != null || claimParty.party.selfInsured !== '' ? claimParty.party.selfInsured ? 'Yes' : 'No' : ''}</td>
                       <td>{claimParty.party.selfAdministered != null ? claimParty.party.selfAdministered ? 'Yes' : 'No' : ''}</td>
                       <td>{claimParty.party.groupFundMember != null ? claimParty.party.groupFundMember ? 'Yes' : 'No' : ''}</td>
                     </tr>
@@ -1566,7 +1566,7 @@ const Wc1FormComponent = () => {
                               }))}
                               placeholder="---Select One---"
                               filter
-                              className="select-dropdown  col-md-12"
+                              className="select-dropdown  custom-input col-md-12"
                               label="NAICS Type"
                             />
                             <label htmlFor="naicsTypes">NAICS Code:</label>
@@ -1782,7 +1782,7 @@ const Wc1FormComponent = () => {
                               ref={getFieldRef('typeOfInjury')}
 
                               label="Type of Injury/Illness"
-                              // dropdownClassName="custom-dropdown-panel"
+                            // dropdownClassName="custom-dropdown-panel"
                             />
                             <label htmlFor="typeOfInjury">Type of Injury/Illness<span style={{ color: 'red' }}>*</span></label>
 
@@ -2766,8 +2766,8 @@ const Wc1FormComponent = () => {
                             id="dateOfDisability"
                             name="dateOfDisability"
                             onChange={handleChange}
-                          // onClick={(e) => e.target.showPicker()}
-                          className="form-control custom-input inclass mb-2"
+                            // onClick={(e) => e.target.showPicker()}
+                            className="form-control custom-input inclass mb-2"
                           />
                         </div>
                       </div>
@@ -2973,7 +2973,7 @@ const Wc1FormComponent = () => {
                 <span className="pi pi-cloud-upload" style={{ fontSize: '1.5rem' }}></span>  Choose File
               </label>
               <div className="card table-responsive mt-2">
-                <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable responsive-datatable" 
+                <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable responsive-datatable"
                   style={{ minWidth: '600px' }} >
                   <Column field="id" header="#" />
                   <Column field="name" header="Document Name" />
@@ -3581,76 +3581,47 @@ const Wc1FormComponent = () => {
             </div>
           )}
         </div>
-        <div className="card-content">
-          <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Submitter Information</h1>
-          <div className="d-flex flex-wrap">
-            <div className="form-section flex-fill">
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-                  Insurer/Self-Insurer: Type or Print Name of Person Filing Form:
-                </label>
-                <span style={{ fontSize: '15px' }} className="value">DAVID IMAHARA</span>
-              </div>
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label htmlFor="submittedDate" className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-                  Date:
-                </label>
-                <span style={{ fontSize: '15px' }} className="value">11/09/2024</span>
-              </div>
+        <div className="container card-content">
+          <h1 className="custom-h1 header mt-2">Submitter Information</h1>
+          <div className="row">
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">
+                Insurer/Self-Insurer: Type or Print Name of Person Filing Form:
+              </label>
+              <span className="value">DAVID IMAHARA</span>
             </div>
-            <div className="form-section flex-fill pl-3">
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
-                  Phone Number:
-                </label>
-                <span style={{ fontSize: '15px', lineHeight: '1.5' }}>(404) 463-1999</span>
-                <label className="custom-label" style={{ marginRight: '10px', marginLeft: '20px', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
-                  Ext:
-                </label>
-                <span style={{ fontSize: '15px', lineHeight: '1.0' }}>ext</span>
-              </div>
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-                  E-mail:
-                </label>
-                <span style={{ fontSize: '15px' }}>CAMPBELLN@SBWC.GA.GOV</span>
-              </div>
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">Date:</label>
+              <span className="value">11/09/2024</span>
+            </div>
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">Phone Number:</label>
+              <span className="value">(404) 463-1999</span>
+              <label className="custom-label ms-3 me-2">Ext:</label>
+              <span className="value">ext</span>
+            </div>
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">E-mail:</label>
+              <span className="value">CAMPBELLN@SBWC.GA.GOV</span>
             </div>
           </div>
         </div>
 
-
-
-
-
-        <div className="d-flex justify-content-center mt-4">
-          <ButtonGroup>
-            <Button label="Reset" icon="pi pi-refresh" size="large" />
-            <Button label="Save" icon="pi pi-save" size="large" />
-            <Button label="Submit" icon="pi pi-check" size="large" />
-            {/* <Button label="Delete" icon="pi pi-trash" /> */}
-            <Button label="Cancel" icon="pi pi-times" size="large" />
-          </ButtonGroup>
-          {/* <button type="reset" className="btn btn-secondary mx-2 mb-10 custom-label">Reset</button>
-          <button type="button" className="btn btn-primary mx-2 mb-10  custom-label"
-            style={{
-              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
-            }}
-            onClick={() => setClicked(!clicked)}>Save</button>
-          <button type="submit" className="btn btn-primary mx-2 mb-10  custom-label" 
-            style={{
-              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
-            }}
-            onClick={() => setClicked(!clicked)}>Submit</button> */}
-
-          {/* <button type="button" className="btn btn-secondary mx-2 mb-10  custom-label">Back</button> */}
-          {/* <Link
-            className="btn btn-secondary mx-2 mb-10  custom-label"
-            to={`/parties`}
-            style={{ marginLeft: "12px" }}
-          >
-            Back
-          </Link> */}
+        <div className="row mt-4">
+          <div className="col-12 d-flex justify-content-center flex-wrap flex-md-nowrap">
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn">Reset</button>
+            </div>
+            <div className="mx-1">
+              <button className="btn btn-lg custom-btn">Save</button>
+            </div>
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn">Submit</button>
+            </div>
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn">Cancel</button>
+            </div>
+          </div>
         </div>
       </form>
     </div >

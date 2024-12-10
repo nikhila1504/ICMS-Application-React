@@ -30,56 +30,61 @@ const Login = () => {
   return (
     <div>
       <br />
-      <h4>Welcome to the State Board of Workers' Compensation Online Integrated Claims Management System (ICMS).
-        </h4>
-        
+      <h4>Welcome to the State Board of Workers' Compensation Online Integrated Claims Management System (ICMS).</h4>
+
       <br />
       <div className="container justify-content-right">
         <div className="row">
-        
-          <div className="card col-md-4 offset-md-3 offset-md-3">
+
+          <div className="card col-md-4 offset-md-3">
             <h2 className="text-center">User Login</h2>
             <div className="card-body">
               {error && (
                 <p className="error-message">
-                  <i class="bi bi-exclamation-circle"></i> {error}
+                  <i className="bi bi-exclamation-circle"></i> {error}
                 </p>
               )}
               <form>
-                <div className="form-group mb-2">
-                  <label className="form-label"> User Name :</label>
+                {/* User Name Field */}
+                <div className="mb-3">
+                  <label htmlFor="username" className="form-label">User Name:</label>
                   <input
                     type="text"
+                    id="username"
                     placeholder="Enter username"
                     name="name"
                     className="form-control"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                  ></input>
+                  />
                 </div>
-                <div className="form-group mb-2">
-                  <label className="form-label"> Password :</label>
+
+                {/* Password Field */}
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">Password:</label>
                   <input
                     type="password"
+                    id="password"
                     placeholder="Enter password"
                     name="password"
                     className="form-control"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                  ></input>
+                  />
                 </div>
-                <br></br>
-                <div className="text-center mb-3"> 
+
+                <div className="text-center mb-3">
                   <button
-                    className="btn btn-outline-success w-20" 
-                    onClick={handleSubmit} style={{fontSize:'15px' }}
+                    className="btn btn-outline-success w-100"
+                    onClick={handleSubmit}
+                    style={{ fontSize: '15px' }}
                   >
                     Login
                   </button>
                 </div>
-                <br></br>
-                &nbsp;
-                <div style={{ marginLeft: "130px",fontSize:'20px' }}>
+
+                {/* Register Link */}
+                <div className="text-center mt-3" style={{ fontSize: '16px' }}>
                   Don't have an account? <Link to="/register">Register</Link>
                 </div>
               </form>

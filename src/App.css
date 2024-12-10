@@ -17,7 +17,7 @@
   flex: 1;
   padding: 7px;
   border: 1px solid #969494;
-  background: #4babf55e;
+  background: #024950;
   color: #333;
   font-weight: bold;
   transition: background 0.3s;
@@ -25,7 +25,7 @@
 
 /* Active tab styling */
 .tab-titles .active {
-  background: #5d8aa8;
+  background: #024950;
   color: white;
 }
 
@@ -99,7 +99,7 @@
 
 .navbar {
   color: white;
-  background-color: skyblue;
+  background-color: #024950;
   max-height: 50px;
   box-shadow:none !important;
   padding-top: 7px !important;
@@ -197,10 +197,12 @@
 
 .navbar-nav .nav-link {
   font-size: 20px;
+  color:white;
 }
 
 .navbar-nav .nav-link:hover {
   text-decoration: none;
+  color:white;
 }
 
 .Error {
@@ -208,18 +210,20 @@
 }
 
 .header {
-  background-color: #4babf55e;
+  background-color: #09737c;
+  color:white;
   padding: 3px;
   border-radius: 5px;
   cursor: pointer;
 }
 .custom-h1 {
   font-size: 20px;
+  color:white;
 }
 .custom-picklist .p-button-icon-only{
   color:black;
-  background-color: skyblue;
-  border: skyblue;
+  background-color: #024950;
+  border: #024950;
 }
 .modal-overlay {
   position: fixed;
@@ -287,7 +291,7 @@
 
 .modal-content h2,
 .modal-content h5 {
-  background-color: #4babf55e;
+  background-color: #024950;
   padding: 10px;
   border-radius: 5px;
   margin: 0 0 10px 0;
@@ -312,8 +316,8 @@
 
 .custom-radio .form-check-input {
   transform: scale(1.0);
-  accent-color: skyblue;
-  border-color: skyblue;
+  accent-color: #024950;
+  border-color: #024950;
 }
 
 .custom-label-NWC {
@@ -322,47 +326,32 @@
 }
 
  .custom-input {
-  /* border: 2px solid skyblue; */
+  /* border: 2px solid #024950; */
   border-radius: 5px;
   padding: 10px;
   font-size: 16px;
   width: 40%;
 } 
-/* .custom-border input:focus {
-  border-color: red !important;
-  box-shadow: inset 0 0 0 1px red !important;
-  border-bottom: 1px solid red !important;
-}
 
-.custom-border label.active {
-  color: red !important;
-} */
-/* Custom border color for the input */
 .custom-border {
-  border: 0px solid skyblue !important; /* Default border color */
-  background-color: transparent; /* Ensure transparent background */
-  transition: all 0.3s ease; /* Smooth transition for changes */
+  border: 0px solid #024950 !important;
+  background-color: transparent; 
+  transition: all 0.3s ease; 
 }
 
-/* Remove default blue border on focus */
 .custom-border:focus {
-  border-color: #4caf50 !important; /* Set your custom color on focus */
-  box-shadow: none !important; /* Remove the default blue shadow */
+  border-color: #4caf50 !important; 
+  box-shadow: none !important; 
 }
 
-/* Change the label color when the field is focused or has a value */
 .custom-border:focus + label,
 .custom-border:not(:placeholder-shown) + label {
-  color: black !important; /* Match label color to focus border */
+  color: #024950 !important;
 }
 
-/* Adjust label position when the input has content or is focused (floating label) */
 .custom-border:not(:placeholder-shown) + label,
 .custom-border:focus + label {
- 
-  font-size: 17px; /* Adjust font size when floating */
-  /* color: black !important;  */
-  /* Label color for floating state */
+  font-size: 17px;
   padding-bottom: 100px;
 }
 .pi-exclamation-circle {
@@ -370,37 +359,36 @@
   font-size: 20px;
   margin-left: 2px;
 }
-/* Optional: Custom styles for disabled state */
 .custom-border:disabled {
-  background-color: #f5f5f5; /* Disabled background */
-  border-color: #dcdcdc !important; /* Disabled border color */
+  background-color: #f5f5f5;
+  border-color: #dcdcdc !important;
 }
 
 
  .form-control {
   font-size: 14px !important;
-  /* border: 2px solid skyblue !important; */
+  /* border: 2px solid #024950 !important; */
   /* border-radius: 5px !important; */
-  border-color: skyblue !important;
+  border-color: #024950 !important;
   padding: 10px 12px !important;
 } 
 .form-control-nr{
-  /* border: 2px solid skyblue !important; */
+  /* border: 2px solid #024950 !important; */
   border-radius: 5px !important;
   margin-top: 0px !important;
 }
 .form-control-nr:focus {
-  border: 2px solid skyblue !important;
+  border: 2px solid #024950 !important;
   border-radius: 5px !important;
 }
 .form-control-nr:active {
-  border: 2px solid #4baaf5 !important;
+  border: 2px solid #024950 !important;
   border-radius: 5px !important;
 }
 
 .dropdown-select {
   font-size: 14px !important; 
-  /* border: 2px solid skyblue !important;  */
+  /* border: 2px solid #024950 !important;  */
   border-radius: 5px !important; 
   width: 100%; 
   height: 45px;
@@ -443,7 +431,7 @@
 }
 .select-dropdown-ct {
   font-size: 14px !important; 
-  /* border: 2px solid skyblue !important;  */
+  /* border: 2px solid #024950 !important;  */
   border-radius: 5px !important; 
   width: 400px; 
   height: 35px;
@@ -463,15 +451,15 @@
 
 .custom-input + label {
   border: none !important; 
-  color: black !important;
+  color: #024950 !important;
 }
 
 .custom-input:focus + label {
-  color: black !important; 
+  color: #024950 !important; 
 }
 
 .custom-input-value {
-  color: #4babf55e;  /* Change text color */font-weight: bold;  /* Make the text bold */font-size: 18px;  /* Set font size */
+  color: #024950;  /* Change text color */font-weight: bold;  /* Make the text bold */font-size: 18px;  /* Set font size */
 }
 
 
@@ -510,6 +498,7 @@
   margin-top: 0rem;
   font-size: 13px;
   font-weight:bold;
+  color:#024950;
   /* margin-right: 0px !important; */
 } 
 .font-bold{
@@ -659,7 +648,7 @@
 
   .nav-item .btn {
     min-width: 150px;
-    background-color: skyblue;
+    background-color: #024950;
     padding: 2px 2px;
   }
 
@@ -705,7 +694,7 @@
   .btn{
     --mdb-btn-padding-top:0px !important;
     --mdb-btn-padding-bottom: 0px !important;
-    background-color: skyblue !important;
+    background-color: #024950 !important;
   }
 }
 .form-group {
@@ -841,11 +830,11 @@
 } */
 .custom-select {
   color: black;
-  border: 1px solid skyblue;
+  border: 1px solid #024950;
 }
 
 .custom-select:focus {
-  border-color: skyblue;
+  border-color: #024950;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 .custom-textarea:focus {
@@ -902,7 +891,7 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
-  /* background-color: skyblue; */
+  /* background-color: #024950; */
   border: 2px solid black; 
   outline: none; 
   
@@ -913,7 +902,7 @@
   display: inline-block;
   width: 30px; 
   height: 30px; 
-  border: 2px solid skyblue; 
+  border: 2px solid #024950; 
   border-radius: 4px; 
   background-color: white; 
   cursor: pointer;
@@ -938,16 +927,16 @@
 }
 
 .file-upload {
-  background-color: #4babf55e;
-  color: #4babf55e;
+  background-color: #024950;
+  color: #024950;
 }
 
 .custom-file-upload {
   display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
-  background-color: #4babf55e;
-  color: black;
+  background-color: #024950;
+  color:white;
   border-radius: 5px;
   text-align: center;
   transition: background-color 0.3s ease;
@@ -955,11 +944,11 @@
 }
 
 .custom-file-upload:hover {
-  background-color: skyblue;
+  background-color: #024950;
 }
 
 .p-button-info {
-  background-color: skyblue;
+  background-color: #024950;
   border: none;
 }
 
@@ -969,8 +958,8 @@
 }
 
 .custom-label .p-datatable-thead>tr>th {
-  background-color: #4babf55e;
-  color: black;
+  background-color: #024950;
+  color: white;
   font-size: 1.2em;
   padding: 12px;
 }
@@ -980,7 +969,7 @@
 }
 
 .btn-success {
-  background-color: skyblue;
+  background-color: #024950;
   color: black;
   border: none;
 }
@@ -990,7 +979,7 @@
 }
 
 .btn-success:hover {
-  background-color: skyblue;
+  background-color: #024950;
   color: black;
 }
 
@@ -999,7 +988,7 @@
 }  */
 
 .clicked {
-  background-color: skyblue;
+  background-color: #024950;
 }
 
 .error-highlight .p-picklist-source,
@@ -1057,8 +1046,11 @@
 .custom-datatable {
   max-width: 100%; 
   overflow-x: auto; 
-}
 
+}
+.custom-datatable th{
+  color:white;
+}
 .custom-datatable th, .custom-datatable td {
   padding: 0.5rem; 
   white-space: nowrap; 
@@ -1122,8 +1114,8 @@ body {
   flex: 1 1 120px;
   margin: 0.3rem;
   padding: 0.7rem;
-  background: #4babf55e;
-  color: black;
+  background: #09737c;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -1131,10 +1123,20 @@ body {
   text-align: center;
 }
 .tab-titles button.active {
-  background: #5d8aa8;
-  color: black;
+  background: #024950;
+  color: white;
+}
+.btn.custom-btn {
+  background-color: #09737c; 
+  color: white; 
+  border: none; 
 }
 
+.btn.custom-btn:hover {
+  /* opacity: 0.8; */
+  color:white;
+  background-color:#024950 
+}
 /* .form-section {
   margin-bottom: 1.5rem;
 }
