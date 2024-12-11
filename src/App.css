@@ -1111,9 +1111,9 @@ body {
   margin-bottom: 1rem;
 }
 .tab-titles button {
-  flex: 1 1 120px;
+  /* flex: 1 1 120px; */
   margin: 0.3rem;
-  padding: 0.7rem;
+  padding: 0.5rem;
   background: #09737c;
   color: white;
   border: none;

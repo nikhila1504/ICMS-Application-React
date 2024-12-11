@@ -969,14 +969,14 @@ const Wc1FormComponent = () => {
             onClick={(e) => { e.preventDefault(); handleTabClick('tab1'); }}
           >
             Claimant Information
-            {hasErrorsInTab('tab1') && <span className="pi pi-exclamation-circle ml-6"></span>}
+            {hasErrorsInTab('tab1') && <span className="pi pi-exclamation-circle ml-5"></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab2' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab2'); }}
           >
             Party Information
-            {hasErrorsInTab('tab2') && <span className="pi pi-exclamation-circle ml-6"></span>}
+            {hasErrorsInTab('tab2') && <span className="pi pi-exclamation-circle ml-5"></span>}
           </button>
 
           <button type="button"
@@ -984,14 +984,14 @@ const Wc1FormComponent = () => {
             onClick={(e) => { e.preventDefault(); handleTabClick('tab3'); }}
           >
             Employment/Wage
-            {hasErrorsInTab('tab3') && <span className="pi pi-exclamation-circle ml-6"></span>}
+            {hasErrorsInTab('tab3') && <span className="pi pi-exclamation-circle ml-5"></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab4' ? 'active' : ''}
             onClick={(e) => { e.preventDefault(); handleTabClick('tab4'); }}
           >
             Injury/Illness & Medical
-            {hasErrorsInTab('tab4') && <span className="pi pi-exclamation-circle ml-6"></span>}
+            {hasErrorsInTab('tab4') && <span className="pi pi-exclamation-circle "></span>}
           </button>
           <button type="button"
             className={activeTab === 'tab5' ? 'active' : ''}
@@ -3610,16 +3610,16 @@ const Wc1FormComponent = () => {
         <div className="row mt-4">
           <div className="col-12 d-flex justify-content-center flex-wrap flex-md-nowrap">
             <div className="mx-1">
-              <button className="btn  btn-lg custom-btn">Reset</button>
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-refresh" ></i> Reset</button>
             </div>
             <div className="mx-1">
-              <button className="btn btn-lg custom-btn">Save</button>
+              <button className="btn btn-lg custom-btn"><i className="pi pi-save" ></i> Save</button>
             </div>
             <div className="mx-1">
-              <button className="btn  btn-lg custom-btn">Submit</button>
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-check" ></i> Submit</button>
             </div>
             <div className="mx-1">
-              <button className="btn  btn-lg custom-btn">Cancel</button>
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-times" style={{fontSize:'0.9rem'}}></i> Cancel</button>
             </div>
           </div>
         </div>

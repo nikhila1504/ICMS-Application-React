@@ -105,9 +105,9 @@ const DataTableComponent = () => {
                                 <button
                                     className="btn btn-secondary"
                                     onClick={(e) => handleLogout(e)}
-                                    style={{ fontSize: '15px', minWidth: '100px' }}
+                                    style={{ fontSize: '15px', minWidth: '100px',color: 'white',backgroundColor:'#024950' }}
                                 >
-                                    Logout
+                                    <i className="pi pi-sign-out" ></i> Logout
                                 </button>
                             ) : null}
                         </div>
