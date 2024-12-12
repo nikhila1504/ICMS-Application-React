@@ -161,7 +161,8 @@ const CalendarComponent = () => {
         <div style={{ flex: 3 }}>
           <h1>
             <Link to="/wc1" className="heading btn custom-btn mb-2">Back</Link>
-            <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Calendar</h1>
+            <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Scheduled Appeals/Hearings/Mediations/Rehab Conferences
+            </h1>
           </h1>
           {loading ? <p>Loading...</p> : (
             <FullCalendar className="calendar"

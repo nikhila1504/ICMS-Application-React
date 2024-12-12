@@ -74,7 +74,7 @@ const DataTableComponent = () => {
                                 <div className="dropdown-item">
                                     <Link className="dropdown-item" to="/calendarList">
                                         <i className="pi pi-folder" style={{ color: 'black', fontSize: '20px' }}></i>
-                                        Calendar
+                                        Check Calendar
                                     </Link>
                                 </div>
                             </div>
