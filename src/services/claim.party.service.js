@@ -17,7 +17,7 @@ const CLAIM_URL = "http://localhost:9092/wc1";
 
 class ClaimPartyService {
     getClaimPartyByClaimId() {
-        return axios.get(CLAIM_URL + "/claimParty/1665067", {
+        return axios.get(CLAIM_URL + "/claimParty/1705266", {
           headers: authHeader(),
         });
       }

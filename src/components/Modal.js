@@ -7,9 +7,9 @@ const Modal = ({ isOpen, onClose, party }) => {
     <div className="modal-overlay">
       <div className="modal-content">
 
-        <h5>Party</h5>
+        <h5 className="custom-h1 header mt-2">Party</h5>
         <button className="close-button" onClick={onClose} style={{ padding: '15px', backgroundColor: 'transparent' }}>&times;</button>
-        <h5>Party Information</h5>
+        <h5 className="custom-h1 header mt-2">Party Information</h5>
         {party && (
           <div>
             <p className='custom-label'>
@@ -20,7 +20,7 @@ const Modal = ({ isOpen, onClose, party }) => {
               <span className='label'>Party Name:</span>
               <span className='value'>{party.partyName}</span>
             </p>
-            <h5>Address</h5>
+            <h5 className="custom-h1 header mt-2">Address</h5>
             <p className='custom-label'>
               <span className='label'>Mailing Address1:</span>
               <span className='value'>{party.address.address1 || 'N/A'}</span>
@@ -41,7 +41,7 @@ const Modal = ({ isOpen, onClose, party }) => {
               <span className='label'>Zip:</span>
               <span className='value'>{party.address.zip || 'N/A'}</span>
             </p>
-            <h5>Contact</h5>
+            <h5 className="custom-h1 header mt-2">Contact</h5>
              <p className='custom-label'>
               <span className='label'>Preferred Contact Name:</span>
               <span className='value'>{party.contact.preferredContactName || 'N/A'}</span>

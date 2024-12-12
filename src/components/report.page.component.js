@@ -20,6 +20,8 @@ import { Button } from 'primereact/button';
 import ReportService from "../services/report.service";
 import { format } from 'date-fns';
 import { ProgressSpinner } from 'primereact/progressspinner'; // Import ProgressSpinner from PrimeReact
+import DataTableComponent from "./DataTableComponent.js";
+import { Link } from "react-router-dom";
 
 const ReportPageComponent = () => {
   const [filters, setFilters] = useState({
@@ -217,8 +219,10 @@ const handleChange = (e) => {
 
   return (
     <div>
-      <h1></h1>
-      <h1 className="custom-h1" style={{ marginTop: '5px', align:'right' }}>User Productivity Report </h1>
+     
+      <DataTableComponent />
+      <Link to="/wc1" className="heading btn custom-btn mb-2 mt-2">Back</Link>
+           <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>User Productivity Report</h1>
      {/* Date Range Inputs */}
      <div>
         {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Claimant Information</h1> */}
@@ -256,12 +260,19 @@ const handleChange = (e) => {
                     }}
                     className="p-button-secondary p-ml-3"
                 /> */}
-            <div className="col-md-1 mb-2">
-              <Button label="Reset" icon="pi pi-refresh" size="small" onClick={resetFilters} />
+            {/* <div className="col-md-2 mb-2">
+            <button className="btn  btn-lg custom-btn"><i className="pi pi-refresh" onClick={resetFilters} ></i> Reset</button>
+              
             </div>
             <div className="col-md-2">
-              <Button label="Generete Report" icon="pi pi-check" size="small" onClick={filterData}/>
+            <button className="btn  btn-lg custom-btn"><i className="pi pi-check" onClick={filterData} ></i> Generete Report</button>
+            </div> */}
+             <div className="col-md-1 mb-2">
+              <Button className='custom-button-tab' label="Reset" icon="pi pi-refresh" size="small" onClick={resetFilters} />
             </div>
+            <div className="col-md-2">
+              <Button className='custom-button-tab' label="Generete Report" icon="pi pi-check" size="small" onClick={filterData}/>
+            </div> 
             {/* <div className="col-md-2">
             <Button
                     label="Clear Filters"
@@ -324,7 +335,7 @@ const handleChange = (e) => {
       scrollHeight="400px"  // Defines vertical scroll height
       responsiveLayout="scroll"
       > */}
- <div style={{ backgroundColor: "skyblue", display: 'flex', justifyContent: 'flex-start', padding: '4px' }}>
+ <div style={{ backgroundColor: "#064371", display: 'flex', justifyContent: 'flex-start', padding: '4px' }}>
         <InputText
           value={searchTerm}  // Bind the input value to the searchTerm state
           onInput={handleSearchChange}
@@ -341,15 +352,15 @@ const handleChange = (e) => {
           // totalRecords={500}
           stripedRows
           scrollable
-          scrollHeight="400px"  // Defines vertical scroll height
-          responsiveLayout="scroll"
+          scrollHeight="440px"  // Defines vertical scroll height
+          
         >
-         <Column field="activityDate" header="Date" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%' }} ></Column>
+         <Column field="activityDate" header="Date" sortable headerStyle={{ padding: '16px',color: '#B31942',paddingLeft:'52px',fontWeight: 'bold' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%' }} ></Column>
                 {/* <Column field="divisionName" header="Division Name" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px'  }} ></Column> */}
-                <Column field="staffName" header="Staff Name" sortable  headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'20%' }} ></Column>
-                <Column field="functionalRole" header="Functional Role" sortable  headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px',width:'30%'  }} ></Column>
-                <Column field="formName" header="Form Name" sortable headerStyle={{ backgroundColor: '#4babf55e' ,padding: '16px',paddingLeft:'52px'}} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'30%' }} ></Column>
-                <Column field="countNo" header="Count" sortable headerStyle={{ backgroundColor: '#4babf55e',padding: '16px',paddingLeft:'52px' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%'  }} ></Column>
+                <Column field="staffName" header="Staff Name" sortable  headerStyle={{ padding: '16px',color: '#B31942',paddingLeft:'52px',fontWeight: 'bold' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'20%' }} ></Column>
+                <Column field="functionalRole" header="Functional Role" sortable  headerStyle={{ padding: '16px',color: '#B31942',paddingLeft:'52px',fontWeight: 'bold' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px',width:'30%'  }} ></Column>
+                <Column field="formName" header="Form Name" sortable headerStyle={{ padding: '16px',color: '#B31942',paddingLeft:'52px',fontWeight: 'bold'}} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px',paddingLeft:'52px' ,width:'30%' }} ></Column>
+                <Column field="countNo" header="Count" sortable headerStyle={{ padding: '16px',color: '#B31942',paddingLeft:'52px',fontWeight: 'bold' }} style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '5px',paddingLeft:'52px',width:'10%'  }} ></Column>
       </DataTable>
       )}
     </div>

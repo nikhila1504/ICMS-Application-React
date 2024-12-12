@@ -7,7 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import CalendarService from "../services/calendar.service";
 import getUsernameFromToken from "../utils/jwtUtils";
-
+import DataTableComponent from "./DataTableComponent.js";
 
 const CalendarComponent = () => {
   const [username, setUsername] = useState(null);
@@ -156,11 +156,12 @@ const CalendarComponent = () => {
 
   return (
     <div style={{ border: '1px' }}>
-      <div style={{ display: "flex", padding: "20px", width: '90%' }}>
+      <DataTableComponent />
+      <div style={{ display: "flex", padding: "20px", width: '80%' }}>
         <div style={{ flex: 3 }}>
           <h1>
-            <Link to="/wc1" className="heading btn btn-dark mb-2">Back</Link>
-            Calendar
+            <Link to="/wc1" className="heading btn custom-btn mb-2">Back</Link>
+            <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Calendar</h1>
           </h1>
           {loading ? <p>Loading...</p> : (
             <FullCalendar className="calendar"

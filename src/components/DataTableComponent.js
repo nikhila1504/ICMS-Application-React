@@ -103,11 +103,11 @@ const DataTableComponent = () => {
                         <div className="ms-auto">
                             {path ? (
                                 <button
-                                    className="btn btn-secondary"
+                                    className="btn"
                                     onClick={(e) => handleLogout(e)}
-                                    style={{ fontSize: '15px', minWidth: '100px' }}
+                                    style={{ fontSize: '15px', minWidth: '100px',color: 'white' }}
                                 >
-                                    Logout
+                                    <i className="pi pi-sign-out" ></i> Logout
                                 </button>
                             ) : null}
                         </div>

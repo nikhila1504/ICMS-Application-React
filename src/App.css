@@ -17,7 +17,7 @@
   flex: 1;
   padding: 7px;
   border: 1px solid #969494;
-  background: #024950;
+  background: #0A3161;
   color: #333;
   font-weight: bold;
   transition: background 0.3s;
@@ -25,7 +25,7 @@
 
 /* Active tab styling */
 .tab-titles .active {
-  background: #024950;
+  background: #0A3161;
   color: white;
 }
 
@@ -99,7 +99,7 @@
 
 .navbar {
   color: white;
-  background-color: #024950;
+  background: #B31942;
   max-height: 50px;
   box-shadow:none !important;
   padding-top: 7px !important;
@@ -210,7 +210,7 @@
 }
 
 .header {
-  background-color: #09737c;
+  background-color: #0A3161;
   color:white;
   padding: 3px;
   border-radius: 5px;
@@ -221,9 +221,9 @@
   color:white;
 }
 .custom-picklist .p-button-icon-only{
-  color:black;
-  background-color: #024950;
-  border: #024950;
+  color:#0A3161;
+  background-color: #0A3161;
+  border: #0A3161;
 }
 .modal-overlay {
   position: fixed;
@@ -291,7 +291,7 @@
 
 .modal-content h2,
 .modal-content h5 {
-  background-color: #024950;
+  background-color: #0A3161;
   padding: 10px;
   border-radius: 5px;
   margin: 0 0 10px 0;
@@ -302,8 +302,9 @@
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 20px;
+  font-size: 40px;
   cursor: pointer;
+  color:red;
 }
 
 
@@ -316,8 +317,8 @@
 
 .custom-radio .form-check-input {
   transform: scale(1.0);
-  accent-color: #024950;
-  border-color: #024950;
+  accent-color: #0A3161;
+  border-color: #0A3161;
 }
 
 .custom-label-NWC {
@@ -334,19 +335,19 @@
 } 
 
 .custom-border {
-  border: 0px solid #024950 !important;
+  border: 0px solid #0A3161 !important;
   background-color: transparent; 
   transition: all 0.3s ease; 
 }
 
 .custom-border:focus {
-  border-color: #4caf50 !important; 
+  border-color: #0A3161 !important; 
   box-shadow: none !important; 
 }
 
 .custom-border:focus + label,
 .custom-border:not(:placeholder-shown) + label {
-  color: #024950 !important;
+  color: #0A3161 !important;
 }
 
 .custom-border:not(:placeholder-shown) + label,
@@ -360,7 +361,7 @@
   margin-left: 2px;
 }
 .custom-border:disabled {
-  background-color: #f5f5f5;
+  background-color: #0A3161;
   border-color: #dcdcdc !important;
 }
 
@@ -369,7 +370,7 @@
   font-size: 14px !important;
   /* border: 2px solid #024950 !important; */
   /* border-radius: 5px !important; */
-  border-color: #024950 !important;
+  border-color: #0A3161 !important;
   padding: 10px 12px !important;
 } 
 .form-control-nr{
@@ -378,11 +379,11 @@
   margin-top: 0px !important;
 }
 .form-control-nr:focus {
-  border: 2px solid #024950 !important;
+  border: 2px solid #0A3161 !important;
   border-radius: 5px !important;
 }
 .form-control-nr:active {
-  border: 2px solid #024950 !important;
+  border: 2px solid #0A3161 !important;
   border-radius: 5px !important;
 }
 
@@ -451,15 +452,15 @@
 
 .custom-input + label {
   border: none !important; 
-  color: #024950 !important;
+  color: #0A3161 !important;
 }
 
 .custom-input:focus + label {
-  color: #024950 !important; 
+  color: #0A3161 !important; 
 }
 
 .custom-input-value {
-  color: #024950;  /* Change text color */font-weight: bold;  /* Make the text bold */font-size: 18px;  /* Set font size */
+  color: #0A3161;  /* Change text color */font-weight: bold;  /* Make the text bold */font-size: 18px;  /* Set font size */
 }
 
 
@@ -498,7 +499,7 @@
   margin-top: 0rem;
   font-size: 13px;
   font-weight:bold;
-  color:#024950;
+  color:#0A3161;
   /* margin-right: 0px !important; */
 } 
 .font-bold{
@@ -648,7 +649,7 @@
 
   .nav-item .btn {
     min-width: 150px;
-    background-color: #024950;
+    background-color: #0A3161;
     padding: 2px 2px;
   }
 
@@ -694,7 +695,7 @@
   .btn{
     --mdb-btn-padding-top:0px !important;
     --mdb-btn-padding-bottom: 0px !important;
-    background-color: #024950 !important;
+    background-color: #0A3161 !important;
   }
 }
 .form-group {
@@ -830,11 +831,11 @@
 } */
 .custom-select {
   color: black;
-  border: 1px solid #024950;
+  border: 1px solid #0A3161;
 }
 
 .custom-select:focus {
-  border-color: #024950;
+  border-color: #0A3161;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 .custom-textarea:focus {
@@ -902,7 +903,7 @@
   display: inline-block;
   width: 30px; 
   height: 30px; 
-  border: 2px solid #024950; 
+  border: 2px solid #0A3161; 
   border-radius: 4px; 
   background-color: white; 
   cursor: pointer;
@@ -927,15 +928,15 @@
 }
 
 .file-upload {
-  background-color: #024950;
-  color: #024950;
+  background-color: #0A3161;
+  color: #0A3161;
 }
 
 .custom-file-upload {
   display: inline-block;
   padding: 10px 20px;
   cursor: pointer;
-  background-color: #024950;
+  background: #B31942;
   color:white;
   border-radius: 5px;
   text-align: center;
@@ -944,11 +945,11 @@
 }
 
 .custom-file-upload:hover {
-  background-color: #024950;
+  background-color: #B31942;
 }
 
 .p-button-info {
-  background-color: #024950;
+  background-color: #0A3161;
   border: none;
 }
 
@@ -958,7 +959,7 @@
 }
 
 .custom-label .p-datatable-thead>tr>th {
-  background-color: #024950;
+  background-color: #0A3161;
   color: white;
   font-size: 1.2em;
   padding: 12px;
@@ -969,7 +970,7 @@
 }
 
 .btn-success {
-  background-color: #024950;
+  background-color: #0A3161;
   color: black;
   border: none;
 }
@@ -979,7 +980,7 @@
 }
 
 .btn-success:hover {
-  background-color: #024950;
+  background-color: #0A3161;
   color: black;
 }
 
@@ -988,7 +989,7 @@
 }  */
 
 .clicked {
-  background-color: #024950;
+  background-color: #0A3161;
 }
 
 .error-highlight .p-picklist-source,
@@ -1114,8 +1115,11 @@ body {
   flex: 1 1 120px;
   margin: 0.3rem;
   padding: 0.7rem;
-  background: #09737c;
-  color: white;
+  /* background: #762f39; */
+  background: #4babf55e;
+  color: black;
+  /* background: #436786;
+  color: white; */
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -1123,11 +1127,11 @@ body {
   text-align: center;
 }
 .tab-titles button.active {
-  background: #024950;
+  background: #0A3161;
   color: white;
 }
 .btn.custom-btn {
-  background-color: #09737c; 
+  background-color: #0A3161; 
   color: white; 
   border: none; 
 }
@@ -1135,7 +1139,7 @@ body {
 .btn.custom-btn:hover {
   /* opacity: 0.8; */
   color:white;
-  background-color:#024950 
+  background-color:#0A3161 
 }
 /* .form-section {
   margin-bottom: 1.5rem;
@@ -1208,7 +1212,6 @@ body {
   display: flex;
   justify-content: space-between; 
   align-items: center;
-  padding: 1rem;
 }
 
 .logo, .icms-logo {
@@ -1224,4 +1227,19 @@ body {
   .logo, .icms-logo {
     margin-bottom: 1rem; 
   }
+}
+
+.custom-button-tab {
+  background-color: #0A3161; /* Example background color */
+  padding: 10px; /* Example padding */
+}
+
+.custom-accordion-tab:hover {
+  background-color: #e9ecef; /* Example hover effect */
+}
+
+/* For all buttons */
+.fc .fc-button {
+  background-color: #0A3161; /* Your desired background color */
+  color: white; 
 }
