@@ -29,7 +29,7 @@ const Wc1FormComponent = () => {
   const [selectedState, setSelectedState] = useState(['GA']);
   const [selectedPhysicianState, setPhysicianState] = useState(['GA']);
   const [selectedHospitalState, setHospitalState] = useState(['GA']);
-  const [naicsTypes, setNaicsTypes] = useState([]);
+  const [naicsType, setNaicsType] = useState([]);
   const [typeOfInjury, setInjuryTypes] = useState([]);
   const [injuryCauseTypes, setInjuryCauseTypes] = useState([]);
   const [activeTab, setActiveTab] = useState('tab1');
@@ -55,7 +55,7 @@ const Wc1FormComponent = () => {
         </select>
 
         <button
-          className="btn btn-outline-info  btn-sm mx-1"
+          className="btn custom-btn  btn-sm mx-1"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
@@ -63,7 +63,7 @@ const Wc1FormComponent = () => {
         </button>
         <span style={{ marginTop: "5px" }}>{`Page ${currentPage} of ${totalPages}`}</span>
         <button
-          className="btn btn-outline-info btn-sm mx-1"
+          className="btn custom-btn btn-sm mx-1"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
@@ -97,8 +97,9 @@ const Wc1FormComponent = () => {
   // Keep track of which accordion section is open
   const [activeIndex, setActiveIndex] = useState(null);
   const [submitted, setSubmitted] = useState(false);
-  const [generatedPdf, setGeneratedPdf] = useState(null); 
+  const [generatedPdf, setGeneratedPdf] = useState(null);
   const [modalOpen, setModalOpen] = useState(false); // Modal open state
+  const [claimParties, setClaimParties] = useState([]);
 
   // Function to toggle the accordion section
   const handleToggle = (index) => {
@@ -147,6 +148,7 @@ const Wc1FormComponent = () => {
       .then((response) => {
         console.log(response);
         setFormData(response.data);
+        console.log("claimNo", formData.claimNo);
         console.log("formData", formData);
       })
       .catch((error) => {
@@ -159,7 +161,10 @@ const Wc1FormComponent = () => {
       .then((response) => {
         console.log(response);
         // setFormData(response.data);
-        // console.log("formData", formData);
+        console.log('claimparties');
+        console.log(response.data);
+        setClaimParties(response.data);
+
       })
       .catch((error) => {
         console.log(error);
@@ -240,8 +245,8 @@ const Wc1FormComponent = () => {
     NaicsTypeService.getAllNaicsTypes()
       .then((response) => {
         console.log(response);
-        setNaicsTypes(response.data);
-        console.log("naicsTypes", naicsTypes);
+        setNaicsType(response.data);
+        console.log("naicsType", naicsType);
       })
       .catch((error) => {
         console.log(error);
@@ -298,7 +303,7 @@ const Wc1FormComponent = () => {
   const hideViewModal = () => {
     setViewVisible(false);
     setFileUrl(null);
-    alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
+    // alert("Your form has been successfully submitted!\n Your claim number is: 2024-000100");
   };
   const confirmDelete = () => {
     setDocuments(documents.filter(doc => doc.id !== docToDelete));
@@ -357,8 +362,8 @@ const Wc1FormComponent = () => {
     selectedHospitalState: 'GA', selectedPhysicianState: 'GA',
     physicianStateTypes: [],
     hospitalStateTypes: [],
-    naicsType: '',
-    naicsTypes: [],
+
+    naicsType: [],
     typeOfInjury: [],
     injuryCauseTypes: [],
     controvertType: [],
@@ -386,6 +391,7 @@ const Wc1FormComponent = () => {
     hospitalName: '',
     hospitalAddress1: '',
     hospitalAddress2: '',
+    claimNo: '',
     hospitalCity: '',
     hospitalState: '',
     hospitalZip: '',
@@ -404,8 +410,8 @@ const Wc1FormComponent = () => {
     convertType: '',
     BenifitsNPReasons: '',
     sectionB: false,
-    isControvertEnabled: false,
-    isMedicalInjuryEnabled: false,
+    sectionC: false,
+    sectionD: false,
     controverted: false,
     document: null,
     payBenefitUntil: '',
@@ -627,8 +633,8 @@ const Wc1FormComponent = () => {
     'benefitsPayableFor': 'tab5',
     'convertType': 'tab5',
     'controverted': 'tab5',
-    'isControvertEnabled': 'tab5',
-    'isMedicalInjuryEnabled': 'tab5',
+    'sectionC': 'tab5',
+    'sectionD': 'tab5',
     // Add more mappings as needed
   };
   const numericFields = [
@@ -640,7 +646,7 @@ const Wc1FormComponent = () => {
     'penalityPaid',
     'weeklyBenefit'
   ];
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitted(true);
     console.log('Form to be Submitted:', formData);
@@ -675,11 +681,11 @@ const Wc1FormComponent = () => {
           Object.assign(newErrors, validateRequiredFields(formData, salaryInLieuRequiredFields));
         }
       }
-      if (formData.isControvertEnabled) {
+      if (formData.sectionC) {
         const controvertRequiredFields = ['controvertType'];
         Object.assign(newErrors, validateRequiredFields(formData, controvertRequiredFields));
       }
-      if (formData.isMedicalInjuryEnabled) {
+      if (formData.sectionD) {
         const indemnityRequiredFields = ['controverted'];
         Object.assign(newErrors, validateRequiredFields(formData, indemnityRequiredFields));
       }
@@ -712,14 +718,14 @@ const Wc1FormComponent = () => {
     if (Object.keys(newErrors).length > 0) {
       console.log('Errors found:', newErrors);
       setErrors(newErrors);
-      // const tab5Errors = ['sectionB', 'isControvertEnabled', 'isMedicalInjuryEnabled'].filter(field => newErrors[field]);
+      // const tab5Errors = ['sectionB', 'sectionC', 'sectionD'].filter(field => newErrors[field]);
       // if (tab5Errors.length > 0) {
       //   setActiveTab('tab5'); 
       // }
       scrollToFirstError();
       return;
     }
-    if (!formData.sectionB && !formData.isMedicalInjuryEnabled && !formData.isControvertEnabled) {
+    if (!formData.sectionB && !formData.sectionD && !formData.sectionC) {
       setSubmitted(true);
       if (activeTab !== 'tab5') {
         alert("Selection one of Section B/C/D is required.");
@@ -738,20 +744,40 @@ const Wc1FormComponent = () => {
       });
       console.log("formData", sanitizedFormData);
       try {
-       const response =  ClaimService.saveClaim(sanitizedFormData);
-       console.log(response);
-       const blob = new Blob([response.data], { type: 'application/pdf' });
-       console.log('Blob:', blob);
-       console.log('Blob size:', blob.size);
-       const pdfUrl = window.URL.createObjectURL(blob);
-       window.open(pdfUrl, '_blank');
-       console.log('PDF URL created:', pdfUrl); 
-       setGeneratedPdf(pdfUrl); 
-       setModalOpen(true);  
-       setIsActive(false);
-      }  catch (error) {
-      console.error('Error downloading the file:', error);
-    }
+        const response = await ClaimService.saveClaim(sanitizedFormData);
+        console.log(response);
+        console.log(response.data);
+        // const blob = new Blob([response.data], { type: 'application/pdf' });
+        // console.log('Blob:', blob);
+        // console.log('Blob size:', blob.size);
+        // const pdfUrl = window.URL.createObjectURL(blob);
+        // window.open(pdfUrl, '_blank');
+        // console.log('PDF URL created:', pdfUrl); 
+        // setGeneratedPdf(pdfUrl); 
+        // setModalOpen(true);  
+        // setIsActive(false);
+
+        const arrayBuffer = response.data;  // This is the ArrayBuffer you received from the API// Check if the first 4 bytes correspond to the PDF signature (%PDF-)
+        console.log(arrayBuffer);
+        const pdfHeader = new Uint8Array(arrayBuffer, 0, 4);
+        console.log('PDF Header:', pdfHeader);
+
+        const isValidPdf = pdfHeader[0] === 0x25 && pdfHeader[1] === 0x50 && pdfHeader[2] === 0x44 && pdfHeader[3] === 0x46;
+        console.log('Is valid PDF:', isValidPdf);
+
+        if (isValidPdf) {
+          const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+          const pdfUrl = window.URL.createObjectURL(blob);
+          setGeneratedPdf(pdfUrl);
+          setViewVisible(true);
+          // window.open(pdfUrl, '_blank'); // Open PDF in a new tab
+
+        } else {
+          console.error('Invalid PDF data.');
+        }
+      } catch (error) {
+        console.error('Error downloading the file:', error);
+      }
       console.log('Submitting form with data:', formData);
       setIsActive(false);
     }
@@ -767,17 +793,17 @@ const Wc1FormComponent = () => {
       return (
         <div>
           <h3>Form Submitted Successfully!</h3>
-          <iframe 
-            src={generatedPdf} 
-            width="100%" 
-            height="600px" 
+          <iframe
+            src={generatedPdf}
+            width="100%"
+            height="600px"
             title="Generated PDF"
             style={{ border: 'none' }}
           />
         </div>
       );
     }
-    return null;  
+    return null;
   };
 
   const getRequiredFieldsForTab = (tab) => {
@@ -785,7 +811,7 @@ const Wc1FormComponent = () => {
       tab1: ['claimant.firstName', 'claimant.lastName', 'claimant.address1', 'claimant.city', 'claimant.state', 'claimant.zip', 'claimant.gender'],
       tab3: ['daysWorkedPerWeek', 'daysOff'],
       tab4: ['dateOfInjury', 'countyOfInjury.description', 'receivedFullPay', 'injuredInEmpPermises', 'typeOfInjury', 'otherInjuryCause'],
-      tab5: ['sectionB', 'isControvertEnabled', 'isMedicalInjuryEnabled'],
+      tab5: ['sectionB', 'sectionC', 'sectionD'],
     };
     return tabFields[tab] || [];
   };
@@ -793,7 +819,7 @@ const Wc1FormComponent = () => {
   const hasErrorsInTab = (tab) => {
     const requiredFields = getRequiredFieldsForTab(tab);
     if (tab === 'tab5') {
-      const isTab5ConditionMet = formData.sectionB || formData.isControvertEnabled || formData.isMedicalInjuryEnabled;
+      const isTab5ConditionMet = formData.sectionB || formData.sectionC || formData.sectionD;
       return submitted && (!isTab5ConditionMet || requiredFields.some((field) => errors[field]));
     }
     return submitted && requiredFields.some((field) => errors[field]);
@@ -887,8 +913,8 @@ const Wc1FormComponent = () => {
 
 
 
-  const totalPages = Math.ceil(parties.length / itemsPerPage);
-  const paginatedParties = parties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(claimParties.length / itemsPerPage);
+  const paginatedParties = claimParties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const handleClick = (e) => {
     // Ensuring that the date picker is triggered upon click
     // `showPicker()` may not be available in all browsers, but it works in most modern browsers.
@@ -899,36 +925,37 @@ const Wc1FormComponent = () => {
   };
   return (
     <div className="tabs container">
-       <DataTableComponent />
+      <DataTableComponent />
       <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
- {/* {modalOpen && (
+      {/* {modalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
           <button className="close-button" onClick={onClose} style={{ padding: '15px', backgroundColor: 'transparent' }}>&times;</button> */}
-            {/* {renderGeneratedContent()} */}
-            <Dialog
-                header="View Document"
-                visible={viewVisible}
-                onHide={() => {
-                  hideViewModal();
-                  
-                }}
-                style={{ width: '80%', height: '90%' }}
-                modal
-              >
- <iframe 
-            src={generatedPdf} 
-            width="100%" 
-            height="600px" 
-            title="Generated PDF"
-            style={{ border: 'none' }}
-          />
+      {/* {renderGeneratedContent()} */}
+      <Dialog
+        // header="Your form has been successfully submitted! Your claim number is:{formData.claimNo}"
+        header={`Your form has been successfully submitted! Your claim number is: ${formData.claimNo}`}
+        visible={viewVisible}
+        onHide={() => {
+          hideViewModal();
 
-              </Dialog>
-            
-           
-          {/* </div> */}
-        {/* </div>
+        }}
+        style={{ width: '80%', height: '90%' }}
+        modal
+      >
+        <iframe
+          src={generatedPdf}
+          width="100%"
+          height="600px"
+          title="Generated PDF"
+          style={{ border: 'none' }}
+        />
+
+      </Dialog>
+
+
+      {/* </div> */}
+      {/* </div>
       )} */}
       <form onSubmit={handleSubmit} noValidate>
 
@@ -988,9 +1015,9 @@ const Wc1FormComponent = () => {
         </div>
         <div className="tab-content">
           {activeTab === 'tab1' && (
-            <div className="card">
+            <div className="card-content">
               {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Claimant Information</h1> */}
-              <div className="form-section flex-fill mb-0">
+              <div className="form-section  flex-fill mb-0">
                 <div className="form-group row mb-0 mt-3">
                   <div className="col-md-2 mb-2">
                     <MDBInput
@@ -1257,27 +1284,28 @@ const Wc1FormComponent = () => {
             </div>
           )}
           {activeTab === 'tab2' && (
-            <div className="card table-responsive">
-              <table className="table table-custom table-striped table-bordered w-100">
+            <div className="card">
+              {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Party Information</h1> */}
+              <table className="table table-custom table-striped table-bordered w-100" style={{ tableLayout: 'auto', width: 'fit-content' }}>
                 <thead className="thead-light">
                   <tr>
-                    <th>Party Type</th>
-                    <th>Party Name</th>
-                    <th>Parent Party</th>
-                    <th>Self Insured</th>
-                    <th>Self Administered</th>
-                    <th>Group Fund Member</th>
+                    <th><b>Party Type</b></th>
+                    <th><b>Party Name</b></th>
+                    <th><b>Parent Party</b></th>
+                    <th><b>Self Insured</b></th>
+                    <th><b>Self Administered</b></th>
+                    <th><b>Group Fund Member</b></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedParties.map((party, index) => (
+                  {paginatedParties.map((claimParty, index) => (
                     <tr key={index}>
-                      <td>{party.partyType}</td>
-                      <td><a href="#" onClick={(e) => { e.preventDefault(); openModal(party); }}>{party.partyName}</a></td>
-                      <td>{party.parentParty}</td>
-                      <td>{party.selfInsured}</td>
-                      <td>{party.selfAdministered}</td>
-                      <td>{party.groupFundMember}</td>
+                      <td>{claimParty.party.partyType?.code}</td>
+                      <td><a href="#" onClick={(e) => { e.preventDefault(); openModal(claimParty.party); }}>{claimParty.party.partyName}</a></td>
+                      <td>{claimParty.parentParty?.partyName}</td>
+                      <td>{((claimParty.party.selfInsured != null || claimParty.party.selfInsured !==undefined) && claimParty.party.partyType?.code.toLowerCase()=== 'employer') ? claimParty.party.selfInsured ? 'Yes' : 'No' : ''}</td>
+                      <td>{((claimParty.party.selfAdministered != null || claimParty.party.selfInsured !==undefined)&& claimParty.party.partyType?.code.toLowerCase()=== 'employer' )? claimParty.party.selfAdministered ? 'Yes' : 'No' : ''}</td>
+                      <td>{((claimParty.party.groupFundMember != null || claimParty.party.selfInsured !==undefined) && claimParty.party.partyType?.code.toLowerCase()=== 'employer' )? claimParty.party.groupFundMember ? 'Yes' : 'No' : ''}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1294,7 +1322,7 @@ const Wc1FormComponent = () => {
             </div>
           )}
           {activeTab === 'tab3' && (
-            <div>
+            <div className='card-content'>
               {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>EMPLOYMENT/WAGE</h1> */}
               <div className="d-flex flex-wrap">
                 {/* First Row */}
@@ -1305,9 +1333,9 @@ const Wc1FormComponent = () => {
                         label="Hired Date"
                         autoComplete="off"
                         type="date"
-                        id="hiredDate"
-                        name="hiredDate"
-                        value={formData.hiredDate}
+                        id="dateHired"
+                        name="dateHired"
+                        value={formData.dateHired}
                         onChange={handleChange}
                         // onClick={(e) => e.target.showPicker()}
                         floating
@@ -1321,10 +1349,10 @@ const Wc1FormComponent = () => {
                       <MDBInput
                         autoComplete="off"
                         type="text"
-                        id="jobClssifiedCodeNo"
-                        name="jobClssifiedCodeNo"
+                        id="jobClassificationCode"
+                        name="jobClassificationCode"
                         label="Job Classified Code No"
-                        value={formData.jobClssifiedCodeNo || ' '}
+                        value={formData.jobClassificationCode || ' '}
                         onChange={handleChange}
                         floating
                         className="custom-input"
@@ -1337,10 +1365,10 @@ const Wc1FormComponent = () => {
                       <MDBInput
                         autoComplete="off"
                         type="text"
-                        id="insurerFile"
-                        name="insurerFile"
+                        id="insurerFileNo"
+                        name="insurerFileNo"
                         label="Insurer/Self Insurer File#"
-                        value={formData.insurerFile || ' '}
+                        value={formData.insurerFileNo || ' '}
                         onChange={handleChange}
                         floating
                         className="custom-input"
@@ -1450,8 +1478,8 @@ const Wc1FormComponent = () => {
                           type="radio"
                           name="wageRateFrequency"
                           id="perHour"
-                          value="perHour"
-                          checked={formData.wageRateFrequency === 'perHour'}
+                          value="1"
+                          checked={formData.wageRateFrequency === '1'}
                           onChange={handleChange}
                           style={{ marginTop: '14px' }}
                         />
@@ -1466,8 +1494,8 @@ const Wc1FormComponent = () => {
                           type="radio"
                           name="wageRateFrequency"
                           id="perDay"
-                          value="perDay"
-                          checked={formData.wageRateFrequency === 'perDay'}
+                          value="2"
+                          checked={formData.wageRateFrequency === '2'}
                           onChange={handleChange}
                           style={{ marginTop: '14px' }}
                         />
@@ -1482,8 +1510,8 @@ const Wc1FormComponent = () => {
                           type="radio"
                           name="wageRateFrequency"
                           id="perWeek"
-                          value="perWeek"
-                          checked={formData.wageRateFrequency === 'perWeek'}
+                          value="3"
+                          checked={formData.wageRateFrequency === '3'}
                           onChange={handleChange}
                           style={{ marginTop: '14px' }}
                         />
@@ -1498,8 +1526,8 @@ const Wc1FormComponent = () => {
                           type="radio"
                           name="wageRateFrequency"
                           id="perMonth"
-                          value="perMonth"
-                          checked={formData.wageRateFrequency === 'perMonth'}
+                          value="4"
+                          checked={formData.wageRateFrequency === '4'}
                           onChange={handleChange}
                           style={{ marginTop: '14px' }}
                         />
@@ -1518,30 +1546,30 @@ const Wc1FormComponent = () => {
               {/* <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>INJURY/ILLNESS AND MEDICAL</h1> */}
 
               <Accordion activeIndex={0}>
-                <AccordionTab header="Injury/Illness" onClick={() => handleToggle(0)}>
-                  <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`}>
+                <AccordionTab header="Injury/Illness" onClick={() => handleToggle(0)} >
+                  <div className={`accordion-content ${activeIndex === 0 ? 'active' : ''}`} >
                     <div className="row">
                       <div className="col-md-4 mb-3">
                         <div className="p-fluid">
                           <FloatLabel className="w-full md:w-14rem">
                             <Dropdown
-                              value={formData.naicsTypes}
-                              name="naicsTypes"
+                              value={formData.naicsType}
+                              name="naicsType"
                               onChange={handleChange}
-                              // options={naicsTypes.map(type => ({
+                              // options={naicsType.map(type => ({
                               //   label: type.description,
                               //   value: type.value
                               // }))}
-                              options={naicsTypes.map(type => ({
+                              options={naicsType.map(type => ({
                                 label: type.description,
                                 value: { id: type.id, code: type.code, description: type.description }
                               }))}
                               placeholder="---Select One---"
                               filter
-                              className="select-dropdown  col-md-12"
+                              className="select-dropdown  custom-input col-md-12"
                               label="NAICS Type"
                             />
-                            <label htmlFor="naicsTypes">NAICS Code:</label>
+                            <label htmlFor="naicsType">NAICS Code:</label>
                           </FloatLabel>
                         </div>
                       </div>
@@ -1754,7 +1782,7 @@ const Wc1FormComponent = () => {
                               ref={getFieldRef('typeOfInjury')}
 
                               label="Type of Injury/Illness"
-                              // dropdownClassName="custom-dropdown-panel"
+                            // dropdownClassName="custom-dropdown-panel"
                             />
                             <label htmlFor="typeOfInjury">Type of Injury/Illness<span style={{ color: 'red' }}>*</span></label>
 
@@ -2272,7 +2300,7 @@ const Wc1FormComponent = () => {
           )}
           {activeTab === 'tab5' && (
             <div className="card">
-              {!formData.isControvertEnabled && !formData.sectionB && !formData.isMedicalInjuryEnabled && (
+              {!formData.sectionC && !formData.sectionB && !formData.sectionD && (
                 <div style={{ color: 'red', fontSize: '14px' }}>
                   <i className="pi pi-exclamation-triangle" style={{ fontSize: '1rem', color: 'red', marginRight: '15px' }}></i>
                   Selection one of Section B/C/D is required.
@@ -2285,7 +2313,7 @@ const Wc1FormComponent = () => {
                   checked={formData.sectionB}
                   onChange={handleCheckboxChange}
                   className="large-checkbox"
-                  disabled={formData.isControvertEnabled || formData.isMedicalInjuryEnabled}
+                  disabled={formData.sectionC || formData.sectionD}
                   style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
                 />
                 B. INCOME BENEFITS Form WC-6 must be filed if weekly benefit is less than maximum
@@ -2738,8 +2766,8 @@ const Wc1FormComponent = () => {
                             id="dateOfDisability"
                             name="dateOfDisability"
                             onChange={handleChange}
-                          // onClick={(e) => e.target.showPicker()}
-                          className="form-control custom-input inclass mb-2"
+                            // onClick={(e) => e.target.showPicker()}
+                            className="form-control custom-input inclass mb-2"
                           />
                         </div>
                       </div>
@@ -2825,22 +2853,22 @@ const Wc1FormComponent = () => {
               <h1 className="custom-h1  header" style={{ margingBottom: '10px' }}>
                 <input autoComplete="off"
                   type="checkbox"
-                  checked={formData.isControvertEnabled}
-                  //onChange={() => setFormData((prev) => ({ ...prev, isControvertEnabled: !prev.isControvertEnabled }))}
+                  checked={formData.sectionC}
+                  //onChange={() => setFormData((prev) => ({ ...prev, sectionC: !prev.sectionC }))}
                   onChange={() => setFormData((prev) => {
-                    const updatedData = { ...prev, isControvertEnabled: !prev.isControvertEnabled };
-                    if (!updatedData.isControvertEnabled) {
+                    const updatedData = { ...prev, sectionC: !prev.sectionC };
+                    if (!updatedData.sectionC) {
                       updatedData.controvertType = {};
                       updatedData.BenifitsNPReasons = '';
                     }
                     return updatedData;
                   })}
                   className="large-checkbox"
-                  disabled={formData.sectionB || formData.isMedicalInjuryEnabled}
+                  disabled={formData.sectionB || formData.sectionD}
                   style={{ marginLeft: '10px', marginRight: '5px', marginBottom: '0px' }}
                 />
                 C. Notice To Convert Payment Of Compensation</h1>
-              {formData.isControvertEnabled && !formData.controvertType && (
+              {formData.sectionC && !formData.controvertType && (
                 <div style={{ color: 'red', fontSize: '14px' }}>
                   <i className="pi pi-exclamation-triangle-down" style={{ fontSize: '1rem', color: 'red', marginRight: '15px' }}></i>
                   Controvert Type is required.
@@ -2861,7 +2889,7 @@ const Wc1FormComponent = () => {
                       value: { id: part.id, code: part.code, description: part.description }
                     }))}
                     placeholder="---Select One---"
-                    disabled={!formData.isControvertEnabled}
+                    disabled={!formData.sectionC}
                     filter
                     className={`select-dropdown-ct ${errors.controvertType ? 'p-invalid' : ''}`}
                   />
@@ -2879,7 +2907,7 @@ const Wc1FormComponent = () => {
                     name="BenifitsNPReasons"
                     className="form-control-nr"
                     value={formData.BenifitsNPReasons}
-                    disabled={!formData.isControvertEnabled}
+                    disabled={!formData.sectionC}
                     onChange={handleChange}
                     rows="5"
                     cols="70"
@@ -2891,20 +2919,20 @@ const Wc1FormComponent = () => {
               <h1 className="custom-h1 header" ref={headerRef}>
                 <input autoComplete="off"
                   type="checkbox"
-                  checked={formData.isMedicalInjuryEnabled}
-                  disabled={formData.sectionB || formData.isControvertEnabled}
+                  checked={formData.sectionD}
+                  disabled={formData.sectionB || formData.sectionC}
                   onChange={() => {
                     setFormData((prev) => ({
                       ...prev,
-                      isMedicalInjuryEnabled: !formData.isMedicalInjuryEnabled,
-                      controverted: formData.isMedicalInjuryEnabled ? false : prev.controverted,
+                      sectionD: !formData.sectionD,
+                      controverted: formData.sectionD ? false : prev.controverted,
                     }));
                   }}
                   // onChange={() => {
                   //   setFormData((prev) => ({
                   //     ...prev,
-                  //     isMedicalInjuryEnabled: !prev.isMedicalInjuryEnabled,
-                  //     controverted: prev.isMedicalInjuryEnabled ? false : prev.controverted
+                  //     sectionD: !prev.sectionD,
+                  //     controverted: prev.sectionD ? false : prev.controverted
                   //   }));
 
                   // }}
@@ -2921,7 +2949,7 @@ const Wc1FormComponent = () => {
                   name="controverted"
                   checked={formData.controverted}
                   onChange={() => setFormData((prev) => ({ ...prev, controverted: !prev.controverted }))}
-                  disabled={!formData.isMedicalInjuryEnabled}
+                  disabled={!formData.sectionD}
                   ref={getFieldRef('convertType')}
                   className={`large-checkbox ${errors.convertType ? 'p-invalid' : ''} me-1`}
                 />
@@ -2945,7 +2973,7 @@ const Wc1FormComponent = () => {
                 <span className="pi pi-cloud-upload" style={{ fontSize: '1.5rem' }}></span>  Choose File
               </label>
               <div className="card table-responsive mt-2">
-                <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable responsive-datatable" 
+                <DataTable value={documents} paginator rows={5} className="datatable custom-label custom-datatable responsive-datatable"
                   style={{ minWidth: '600px' }} >
                   <Column field="id" header="#" />
                   <Column field="name" header="Document Name" />
@@ -3072,16 +3100,16 @@ const Wc1FormComponent = () => {
                   <div className="d-flex flex-wrap">
                     <div className="col-md-3 mb-2">
                       <label className=" col-form-label custom-label">Hired Date:</label>
-                      <span className='custom-span'>{formData.hiredDate ? formatDateForInput(formData.hiredDate) : ' '}</span>
+                      <span className='custom-span'>{formData.dateHired ? formatDateForInput(formData.dateHired) : ' '}</span>
                       {/* {formData.claimant.dateOfBirth ? formatDateForInput(formData.claimant.dateOfBirth) : ' '} */}
                     </div>
                     <div className="col-md-3 mb-2">
                       <label className=" col-form-label custom-label">Job Classified Code No:</label>
-                      <span className='custom-span'>{formData.jobClssifiedCodeNo || ' '}</span>
+                      <span className='custom-span'>{formData.jobClassificationCode || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
                       <label className=" col-form-label custom-label">Insurer/Self Insurer File#:</label>
-                      <span className='custom-span'>{formData.insurerFile || ' '}</span>
+                      <span className='custom-span'>{formData.insurerFileNo || ' '}</span>
                     </div>
                     <div className="col-md-3 mb-2">
                       <label className=" col-form-label custom-label">Days Worked Per Week:</label>
@@ -3106,7 +3134,7 @@ const Wc1FormComponent = () => {
                   <div className="row">
                     <div className="col-md-4 mb-3">
                       <label className=" col-form-label custom-label">NAICS Type:</label>
-                      <span className='custom-span'>{formData.naicsTypes ? formData.naicsTypes.description : ' '}</span>
+                      <span className='custom-span'>{formData.naicsType ? formData.naicsType.description : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
@@ -3506,7 +3534,7 @@ const Wc1FormComponent = () => {
                     )}
                   </div>
                 )}
-                {formData.isControvertEnabled && (
+                {formData.sectionC && (
                   <div className="form-group row mb-0 mt-3">
                     <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>
                       C. Notice To Convert Payment Of Compensation
@@ -3529,7 +3557,7 @@ const Wc1FormComponent = () => {
                     </div>
                   </div>
                 )}
-                {formData.isMedicalInjuryEnabled && (
+                {formData.sectionD && (
                   <div className="form-group row mb-0 mt-3">
                     <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>D. Medical Only Injury</h1>
                     <div className="col-md-6" style={{ display: 'flex', alignItems: 'center' }}>
@@ -3539,7 +3567,7 @@ const Wc1FormComponent = () => {
                         name="controverted"
                         checked={formData.controverted}
                         onChange={() => setFormData((prev) => ({ ...prev, controverted: !prev.controverted }))}
-                        disabled={!formData.isMedicalInjuryEnabled}
+                        disabled={!formData.sectionD}
                         ref={getFieldRef('convertType')}
                         className={`large-checkbox ${errors.convertType ? 'p-invalid' : ''} style={{ marginRight: '8px' }}`}
                       />
@@ -3553,76 +3581,47 @@ const Wc1FormComponent = () => {
             </div>
           )}
         </div>
-        <div className="card-content">
-          <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Submitter Information</h1>
-          <div className="d-flex flex-wrap">
-            <div className="form-section flex-fill">
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-                  Insurer/Self-Insurer: Type or Print Name of Person Filing Form:
-                </label>
-                <span style={{ fontSize: '15px' }} className="value">DAVID IMAHARA</span>
-              </div>
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label htmlFor="submittedDate" className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-                  Date:
-                </label>
-                <span style={{ fontSize: '15px' }} className="value">11/09/2024</span>
-              </div>
+        <div className="container card-content">
+          <h1 className="custom-h1 header mt-2">Submitter Information</h1>
+          <div className="row">
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">
+                Insurer/Self-Insurer: Type or Print Name of Person Filing Form:
+              </label>
+              <span className="value">DAVID IMAHARA</span>
             </div>
-            <div className="form-section flex-fill pl-3">
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
-                  Phone Number:
-                </label>
-                <span style={{ fontSize: '15px', lineHeight: '1.5' }}>(404) 463-1999</span>
-                <label className="custom-label" style={{ marginRight: '10px', marginLeft: '20px', whiteSpace: 'nowrap', lineHeight: '1.5' }}>
-                  Ext:
-                </label>
-                <span style={{ fontSize: '15px', lineHeight: '1.0' }}>ext</span>
-              </div>
-              <div className="form-group mb-1 d-flex align-items-center">
-                <label className="custom-label" style={{ marginRight: '10px', whiteSpace: 'nowrap' }}>
-                  E-mail:
-                </label>
-                <span style={{ fontSize: '15px' }}>CAMPBELLN@SBWC.GA.GOV</span>
-              </div>
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">Date:</label>
+              <span className="value">11/09/2024</span>
+            </div>
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">Phone Number:</label>
+              <span className="value">(404) 463-1999</span>
+              <label className="custom-label ms-3 me-2">Ext:</label>
+              <span className="value">ext</span>
+            </div>
+            <div className="col-md-6 col-12 d-flex align-items-center mb-2">
+              <label className="custom-label me-2">E-mail:</label>
+              <span className="value">CAMPBELLN@SBWC.GA.GOV</span>
             </div>
           </div>
         </div>
 
-
-
-
-
-        <div className="d-flex justify-content-center mt-4">
-          <ButtonGroup>
-            <Button label="Reset" icon="pi pi-refresh" size="large" />
-            <Button label="Save" icon="pi pi-save" size="large" />
-            <Button label="Submit" icon="pi pi-check" size="large" />
-            {/* <Button label="Delete" icon="pi pi-trash" /> */}
-            <Button label="Cancel" icon="pi pi-times" size="large" />
-          </ButtonGroup>
-          {/* <button type="reset" className="btn btn-secondary mx-2 mb-10 custom-label">Reset</button>
-          <button type="button" className="btn btn-primary mx-2 mb-10  custom-label"
-            style={{
-              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
-            }}
-            onClick={() => setClicked(!clicked)}>Save</button>
-          <button type="submit" className="btn btn-primary mx-2 mb-10  custom-label" 
-            style={{
-              backgroundColor: clicked ? '#4babf55e' : '#4babf55e', border: 'none', color: 'black'
-            }}
-            onClick={() => setClicked(!clicked)}>Submit</button> */}
-
-          {/* <button type="button" className="btn btn-secondary mx-2 mb-10  custom-label">Back</button> */}
-          {/* <Link
-            className="btn btn-secondary mx-2 mb-10  custom-label"
-            to={`/parties`}
-            style={{ marginLeft: "12px" }}
-          >
-            Back
-          </Link> */}
+        <div className="row mt-4">
+          <div className="col-12 d-flex justify-content-center flex-wrap flex-md-nowrap">
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-refresh" ></i> Reset</button>
+            </div>
+            <div className="mx-1">
+              <button className="btn btn-lg custom-btn"><i className="pi pi-save" ></i> Save</button>
+            </div>
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-check" ></i> Submit</button>
+            </div>
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-times" ></i> Cancel</button>
+            </div>
+          </div>
         </div>
       </form>
     </div >
