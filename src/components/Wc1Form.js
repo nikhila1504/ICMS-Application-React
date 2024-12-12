@@ -3619,7 +3619,7 @@ const Wc1FormComponent = () => {
               <button className="btn  btn-lg custom-btn"><i className="pi pi-check" ></i> Submit</button>
             </div>
             <div className="mx-1">
-              <button className="btn  btn-lg custom-btn"><i className="pi pi-times" ></i> Cancel</button>
+              <button className="btn  btn-lg custom-btn"><i className="pi pi-times" style={{fontSize:'1rem'}} ></i> Cancel</button>
             </div>
           </div>
         </div>

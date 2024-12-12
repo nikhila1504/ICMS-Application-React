@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const DataTableComponent = () => {
     const location = useLocation();
-    const path = location.pathname.includes("wc1");
+    const path = location.pathname.includes("reports") ||  location.pathname.includes("wc1") ||  location.pathname.includes("calendarList");
     const navigate = useNavigate();
 
     const handleLogout = async (e) => {
