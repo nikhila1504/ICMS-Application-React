@@ -75,7 +75,7 @@ const Login = () => {
 
                 <div className="text-center mb-3">
                   <button
-                    className="btn btn-outline-success w-100"
+                    className="btn custom-btn w-100"
                     onClick={handleSubmit}
                     style={{ fontSize: '15px' }}
                   >
