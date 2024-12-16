@@ -23,6 +23,7 @@ import TreatmentTypeService from "../services/treatment.type.service";
 import DisabilityTypeService from "../services/disability.type.service";
 // import ReactFileViewer from 'react-file-viewer';
 import DataTableComponent from "./DataTableComponent.js";
+import BodyPartTypeService from "../services/bodyparttypes.service";
 
 const Wc1FormComponent = () => {
   const [stateTypes, setStateTypes] = useState([]);
@@ -204,6 +205,17 @@ const Wc1FormComponent = () => {
       });
   }, []);
 
+  useEffect(() => {
+    BodyPartTypeService.getAllBodyPartTypes()
+      .then((response) => {
+        console.log("bodypartTypes ....:", response);
+        setSource(response.data);
+        console.log("bodypartTypes", source);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
     StateTypeService.getAllStateTypes()
@@ -373,7 +385,7 @@ const Wc1FormComponent = () => {
     dateFailedToWorkFullDay: '',
     receivedFullPay: 'Y',
     injuredInEmpPermises: '',
-    bodyPartAffected: [],
+    bodypartTypes: [],
     treatmentTypes: [],
     otherInjuryCause: '',
     typeOfInjury: '',
@@ -694,8 +706,8 @@ const Wc1FormComponent = () => {
     validateConditionalFields();
 
     console.log('Validation Errors:', newErrors);
-    if (!formData.bodyPartAffected || formData.bodyPartAffected.length === 0) {
-      newErrors.bodyPartAffected = 'Please select at least one body part affected.';
+    if (!formData.bodypartTypes || formData.bodypartTypes.length === 0) {
+      newErrors.bodypartTypes = 'Please select at least one body part affected.';
     }
     const scrollToFirstError = () => {
       if (Object.keys(newErrors).length > 0) {
@@ -878,15 +890,15 @@ const Wc1FormComponent = () => {
     setFormData((prevState) => {
       const updatedFormData = {
         ...prevState,
-        bodyPartAffected: target,
+        bodypartTypes: target,
       };
       console.log('Updated formData:', updatedFormData);
       if (target.length > 0) {
         setErrors((prevErrors) => {
-          const { bodyPartAffected, ...rest } = prevErrors;
+          const { bodypartTypes, ...rest } = prevErrors;
           return rest;
         });
-        if (Object.keys(errors).length === 1 && errors.bodyPartAffected) {
+        if (Object.keys(errors).length === 1 && errors.bodypartTypes) {
           setIsActive(false);
         }
       }
@@ -904,7 +916,7 @@ const Wc1FormComponent = () => {
     zip: '',
     gender: '',
     daysWorkedPerWeek: '', dateOfInjury: '', countyOfInjury: '', receivedFullPay: '', injuredInEmpPermises: '', otherInjuryCause: '', typeOfInjury: '',
-    bodyPartAffected: false, averageWeeklyWage: '',
+    bodypartTypes: false, averageWeeklyWage: '',
     weeklyBenefit: '', dateOfFirstPayment: '', compensationPaid: '',
     dateBenefitsPayableFrom: '', benefitsPayableFor: ''
     , benefitsPayableFromDate: '', sectionB: '', incomeBenefits: '',
@@ -1841,8 +1853,8 @@ const Wc1FormComponent = () => {
                             <PickList
                               dataKey="id"
                               inputRef={pickListRef}
-                              name="bodyPartAffected"
-                              value={formData.bodyPartAffected}
+                              name="bodypartTypes"
+                              value={formData.bodypartTypes}
                               source={source}
                               target={target}
                               onChange={onChange}
@@ -1855,9 +1867,9 @@ const Wc1FormComponent = () => {
                               filter
                               responsive
                             />
-                            {errors.bodyPartAffected && (
+                            {errors.bodypartTypes && (
                               <div className="error-message" style={{ color: 'red', fontSize: '12px', marginLeft: '70px' }}>
-                                {errors.bodyPartAffected}
+                                {errors.bodypartTypes}
                               </div>
                             )}
                           </div>
@@ -3199,11 +3211,11 @@ const Wc1FormComponent = () => {
                   <div className="row">
                     <div className="col-md-12 mb-3">
                       <label className=" col-form-label custom-label">Body Part Affected:</label>
-                      {/* <span className='custom-span'>{formData.bodyPartAffected ? formData.bodyPartAffected : ' '}</span> */}
+                      {/* <span className='custom-span'>{formData.bodypartTypes ? formData.bodypartTypes : ' '}</span> */}
                       <span className='custom-span'>
-                        {Array.isArray(formData.bodyPartAffected)
-                          ? formData.bodyPartAffected.join(', ')
-                          : formData.bodyPartAffected || ' '}
+                        {Array.isArray(formData.bodypartTypes)
+                          ? formData.bodypartTypes.join(', ')
+                          : formData.bodypartTypes || ' '}
                       </span>
                     </div>
                   </div>
