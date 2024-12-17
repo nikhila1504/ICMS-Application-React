@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NewClaimComponent from "./NewClaimComponent.js";
 import { useNavigate } from "react-router-dom";
+import DataTableComponent from "./DataTableComponent.js";
 
 const NewWc1 = () => {
     const [filerType, setFilerType] = useState('');
@@ -9,12 +10,12 @@ const NewWc1 = () => {
     
     const handleSubmit = (e) => {
         e.preventDefault();
-        navigate("/manageMatchingClaims");
+        navigate("/newClaim");
     };
 
     return (
         <div className="form-container-ncc" style={{ position: 'relative', minHeight: '100vh' }}>
-            {/* <NewClaimComponent /> */}
+            <DataTableComponent />
             <div className="d-flex justify-content-center align-items-center" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '100%', maxWidth: '600px' }}>
                 <div className="card p-4" style={{ width: '100%' }}>
                     <h2 className="text-center mb-4">WC-1 Form</h2>
@@ -60,9 +61,20 @@ const NewWc1 = () => {
                                 </li>
                             </ul>
                         </div>
-                        <div className="text-center mb-3">
+                        <div className="row mt-4">
+          <div className="col-12 d-flex justify-content-center flex-wrap flex-md-nowrap">
+            <div className="mx-1">
+              <button className="btn  btn-lg custom-btn">
+              <i className="pi pi-arrow-right" ></i> Continue
+                  {/* <i className="pi pi-angle-double-right" ></i> Continue */}
+                  {/* <i className="pi pi-chevron-right" ></i> Continue */}
+              </button>
+            </div>
+            </div>
+            </div>
+                        {/* <div className="text-center mb-3">
                             <button type="submit" className="btn btn-info" style={{ fontSize: '15px' }}>Continue</button>
-                        </div>
+                        </div> */}
                     </form>
                 </div>
             </div>

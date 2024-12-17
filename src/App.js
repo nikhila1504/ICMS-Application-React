@@ -15,9 +15,10 @@ import Wc1FormComponent from "./components/Wc1Form";
 import Wc1Form from "./components/Wc1FormComponent";
 import Wc1Component from "./components/Wc1Component";
 import ReportPageComponent from "./components/report.page.component";
-import manageMatchingClaims from "./components/manageMatchingClaims";
+import NewClaim from "./components/manageMatchingClaims";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import NewWc1 from "./components/NewWc1";
 
 function App() {
   return (
@@ -35,7 +36,8 @@ function App() {
               <Route path="/wc1" element={<Wc1FormComponent />} />
               <Route path="/add-party" element={<AddPartyComponent />} />
               <Route path="/edit-party/:id" element={<AddPartyComponent />} />
-              {/* <Route path="/newWc1" element={<NewWc1 />} /> */}
+              <Route path="/newWc1" element={<NewWc1 />} />
+              <Route path="/newClaim" element={<NewClaim />} />
               <Route path="/Wc1poc" element={<Wc1Component />} />
               <Route path="/calendarList" element={<CalendarComponent />} />
               <Route path="/manageMatchingClaims" element={<manageMatchingClaims />} />

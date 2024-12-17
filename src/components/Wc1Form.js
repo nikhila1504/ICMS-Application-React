@@ -339,104 +339,111 @@ const Wc1FormComponent = () => {
     );
   };
 
+// Reset form values
+const handleReset = () => {
+  setFormData(initialFormValues);
+};
 
-  const [formData, setFormData] = useState({
-    tab3: false,
+ // Initial form state
+ const initialFormValues = {
+  tab3: false,
 
-    claimant: {
-      firstName: '',
-      lastName: '',
-      middleIntial: '',
-      dateOfBirth: '',
-      gender: 'Male',
-      address1: '',
-      address2: '',
-      city: '',
-      state: 'GA',
-      zip: '',
-      primaryEmail: '',
-      primaryPhone: '',
-    },
-    countyOfInjury: {
-      description: '',
-    },
+  claimant: {
+    firstName: '',
+    lastName: '',
+    middleIntial: '',
+    dateOfBirth: '',
+    gender: 'Male',
+    address1: '',
+    address2: '',
+    city: '',
+    state: 'GA',
+    zip: '',
+    primaryEmail: '',
+    primaryPhone: '',
+  },
+  countyOfInjury: {
+    description: '',
+  },
 
-    daysWorkedPerWeek: '',
-    insurerFileNo: '',
-    jobClassificationCode: '',
-    dateHired: '',
-    wageRate: '',
-    daysOff: '',
-    wageRateFrequency: 'perHour',
-    outOfCountryAddress: '',
-    stateTypes: [],
-    selectedState: 'GA',
-    selectedHospitalState: 'GA', selectedPhysicianState: 'GA',
-    physicianStateTypes: [],
-    hospitalStateTypes: [],
+  daysWorkedPerWeek: '',
+  insurerFileNo: '',
+  jobClassificationCode: '',
+  dateHired: '',
+  wageRate: '',
+  daysOff: '',
+  wageRateFrequency: 'perHour',
+  outOfCountryAddress: '',
+  stateTypes: [],
+  selectedState: 'GA',
+  selectedHospitalState: 'GA', selectedPhysicianState: 'GA',
+  physicianStateTypes: [],
+  hospitalStateTypes: [],
 
-    naicsType: [],
-    typeOfInjury: [],
-    injuryCauseTypes: [],
-    controvertType: [],
-    dateOfInjury: '',
-    timeOfInjury: '',
-    dateEmployerNotified: '',
-    dateFailedToWorkFullDay: '',
-    receivedFullPay: 'Y',
-    injuredInEmpPermises: '',
-    bodypartTypes: [],
-    treatmentTypes: [],
-    otherInjuryCause: '',
-    typeOfInjury: '',
-    tPhysicianAddress: '',
-    physicianName: '',
-    physicianPhoneExt: '',
-    PhysicianPhone: '',
-    physicianZipExt: '',
-    PhysicianZIP: '',
-    tPhysicianState: '',
-    physicianCity: '',
-    physicianAddress2: '',
-    physicianAddress1: '',
-    initialTreatmentGiven: '',
-    hospitalName: '',
-    hospitalAddress1: '',
-    hospitalAddress2: '',
-    claimNo: '',
-    hospitalCity: '',
-    hospitalState: '',
-    hospitalZip: '',
-    hospitalZipExt: '',
-    hospitalPhone: '',
-    hospitalPhoneExt: '',
-    dateReturnedToWork: '',
-    wagePerWeekAfterReturn: '',
-    dateOfDeath: '',
-    reportPreparedBy: '',
-    reportPreparedPhone: '',
-    reportPreparedPhoneExt: '',
-    weeklyBenefit: '',
-    dateOfReport: '',
-    incomeBenefits: '',
-    convertType: '',
-    BenifitsNPReasons: '',
-    sectionB: false,
-    sectionC: false,
-    sectionD: false,
-    controverted: false,
-    document: null,
-    payBenefitUntil: '',
-    benefitsPayableFor: '',
-    benefitsPayableFromDate: '',
-    dateSalaryPaid: '',
-    dateOfDisability: '',
-    weeklyBenefitAmount: '',
-    averageWeeklyWage: '',
-    previousMedicalOnly: '',
-    averageWeeklyWageAmount: '',
-    disabilityTypes: []
-  });
+  naicsType: [],
+  typeOfInjury: [],
+  injuryCauseTypes: [],
+  controvertType: [],
+  dateOfInjury: '',
+  timeOfInjury: '',
+  dateEmployerNotified: '',
+  dateFailedToWorkFullDay: '',
+  receivedFullPay: 'Y',
+  injuredInEmpPermises: '',
+  bodypartTypes: [],
+  treatmentTypes: [],
+  otherInjuryCause: '',
+  typeOfInjury: '',
+  tPhysicianAddress: '',
+  physicianName: '',
+  physicianPhoneExt: '',
+  PhysicianPhone: '',
+  physicianZipExt: '',
+  PhysicianZIP: '',
+  tPhysicianState: '',
+  physicianCity: '',
+  physicianAddress2: '',
+  physicianAddress1: '',
+  initialTreatmentGiven: '',
+  hospitalName: '',
+  hospitalAddress1: '',
+  hospitalAddress2: '',
+  claimNo: '',
+  hospitalCity: '',
+  hospitalState: '',
+  hospitalZip: '',
+  hospitalZipExt: '',
+  hospitalPhone: '',
+  hospitalPhoneExt: '',
+  dateReturnedToWork: '',
+  wagePerWeekAfterReturn: '',
+  dateOfDeath: '',
+  reportPreparedBy: '',
+  reportPreparedPhone: '',
+  reportPreparedPhoneExt: '',
+  weeklyBenefit: '',
+  dateOfReport: '',
+  incomeBenefits: '',
+  convertType: '',
+  BenifitsNPReasons: '',
+  sectionB: false,
+  sectionC: false,
+  sectionD: false,
+  controverted: false,
+  document: null,
+  payBenefitUntil: '',
+  benefitsPayableFor: '',
+  benefitsPayableFromDate: '',
+  dateSalaryPaid: '',
+  dateOfDisability: '',
+  weeklyBenefitAmount: '',
+  averageWeeklyWage: '',
+  previousMedicalOnly: '',
+  averageWeeklyWageAmount: '',
+  disabilityTypes: []
+};
+
+  const [formData, setFormData] = useState(initialFormValues);
 
   const [parties, setParties] = useState([
     { partyType: 'Claimant', partyName: 'CLAYTON HUTCHINSON', parentParty: '', selfInsured: '', selfAdministered: '', groupFundMember: '' },
@@ -3056,7 +3063,7 @@ const Wc1FormComponent = () => {
 
                     <div className="col-md-2 mb-2">
                       <label className=" col-form-label custom-label">M.I.:</label>
-                      <span className='custom-span'>{formData.claimant.middleInitial || ' '}</span>
+                      <span className='custom-span'>{formData.claimant.middleIntial || ' '}</span>
                     </div>
 
                     <div className="col-md-1 mb-2">
@@ -3622,7 +3629,9 @@ const Wc1FormComponent = () => {
         <div className="row mt-4">
           <div className="col-12 d-flex justify-content-center flex-wrap flex-md-nowrap">
             <div className="mx-1">
-              <button className="btn  btn-lg custom-btn"><i className="pi pi-refresh" ></i> Reset</button>
+              <button className="btn  btn-lg custom-btn" onClick={handleReset}>
+                  <i className="pi pi-refresh" ></i> Reset
+              </button>
             </div>
             <div className="mx-1">
               <button className="btn btn-lg custom-btn"><i className="pi pi-save" ></i> Save</button>

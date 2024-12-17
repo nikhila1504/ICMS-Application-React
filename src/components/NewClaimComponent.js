@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const NewClaimComponent = () => {
     return (
         // <div>NewClaimComponent</div>
-        <nav className="navbar navbar-expand-md mt-3 ml-0">
+        <nav className="navbar navbar-expand-md ml-0">
             <ul className="navbar navbar-nav">
                 <li className="nav-item dropdown">
                     <h2> <Link

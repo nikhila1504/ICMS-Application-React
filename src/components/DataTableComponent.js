@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import logo from '../sbwc_logo.gif';
 import icmslogo from '../icms_logo.gif';
 import { Link } from 'react-router-dom';
+import NewClaimComponent from "./NewClaimComponent.js";
 
 const DataTableComponent = () => {
     const location = useLocation();
@@ -28,9 +29,11 @@ const DataTableComponent = () => {
                 {/* <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button> */}
+                <NewClaimComponent />
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav ml-auto">
                         {/* Reports Section */}
+                        
                         <li className="nav-item dropdown">
                             <h2>
                                 <Link
