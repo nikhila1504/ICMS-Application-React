@@ -21,9 +21,9 @@ const NewWc1 = () => {
                     <h2 className="text-center mb-4">WC-1 Form</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label className="form-label" style={{ fontSize: '12px', paddingLeft: '10px' }}>
-                                <b>Attorney for Employee/Claimant cannot file a WC-1.<br />
-                                This WC-1 has been filed on behalf of the</b>
+                            <label className="custom-label me-2" style={{ fontSize: '14px', paddingLeft: '10px' }}>
+                                Attorney for Employee/Claimant cannot file a WC-1.<br />
+                                This WC-1 has been filed on behalf of the
                             </label>
                             <ul className="list-group">
                                 <li className="list-group-item">
