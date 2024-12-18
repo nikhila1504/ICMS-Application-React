@@ -354,6 +354,7 @@ const handleReset = () => {
     middleIntial: '',
     dateOfBirth: '',
     gender: 'Male',
+    international:'',
     address1: '',
     address2: '',
     city: '',
@@ -373,7 +374,6 @@ const handleReset = () => {
   wageRate: '',
   daysOff: '',
   wageRateFrequency: 'perHour',
-  outOfCountryAddress: '',
   stateTypes: [],
   selectedState: 'GA',
   selectedHospitalState: 'GA', selectedPhysicianState: 'GA',
@@ -390,7 +390,7 @@ const handleReset = () => {
   dateFailedToWorkFullDay: '',
   receivedFullPay: 'Y',
   injuredInEmpPermises: '',
-  bodypartTypes: [],
+  bodyPartAffected: [],
   treatmentTypes: [],
   otherInjuryCause: '',
   typeOfInjury: '',
@@ -617,7 +617,7 @@ const handleReset = () => {
     return (
       <div>
         <div>
-          <span className="font-bold" style={{ fontSize: '15px' }}>{item}</span>
+          <span className="font-bold" style={{ fontSize: '15px' }}>{item.description}</span>
         </div>
       </div>
     );
@@ -713,8 +713,8 @@ const handleReset = () => {
     validateConditionalFields();
 
     console.log('Validation Errors:', newErrors);
-    if (!formData.bodypartTypes || formData.bodypartTypes.length === 0) {
-      newErrors.bodypartTypes = 'Please select at least one body part affected.';
+    if (!formData.bodyPartAffected || formData.bodyPartAffected.length === 0) {
+      newErrors.bodyPartAffected = 'Please select at least one body part affected.';
     }
     const scrollToFirstError = () => {
       if (Object.keys(newErrors).length > 0) {
@@ -897,15 +897,15 @@ const handleReset = () => {
     setFormData((prevState) => {
       const updatedFormData = {
         ...prevState,
-        bodypartTypes: target,
+        bodyPartAffected: target,
       };
       console.log('Updated formData:', updatedFormData);
       if (target.length > 0) {
         setErrors((prevErrors) => {
-          const { bodypartTypes, ...rest } = prevErrors;
+          const { bodyPartAffected, ...rest } = prevErrors;
           return rest;
         });
-        if (Object.keys(errors).length === 1 && errors.bodypartTypes) {
+        if (Object.keys(errors).length === 1 && errors.bodyPartAffected) {
           setIsActive(false);
         }
       }
@@ -923,7 +923,7 @@ const handleReset = () => {
     zip: '',
     gender: '',
     daysWorkedPerWeek: '', dateOfInjury: '', countyOfInjury: '', receivedFullPay: '', injuredInEmpPermises: '', otherInjuryCause: '', typeOfInjury: '',
-    bodypartTypes: false, averageWeeklyWage: '',
+    bodyPartAffected: false, averageWeeklyWage: '',
     weeklyBenefit: '', dateOfFirstPayment: '', compensationPaid: '',
     dateBenefitsPayableFrom: '', benefitsPayableFor: ''
     , benefitsPayableFromDate: '', sectionB: '', incomeBenefits: '',
@@ -1152,15 +1152,15 @@ const handleReset = () => {
                   <div className="col-md-2 mb-2 d-flex align-items-center">
                     <label className="custom-label mb-0 me-2">Out of Country Address:</label>
                     <div
-                      className={`custom-checkbox ${formData.outOfCountryAddress ? 'checked' : ''}`}
-                      onClick={() => handleChange({ target: { name: 'outOfCountryAddress', value: !formData.outOfCountryAddress } })}
+                      className={`custom-checkbox ${formData.claimant.international ? 'checked' : ''}`}
+                      onClick={() => handleChange({ target: { name: 'claimant.international', value: !formData.claimant.international } })}
                       style={{ cursor: 'pointer' }}
                     />
                     <input
                       type="checkbox"
-                      id="outOfCountryAddress"
-                      name="outOfCountryAddress"
-                      value={formData.outOfCountryAddress}
+                      id="international"
+                      name="claimant.international"
+                      value={formData.claimant.international}
                       onChange={handleChange}
                       style={{ display: 'none' }}
                     />
@@ -1654,8 +1654,8 @@ const handleReset = () => {
                           // onClick={(e) => e.target.showPicker()}
                           label="Date Employer had Knowledge of Injury"
                           className="custom-input"
-                          name="dateEmployerKnowledge"
-                          value={formData.dateEmployerKnowledge}
+                          name="dateEmployerNotified"
+                          value={formData.dateEmployerNotified}
                           onChange={handleChange}
                           floating
                         />
@@ -1667,8 +1667,8 @@ const handleReset = () => {
                           // onClick={(e) => e.target.showPicker()}
                           label="First Date Employee Failed to Work"
                           className="custom-input"
-                          name="firstDateFailed"
-                          value={formData.firstDateFailed}
+                          name="dateFailedToWorkFullDay"
+                          value={formData.dateFailedToWorkFullDay}
                           onChange={handleChange}
                           floating
                         />
@@ -1860,8 +1860,8 @@ const handleReset = () => {
                             <PickList
                               dataKey="id"
                               inputRef={pickListRef}
-                              name="bodypartTypes"
-                              value={formData.bodypartTypes}
+                              name="bodyPartAffected"
+                              value={formData.bodyPartAffected}
                               source={source}
                               target={target}
                               onChange={onChange}
@@ -1874,9 +1874,9 @@ const handleReset = () => {
                               filter
                               responsive
                             />
-                            {errors.bodypartTypes && (
+                            {errors.bodyPartAffected && (
                               <div className="error-message" style={{ color: 'red', fontSize: '12px', marginLeft: '70px' }}>
-                                {errors.bodypartTypes}
+                                {errors.bodyPartAffected}
                               </div>
                             )}
                           </div>
@@ -1896,9 +1896,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Treating Physician Name"
-                              id="tPhysicianName"
-                              name="tPhysicianName"
-                              value={formData.tPhysicianName || ' '}
+                              id="physicianName"
+                              name="physicianName"
+                              value={formData.physicianName || ' '}
                               onChange={handleChange}
                               floating
                               className="custom-input mb-2"
@@ -1908,9 +1908,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Treating Physician Address 1"
-                              id="tPhysicianAddress1"
-                              name="tPhysicianAddress1"
-                              value={formData.tPhysicianAddress1 || ' '}
+                              id="physicianAddress1"
+                              name="physicianAddress1"
+                              value={formData.physicianAddress1 || ' '}
                               onChange={handleChange}
                               floating
                               className="custom-input mb-2"
@@ -1920,9 +1920,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Treating Physician Address 2"
-                              id="tPhysicianAddress2"
-                              name="tPhysicianAddress2"
-                              value={formData.tPhysicianAddress2 || ' '}
+                              id="physicianAddress2"
+                              name="physicianAddress2"
+                              value={formData.physicianAddress2 || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -1932,9 +1932,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Treating Physician City"
-                              id="tPhysicianCity"
-                              name="tPhysicianCity"
-                              value={formData.tPhysicianCity || ' '}
+                              id="physicianCity"
+                              name="physicianCity"
+                              value={formData.physicianCity || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -1963,9 +1963,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Treating Physician ZIP"
-                              id="tPhysicianZIP"
-                              name="tPhysicianZIP"
-                              value={formData.tPhysicianZIP || ' '}
+                              id="physicianZip"
+                              name="physicianZip"
+                              value={formData.physicianZip || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -1975,9 +1975,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Ext"
-                              id="tPhysicianZIPExt"
-                              name="tPhysicianZIPExt"
-                              value={formData.tPhysicianZIPExt || ' '}
+                              id="physicianZipExt"
+                              name="physicianZipExt"
+                              value={formData.physicianZipExt || ' '}
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
@@ -1988,9 +1988,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Treating Physician Phone"
-                              id="tPhysicianPhone"
-                              name="tPhysicianPhone"
-                              value={formData.tPhysicianPhone || ' '}
+                              id="physicianPhone"
+                              name="physicianPhone"
+                              value={formData.physicianPhone || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -2000,9 +2000,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Ext"
-                              id="tPhysicianPhoneExt"
-                              name="tPhysicianPhoneExt"
-                              value={formData.tPhysicianPhoneExt || ' '}
+                              id="physicianPhoneExt"
+                              name="physicianPhoneExt"
+                              value={formData.physicianPhoneExt || ' '}
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
@@ -2038,9 +2038,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Hospital/Treating Facility"
-                              id="treatingFacility"
-                              name="treatingFacility"
-                              value={formData.treatingFacility || ' '}
+                              id="hospitalName"
+                              name="hospitalName"
+                              value={formData.hospitalName || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -2050,9 +2050,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Hospital/Treating Facility Address 1"
-                              id="treatingFacilityAddress1"
-                              name="treatingFacilityAddress1"
-                              value={formData.treatingFacilityAddress1 || ' '}
+                              id="hospitalAddress1"
+                              name="hospitalAddress1"
+                              value={formData.hospitalAddress1 || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -2062,9 +2062,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Hospital/Treating Facility Address 2"
-                              id="treatingFacilityAddress2"
-                              name="treatingFacilityAddress2"
-                              value={formData.treatingFacilityAddress2 || ' '}
+                              id="hospitalAddress2"
+                              name="hospitalAddress2"
+                              value={formData.hospitalAddress2 || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -2074,9 +2074,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Hospital/Treating Facility City"
-                              id="treatingFacilityCity"
-                              name="treatingFacilityCity"
-                              value={formData.treatingFacilityCity || ' '}
+                              id="hospitalCity"
+                              name="hospitalCity"
+                              value={formData.hospitalCity || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -2107,9 +2107,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Hospital/Treating Facility Zip"
-                              id="treatingFacilityZIP"
-                              name="treatingFacilityZIP"
-                              value={formData.treatingFacilityZIP || ' '}
+                              id="hospitalZip"
+                              name="hospitalZip"
+                              value={formData.hospitalZip || ' '}
                               onChange={handleChange}
                               floating
                               className="form-control custom-input mb-2"
@@ -2119,9 +2119,9 @@ const handleReset = () => {
                             <MDBInput
                               type="text"
                               label="Ext"
-                              id="treatingFacilityZIPExt"
-                              name="treatingFacilityZIPExt"
-                              value={formData.treatingFacilityZIPExt || ' '}
+                              id="hospitalZipExt"
+                              name="hospitalZipExt"
+                              value={formData.hospitalZipExt || ' '}
                               onChange={handleChange}
                               floating
                               style={{ marginLeft: '9px' }}
@@ -2182,9 +2182,9 @@ const handleReset = () => {
                           label="If Returned to Work, Give Date:"
                           type="date"
                           className="form-control custom-input mb-2"
-                          id="RtwDate"
-                          name="RtwDate"
-                          value={formData.RtwDate}
+                          id="dateReturnedToWork"
+                          name="dateReturnedToWork"
+                          value={formData.dateReturnedToWork}
                           onChange={handleChange}
                         // onClick={(e) => e.target.showPicker()}
                         />
@@ -2200,9 +2200,9 @@ const handleReset = () => {
                           label="Returned at what wage per week:"
                           type="text"
                           className="form-control custom-input mb-2"
-                          id="ReturnedWagePerWeek"
-                          name="ReturnedWagePerWeek"
-                          value={formData.ReturnedWagePerWeek || ' '}
+                          id="wagePerWeekAfterReturn"
+                          name="wagePerWeekAfterReturn"
+                          value={formData.wagePerWeekAfterReturn || ' '}
                           onBlur={handleBlur}
                           onFocus={handleFocus}
                           onChange={handleChange}
@@ -2220,9 +2220,9 @@ const handleReset = () => {
                           label="If Fatal, Enter Complete Date of Death:"
                           type="date"
                           className="form-control custom-input mb-2"
-                          id="FatalDeathDate"
-                          name="FatalDeathDate"
-                          value={formData.FatalDeathDate}
+                          id="dateOfDeath"
+                          name="dateOfDeath"
+                          value={formData.dateOfDeath}
                           onChange={handleChange}
                           onClick={(e) => e.target.showPicker()}
                         />
@@ -2261,9 +2261,9 @@ const handleReset = () => {
                           label="Telephone Number:"
                           type="text"
                           className="form-control custom-input mb-2"
-                          id="telePhoneNumber"
-                          name="telePhoneNumber"
-                          value={formData.telePhoneNumber || ' '}
+                          id="reportPreparedPhone"
+                          name="reportPreparedPhone"
+                          value={formData.reportPreparedPhone || ' '}
                           onChange={handleChange}
                         />
                         {/* </MDBFloatingLabel> */}
@@ -2278,9 +2278,9 @@ const handleReset = () => {
                           label="Ext:"
                           type="text"
                           className="form-control custom-input mb-2"
-                          id="telePhoneExt"
-                          name="telePhoneExt"
-                          value={formData.telePhoneExt || ' '}
+                          id="reportPreparedPhoneExt"
+                          name="reportPreparedPhoneExt"
+                          value={formData.reportPreparedPhoneExt || ' '}
                           onChange={handleChange}
                         />
                         {/* </MDBFloatingLabel> */}
@@ -2295,9 +2295,9 @@ const handleReset = () => {
                           label="Date of Report:"
                           type="date"
                           className="form-control custom-input"
-                          id="DateOfReport"
-                          name="DateOfReport"
-                          value={formData.DateOfReport}
+                          id="dateOfReport"
+                          name="dateOfReport"
+                          value={formData.dateOfReport}
                           onChange={handleChange}
                         // onClick={(e) => e.target.showPicker()}
                         />
@@ -3061,7 +3061,7 @@ const handleReset = () => {
                       <span className='custom-span'>{formData.claimant.lastName || ' '}</span>
                     </div>
 
-                    <div className="col-md-2 mb-2">
+                    <div className="col-md-1 mb-2">
                       <label className=" col-form-label custom-label">M.I.:</label>
                       <span className='custom-span'>{formData.claimant.middleIntial || ' '}</span>
                     </div>
@@ -3070,8 +3070,11 @@ const handleReset = () => {
                       <label className=" col-form-label custom-label">Gender:</label>
                       <span className='custom-span'>{formData.claimant.gender || ' '}</span>
                     </div>
-
-                    <div className="col-md-4 mb-2">
+                    <div className="col-md-2 mb-2">
+                      <label className=" col-form-label custom-label">Out of Country Address:</label>
+                      <span className='custom-span'>{formData.claimant.international ? '✔️' : '❌'}</span>
+                    </div>
+                    <div className="col-md-2 mb-2">
                       <label className=" col-form-label custom-label">Birthdate:</label>
                       <span className='custom-span'>{formData.claimant.dateOfBirth
                         ? `${new Date(formData.claimant.dateOfBirth).getMonth() + 1}`.padStart(2, '0') + '-' +
@@ -3179,14 +3182,14 @@ const handleReset = () => {
                   <div className="row">
                     <div className="col-md-4 mb-3">
                       <label className=" col-form-label custom-label">Date Employer had Knowledge of Injury:</label>
-                      <span className='custom-span'>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span>
-                      {/* <span className='custom-span'>{formData.dateEmployerKnowledge ? formatDateForInput(formData.dateEmployerKnowledge) : ' '}</span> */}
+                      <span className='custom-span'>{formData.dateEmployerNotified ? formatDateForInput(formData.dateEmployerNotified) : ' '}</span>
+                      {/* <span className='custom-span'>{formData.dateEmployerNotified ? formatDateForInput(formData.dateEmployerNotified) : ' '}</span> */}
                     </div>
 
                     <div className="col-md-4 mb-3">
                       <label className=" col-form-label custom-label">First Date Employee Failed to Work:</label>
-                      {/* <span className='custom-span'>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span> */}
-                      <span className='custom-span'>{formData.firstDateFailed ? formatDateForInput(formData.firstDateFailed) : ' '}</span>
+                      {/* <span className='custom-span'>{formData.dateFailedToWorkFullDay ? formatDateForInput(formData.dateFailedToWorkFullDay) : ' '}</span> */}
+                      <span className='custom-span'>{formData.dateFailedToWorkFullDay ? formatDateForInput(formData.dateFailedToWorkFullDay) : ' '}</span>
                     </div>
 
                     <div className="col-md-4 mb-3">
@@ -3218,11 +3221,11 @@ const handleReset = () => {
                   <div className="row">
                     <div className="col-md-12 mb-3">
                       <label className=" col-form-label custom-label">Body Part Affected:</label>
-                      {/* <span className='custom-span'>{formData.bodypartTypes ? formData.bodypartTypes : ' '}</span> */}
+                      {/* <span className='custom-span'>{formData.bodyPartAffected ? formData.bodyPartAffected : ' '}</span> */}
                       <span className='custom-span'>
-                        {Array.isArray(formData.bodypartTypes)
-                          ? formData.bodypartTypes.join(', ')
-                          : formData.bodypartTypes || ' '}
+                        {Array.isArray(formData.bodyPartAffected)
+                          ? formData.bodyPartAffected.join(', ')
+                          : formData.bodyPartAffected || ' '}
                       </span>
                     </div>
                   </div>
@@ -3232,20 +3235,20 @@ const handleReset = () => {
                   <div className="flex-fill">
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
-                        <label htmlFor="tPhysicianName" className=" col-form-label custom-label">Treating Physician Name:</label>
-                        <span className='custom-span' id="tPhysicianName">{formData.tPhysicianName || ' '}</span>
+                        <label htmlFor="physicianName" className=" col-form-label custom-label">Treating Physician Name:</label>
+                        <span className='custom-span' id="physicianName">{formData.physicianName || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="tPhysicianAddress1" className=" col-form-label custom-label">Treating Physician Address 1:</label>
-                        <span className='custom-span' id="tPhysicianAddress1">{formData.tPhysicianAddress1 || ' '}</span>
+                        <label htmlFor="physicianAddress1" className=" col-form-label custom-label">Treating Physician Address 1:</label>
+                        <span className='custom-span' id="physicianAddress1">{formData.physicianAddress1 || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="tPhysicianAddress2" className=" col-form-label custom-label">Treating Physician Address 2:</label>
-                        <span className='custom-span' id="tPhysicianAddress2">{formData.tPhysicianAddress2 || ' '}</span>
+                        <label htmlFor="physicianAddress2" className=" col-form-label custom-label">Treating Physician Address 2:</label>
+                        <span className='custom-span' id="physicianAddress2">{formData.physicianAddress2 || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="tPhysicianCity" className=" col-form-label custom-label">Treating Physician City:</label>
-                        <span className='custom-span' id="tPhysicianCity">{formData.tPhysicianCity || ' '}</span>
+                        <label htmlFor="physicianCity" className=" col-form-label custom-label">Treating Physician City:</label>
+                        <span className='custom-span' id="physicianCity">{formData.physicianCity || ' '}</span>
                       </div>
 
                     </div>
@@ -3256,20 +3259,20 @@ const handleReset = () => {
                         <span className='custom-span' id="selectedPhysicianState">{formData.selectedPhysicianState || 'GA'}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="tPhysicianZIP" className=" col-form-label custom-label">Treating Physician ZIP:</label>
-                        <span className='custom-span' id="tPhysicianZIP">{formData.tPhysicianZIP || ' '}</span>
+                        <label htmlFor="physicianZip" className=" col-form-label custom-label">Treating Physician ZIP:</label>
+                        <span className='custom-span' id="physicianZip">{formData.physicianZip || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="tPhysicianZIPExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span' id="tPhysicianZIPExt">{formData.tPhysicianZIPExt || ' '}</span>
+                        <label htmlFor="physicianZipExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span' id="physicianZipExt">{formData.physicianZipExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="tPhysicianPhone" className=" col-form-label custom-label">Treating Physician Phone:</label>
-                        <span className='custom-span' id="tPhysicianPhone">{formData.tPhysicianPhone || ' '}</span>
+                        <label htmlFor="physicianPhone" className=" col-form-label custom-label">Treating Physician Phone:</label>
+                        <span className='custom-span' id="physicianPhone">{formData.physicianPhone || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="tPhysicianPhoneExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span' id="tPhysicianPhoneExt">{formData.tPhysicianPhoneExt || ' '}</span>
+                        <label htmlFor="physicianPhoneExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span' id="physicianPhoneExt">{formData.physicianPhoneExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="treatmentTypes" className=" col-form-label custom-label">Initial Treatment:</label>
@@ -3281,20 +3284,20 @@ const handleReset = () => {
                   <div className="flex-fill">
                     <div className="form-group row mb-1 mt-2">
                       <div className="col-md-3">
-                        <label htmlFor="treatingFacility" className=" col-form-label custom-label">Hospital/Treating Facility:</label>
-                        <span className='custom-span' id="treatingFacility">{formData.treatingFacility || ' '}</span>
+                        <label htmlFor="hospitalName" className=" col-form-label custom-label">Hospital/Treating Facility:</label>
+                        <span className='custom-span' id="hospitalName">{formData.hospitalName || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="treatingFacilityAddress1" className=" col-form-label custom-label">Hospital/Treating Facility Address 1:</label>
-                        <span className='custom-span' id="treatingFacilityAddress1">{formData.treatingFacilityAddress1 || ' '}</span>
+                        <label htmlFor="hospitalAddress1" className=" col-form-label custom-label">Hospital/Treating Facility Address 1:</label>
+                        <span className='custom-span' id="hospitalAddress1">{formData.hospitalAddress1 || ' '}</span>
                       </div>
                       <div className="col-md-3">
-                        <label htmlFor="treatingFacilityAddress2" className=" col-form-label custom-label">Hospital/Treating Facility Address 2:</label>
-                        <span className='custom-span' id="treatingFacilityAddress2">{formData.treatingFacilityAddress2 || ' '}</span>
+                        <label htmlFor="hospitalAddress2" className=" col-form-label custom-label">Hospital/Treating Facility Address 2:</label>
+                        <span className='custom-span' id="hospitalAddress2">{formData.hospitalAddress2 || ' '}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="treatingFacilityCity" className=" col-form-label custom-label">Hospital/Treating Facility City:</label>
-                        <span className='custom-span' id="treatingFacilityCity">{formData.treatingFacilityCity || ' '}</span>
+                        <label htmlFor="hospitalCity" className=" col-form-label custom-label">Hospital/Treating Facility City:</label>
+                        <span className='custom-span' id="hospitalCity">{formData.hospitalCity || ' '}</span>
                       </div>
 
                     </div>
@@ -3305,12 +3308,12 @@ const handleReset = () => {
                         <span className='custom-span' id="selectedHospitalState">{formData.selectedHospitalState || 'GA'}</span>
                       </div>
                       <div className="col-md-2">
-                        <label htmlFor="treatingFacilityZIP" className=" col-form-label custom-label">Hospital/Treating Facility ZIP:</label>
-                        <span className='custom-span' id="treatingFacilityZIP">{formData.treatingFacilityZIP || ' '}</span>
+                        <label htmlFor="hospitalZip" className=" col-form-label custom-label">Hospital/Treating Facility ZIP:</label>
+                        <span className='custom-span' id="hospitalZip">{formData.hospitalZip || ' '}</span>
                       </div>
                       <div className="col-md-1">
-                        <label htmlFor="treatingFacilityZIPExt" className=" col-form-label custom-label">Ext:</label>
-                        <span className='custom-span' id="treatingFacilityZIPExt">{formData.treatingFacilityZIPExt || ' '}</span>
+                        <label htmlFor="hospitalZipExt" className=" col-form-label custom-label">Ext:</label>
+                        <span className='custom-span' id="hospitalZipExt">{formData.hospitalZipExt || ' '}</span>
                       </div>
                       <div className="col-md-2">
                         <label htmlFor="hospitalPhone" className=" col-form-label custom-label">Hospital Phone:</label>
@@ -3325,18 +3328,18 @@ const handleReset = () => {
                   <hr></hr>
                   <div className="form-group row mb-1">
                     <div className="col-md-3">
-                      <label htmlFor="RtwDate" className=" col-form-label custom-label">If Returned to Work, Give Date:</label>
-                      {/* <span className='custom-span' id="RtwDate">{formData.RtwDate || ' '}</span> */}
-                      <span className='custom-span'>{formData.RtwDate ? formatDateForInput(formData.RtwDate) : ' '}</span>
+                      <label htmlFor="dateReturnedToWork" className=" col-form-label custom-label">If Returned to Work, Give Date:</label>
+                      {/* <span className='custom-span' id="dateReturnedToWork">{formData.dateReturnedToWork || ' '}</span> */}
+                      <span className='custom-span'>{formData.dateReturnedToWork ? formatDateForInput(formData.dateReturnedToWork) : ' '}</span>
                     </div>
                     <div className="col-md-3">
-                      <label htmlFor="ReturnedWagePerWeek" className=" col-form-label custom-label">Returned at what wage per week:</label>
-                      <span className='custom-span' id="ReturnedWagePerWeek">{formData.ReturnedWagePerWeek || ' '}</span>
+                      <label htmlFor="wagePerWeekAfterReturn" className=" col-form-label custom-label">Returned at what wage per week:</label>
+                      <span className='custom-span' id="wagePerWeekAfterReturn">{formData.wagePerWeekAfterReturn || ' '}</span>
                     </div>
                     <div className="col-md-3">
-                      <label htmlFor="FatalDeathDate" className=" col-form-label custom-label">If Fatal, Enter Complete Date of Death:</label>
-                      {/* <span className='custom-span' id="FatalDeathDate">{formData.FatalDeathDate || ' '}</span> */}
-                      <span className='custom-span'>{formData.FatalDeathDate ? formatDateForInput(formData.FatalDeathDate) : ' '}</span>
+                      <label htmlFor="dateOfDeath" className=" col-form-label custom-label">If Fatal, Enter Complete Date of Death:</label>
+                      {/* <span className='custom-span' id="dateOfDeath">{formData.dateOfDeath || ' '}</span> */}
+                      <span className='custom-span'>{formData.dateOfDeath ? formatDateForInput(formData.dateOfDeath) : ' '}</span>
 
                     </div>
                   </div>
@@ -3347,17 +3350,17 @@ const handleReset = () => {
                       <span className='custom-span' id="reportPreparedBy">{formData.reportPreparedBy || ' '}</span>
                     </div>
                     <div className="col-md-3">
-                      <label htmlFor="telePhoneNumber" className=" col-form-label custom-label">Telephone Number:</label>
-                      <span className='custom-span' id="telePhoneNumber">{formData.telePhoneNumber || ' '}</span>
+                      <label htmlFor="reportPreparedPhone" className=" col-form-label custom-label">Telephone Number:</label>
+                      <span className='custom-span' id="reportPreparedPhone">{formData.reportPreparedPhone || ' '}</span>
                     </div>
                     <div className="col-md-2 d-flex align-items-center">
-                      <label htmlFor="telePhoneExt" className=" col-form-label custom-label">Ext:</label>
-                      <span className='custom-span' id="telePhoneExt">{formData.telePhoneExt || ' '}</span>
+                      <label htmlFor="reportPreparedPhoneExt" className=" col-form-label custom-label">Ext:</label>
+                      <span className='custom-span' id="reportPreparedPhoneExt">{formData.reportPreparedPhoneExt || ' '}</span>
                     </div>
                     <div className="col-md-4">
-                      <label htmlFor="DateOfReport" className=" col-form-label custom-label">Date of Report:</label>
-                      {/* <span className='custom-span' id="DateOfReport">{formData.DateOfReport || ' '}</span> */}
-                      <span className='custom-span'>{formData.DateOfReport ? formatDateForInput(formData.DateOfReport) : ' '}</span>
+                      <label htmlFor="dateOfReport" className=" col-form-label custom-label">Date of Report:</label>
+                      {/* <span className='custom-span' id="dateOfReport">{formData.dateOfReport || ' '}</span> */}
+                      <span className='custom-span'>{formData.dateOfReport ? formatDateForInput(formData.dateOfReport) : ' '}</span>
                     </div>
                   </div>
                 </div>
@@ -3460,7 +3463,7 @@ const handleReset = () => {
                         </div>
 
                         {/* Additional fields for permanent disability (if applicable) */}
-                        {formData.disabilityTypes?.trim().toLowerCase() === 'permanen' && (
+                        {formData.disabilityTypes.code?.trim().toLowerCase() === 'permanen' && (
                           <div className="d-flex flex-wrap mt-3">
                             <div className="col-md-3">
                               <label className=" col-form-label custom-label">
