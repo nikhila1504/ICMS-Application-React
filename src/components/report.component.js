@@ -198,7 +198,6 @@ const ReportComponent = () => {
       </div>
 
       <div style={{ border: '0px solid #00796b', borderRadius: '1px', padding: '1px' }}>
-
         <DataTable value={posts} sortMode="multiple" filters={filters}
           paginator
           footer={header}
@@ -206,14 +205,12 @@ const ReportComponent = () => {
           // rowsPerPageOptions={[1, 2, 3, 4, 5]}
           totalRecords={5}
           stripedRows
-
         >
           <Column field="id" header="ID" headerStyle={{ backgroundColor: '#4babf55e' }} sortable style={{ border: '1px solid #00796b', borderRadius: '1px', padding: '1px' }} />
           <Column field="fname" header="Name" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '8px', padding: '10px' }} />
           <Column field="age" header="Age" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '8px', padding: '10px' }} />
           <Column field="city" header="City" sortable headerStyle={{ backgroundColor: '#4babf55e' }} style={{ border: '1px solid #00796b', borderRadius: '8px', padding: '10px' }} />
         </DataTable>
-
       </div>
 
     </div>

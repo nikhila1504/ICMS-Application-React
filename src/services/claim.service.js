@@ -25,6 +25,7 @@ const authHeader = () => {
 };
 
 const CLAIM_URL = "http://localhost:9092/wc1";
+const SEARCH_URL="http://localhost:9092/searchClaim"
 
 class ClaimService {
   getClaimById() {
@@ -36,6 +37,13 @@ class ClaimService {
     return axios.post(CLAIM_URL + "/submitWc1Form" , formData ,{
       headers: authHeader(),
       responseType: 'arraybuffer', 
+    });
+  }
+  searchClaim(formData){
+    const { firstName, lastName, dateOfBirth, dateOfInjury } = formData;
+    const url = `${SEARCH_URL}/findClaim?firstName=${firstName}&lastName=${lastName}&dateOfBirth=${dateOfBirth}&dateOfInjury=${dateOfInjury}`;
+    return axios.get(url,{
+      headers: authHeader(),
     });
   }
 

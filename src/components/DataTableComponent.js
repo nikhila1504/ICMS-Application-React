@@ -6,7 +6,9 @@ import NewClaimComponent from "./NewClaimComponent.js";
 
 const DataTableComponent = () => {
     const location = useLocation();
-    const path = location.pathname.includes("reports") ||  location.pathname.includes("wc1") ||  location.pathname.includes("calendarList");
+    //const path = location.pathname.includes("reports") ||  location.pathname.includes("wc1") ||  location.pathname.includes("calendarList") ||location.pathname.includes("newClaim");
+    const pathsToCheck = ["reports", "wc1", "calendarList", "newClaim"];
+    const path = pathsToCheck.some(subPath => location.pathname.includes(subPath));
     const navigate = useNavigate();
 
     const handleLogout = async (e) => {

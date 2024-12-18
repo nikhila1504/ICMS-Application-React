@@ -16,7 +16,7 @@ import NaicsTypeService from "../services/naics.type.service";
 import InjuryTypeService from "../services/injury.type.service";
 import InjuryCauseTypeService from "../services/injury.cause.type.service";
 import ControvertTypeService from "../services/controvert.type.service";
-import { MDBInput, MDBDropdown, MDBDropdownMenu, MDBDropdownItem, MDBDropdownToggle, MDBRadio } from 'mdb-react-ui-kit';
+import { MDBInput} from 'mdb-react-ui-kit';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import TreatmentTypeService from "../services/treatment.type.service";
