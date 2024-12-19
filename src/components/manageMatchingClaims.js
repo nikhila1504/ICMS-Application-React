@@ -111,7 +111,7 @@ const ManageMatchingClaims = () => {
             // Don't proceed if fields are empty
             return;
         }
-        
+
         // Show the confirmation modal
         setFormDetails(formData);
         setConfirmationVisible(true);
@@ -128,10 +128,10 @@ const ManageMatchingClaims = () => {
             });
 
             if (dobExists) {
-                navigate('/wc1');
-            } else {
                 setConfirmationVisible(false);
                 setErrorBannerVisible(true);
+            } else {
+                navigate('/wc1');
             }
         }
         setConfirmationVisible(false);
@@ -295,9 +295,11 @@ const ManageMatchingClaims = () => {
                         </button>
                     </div>
                     <div className="mx-1">
-                        <button className="btn btn-lg custom-btn" disabled={isFileButtonDisabled}>
-                            <i className="pi pi-folder-open"></i> File In Existing Claim
-                        </button>
+                        <Link to="/wc1">
+                            <button className="btn btn-lg custom-btn" disabled={isFileButtonDisabled}>
+                                <i className="pi pi-folder-open"></i> File In Existing Claim
+                            </button>
+                        </Link>
                     </div>
                     <div className="mx-1">
                         {/* <Link to="/wc1"> */}
