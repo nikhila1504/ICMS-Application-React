@@ -84,10 +84,10 @@ const ManageMatchingClaims = () => {
         setErrorBannerVisible(false);
         const errors = {};
         let isValid = true;
-        if (!formData.dateOfInjury) { errors.dateOfInjury = 'Required'; isValid = false; }
-        if (!formData.firstName) { errors.firstName = 'Required'; isValid = false; }
-        if (!formData.lastName) { errors.lastName = 'Required'; isValid = false; }
-        if (!formData.dateOfBirth) { errors.dateOfBirth = 'Required'; isValid = false; }
+        if (!formData.dateOfInjury) { errors.dateOfInjury = 'Date Of Injury is Required'; isValid = false; }
+        if (!formData.firstName) { errors.firstName = 'First Name is Required'; isValid = false; }
+        if (!formData.lastName) { errors.lastName = 'Last Name is Required'; isValid = false; }
+        if (!formData.dateOfBirth) { errors.dateOfBirth = 'Date Of Birth is Required'; isValid = false; }
 
         setFormErrors(errors);
         if (!isValid) return;
@@ -112,6 +112,11 @@ const ManageMatchingClaims = () => {
             return;
         }
         const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
+        if (posts.length === 0) {
+            setFormDetails(formData);
+            setConfirmationVisible(true);
+            return; 
+        }
         const dobExists = posts.some(post => {
             const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
             return normalizedPostDOB === normalizedFormDOB;
