@@ -108,7 +108,7 @@ const ManageMatchingClaims = () => {
     const handleNewClaim = () => {
         setErrorBannerVisible(false);
         if (!formData.dateOfInjury || !formData.firstName || !formData.lastName || !formData.dateOfBirth) {
-            setErrorBannerVisible(true);
+            //setErrorBannerVisible(true);
             return;
         }
         const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
