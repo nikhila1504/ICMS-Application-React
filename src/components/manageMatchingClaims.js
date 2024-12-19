@@ -111,10 +111,30 @@ const ManageMatchingClaims = () => {
             //setErrorBannerVisible(true);
             return;
         }
+        setConfirmationVisible(true);
+        // const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
+        // if (posts.length === 0) {
+        //     setFormDetails(formData);
+        //     setConfirmationVisible(true);
+        //     return; 
+        // }
+        // const dobExists = posts.some(post => {
+        //     const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
+        //     return normalizedPostDOB === normalizedFormDOB;
+        // });
+        // if (dobExists) {
+        //     setFormDetails(formData);
+        //     setConfirmationVisible(true);
+        // } else {
+        //     setErrorBannerVisible(true);
+        // }
+    };
+    const handleConfirm = () => {
         const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
         if (posts.length === 0) {
             setFormDetails(formData);
-            setConfirmationVisible(true);
+            //setConfirmationVisible(true);
+            navigate('/wc1');
             return; 
         }
         const dobExists = posts.some(post => {
@@ -123,13 +143,11 @@ const ManageMatchingClaims = () => {
         });
         if (dobExists) {
             setFormDetails(formData);
-            setConfirmationVisible(true);
-        } else {
+            navigate('/wc1');
+        } else{
+            setConfirmationVisible(false);
             setErrorBannerVisible(true);
         }
-    };
-    const handleConfirm = () => {
-        navigate('/wc1');
     };
     const handleCancel = () => {
         setConfirmationVisible(false);
