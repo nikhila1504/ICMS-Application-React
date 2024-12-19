@@ -538,6 +538,15 @@
   min-width: 0 !important;
   max-width: none !important;
 }
+.custom-error-message {
+  font-weight: bold;
+  color: red; 
+}
+
+
+.text-danger {
+  color: red;
+}
 
 .p-dropdown-panel {
   width: 700px !important;  
@@ -1230,16 +1239,28 @@ body {
 }
 
 .custom-button-tab {
-  background-color: #0A3161; /* Example background color */
-  padding: 10px; /* Example padding */
+  background-color: #0A3161; 
+  padding: 10px; 
 }
 
 .custom-accordion-tab:hover {
-  background-color: #e9ecef; /* Example hover effect */
+  background-color: #e9ecef; 
 }
 
-/* For all buttons */
 .fc .fc-button {
-  background-color: #0A3161; /* Your desired background color */
+  background-color: #0A3161; 
   color: white; 
 }
+.p-dialog .p-dialog-header {
+  padding: 0 !important;
+  margin: 0 !important;  
+}
+
+.p-dialog-header {
+  width: 100% !important;
+}
+/* .p-dialog-header-icons{
+  background-color: #0A3161; 
+  color:white;
+} */
+

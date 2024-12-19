@@ -2,8 +2,9 @@ import DataTableComponent from "./DataTableComponent.js";
 import { MDBInput } from 'mdb-react-ui-kit';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 import React, { useState, useEffect, useRef } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { Link, useNavigate } from "react-router-dom";
@@ -21,9 +22,20 @@ const ManageMatchingClaims = () => {
     };
 
     const [formData, setFormData] = useState(initialFormValues);
+    const [formDetails, setFormDetails] = useState({});
+    const [confirmationVisible, setConfirmationVisible] = useState(false);
     const [posts, setPosts] = useState([]);
     const [selectedClaims, setSelectedClaims] = useState([]);
     const [isFileButtonDisabled, setFileButtonDisabled] = useState(true);
+    const [errorBannerVisible, setErrorBannerVisible] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
+    const [touched, setTouched] = useState({});
+    // const [formErrors, setFormErrors] = useState({
+    //     dateOfInjury: '',
+    //     firstName: '',
+    //     lastName: '',
+    //     dateOfBirth: ''
+    // });
 
     const navigate = useNavigate();
 
@@ -33,6 +45,9 @@ const ManageMatchingClaims = () => {
             ...formData,
             [name]: value,
         });
+        setTouched({ ...touched, [name]: true, });
+        setFormErrors({ ...formErrors, [name]: '' });
+        setErrorBannerVisible(false);
     };
 
     const handleSelectionChange = (e) => {
@@ -44,9 +59,9 @@ const ManageMatchingClaims = () => {
 
     const handleReset = () => {
         setFormData(initialFormValues);
-        setPosts([]);                    
-        setSelectedClaims([]);           
-        setFileButtonDisabled(true); 
+        setPosts([]);
+        setSelectedClaims([]);
+        setFileButtonDisabled(true);
     };
 
     const formatDate = (date) => {
@@ -66,27 +81,75 @@ const ManageMatchingClaims = () => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
+        setErrorBannerVisible(false);
+        const errors = {};
+        let isValid = true;
+        if (!formData.dateOfInjury) { errors.dateOfInjury = 'Required'; isValid = false; }
+        if (!formData.firstName) { errors.firstName = 'Required'; isValid = false; }
+        if (!formData.lastName) { errors.lastName = 'Required'; isValid = false; }
+        if (!formData.dateOfBirth) { errors.dateOfBirth = 'Required'; isValid = false; }
 
-        if (!formData || !formData.firstName || !formData.lastName) {
-            console.error('Form data is incomplete!');
-            return;
-        }
-
+        setFormErrors(errors);
+        if (!isValid) return;
         try {
             const response = await ClaimService.searchClaim(formData);
             console.log("handleSearch", response.data);
             setPosts(response.data);
-            // Enable button if there are records after search
             setFileButtonDisabled(selectedClaims.length === 0);
         } catch (error) {
             console.error('Error fetching claims:', error);
         }
+    };
+    const normalizeDate = (date) => {
+        const d = new Date(date);
+        return d.toISOString().split('T')[0];
+    };
+
+    const handleNewClaim = () => {
+        setErrorBannerVisible(false);
+        if (!formData.dateOfInjury || !formData.firstName || !formData.lastName || !formData.dateOfBirth) {
+            setErrorBannerVisible(true);
+            return;
+        }
+        const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
+        const dobExists = posts.some(post => {
+            const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
+            return normalizedPostDOB === normalizedFormDOB;
+        });
+        if (dobExists) {
+            setFormDetails(formData);
+            setConfirmationVisible(true);
+        } else {
+            setErrorBannerVisible(true);
+        }
+    };
+    const handleConfirm = () => {
+        navigate('/wc1');
+    };
+    const handleCancel = () => {
+        setConfirmationVisible(false);
+    };
+    const getInputClassName = (field) => {
+        const errorClass = formErrors[field] ? 'custom-border custom-error' : 'custom-border';
+        console.log(`Field: ${field}, Class: ${errorClass}`);
+        return errorClass;
     };
 
     return (
         <div>
             <DataTableComponent />
             <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>WC-1, Employers First Report of Injury</h1>
+            {errorBannerVisible && (
+                <div style={{
+                    backgroundColor: '#B31942',
+                    color: 'white',
+                    padding: '10px',
+                    fontWeight: 'bold',
+                    marginBottom: '20px'
+                }}>
+                    <i className="pi pi-times-circle" style={{ color: 'white', fontSize: '1rem' }}></i>  Claim exists with the given Search Criteria. Please file in Existing Claim.
+                </div>
+            )}
             <h1 className="custom-h1 header" style={{ marginTop: '5px' }}>Search</h1>
             <div className="form-section flex-fill">
                 <div className="form-group row mb-3 mt-3">
@@ -100,9 +163,10 @@ const ManageMatchingClaims = () => {
                             value={formData.dateOfInjury}
                             onChange={handleChange}
                             floating
-                            className="custom-border"
+                            className={getInputClassName('dateOfInjury')}
                             style={{ borderColor: 'blue', width: '100%' }}
                         />
+                        {formErrors.dateOfInjury && <small className="custom-error-message">{formErrors.dateOfInjury}</small>}
                     </div>
                     <div className="col-md-3">
                         <MDBInput
@@ -114,9 +178,10 @@ const ManageMatchingClaims = () => {
                             value={formData.firstName}
                             onChange={handleChange}
                             floating
-                            className="custom-border"
+                            className={getInputClassName('firstName')}
                             style={{ borderColor: 'blue', width: '100%' }}
                         />
+                        {formErrors.firstName && <small className="custom-error-message">{formErrors.firstName}</small>}
                     </div>
                     <div className="col-md-3">
                         <MDBInput
@@ -128,9 +193,10 @@ const ManageMatchingClaims = () => {
                             value={formData.lastName}
                             onChange={handleChange}
                             floating
-                            className="custom-border"
+                            className={getInputClassName('lastName')}
                             style={{ borderColor: 'blue', width: '100%' }}
                         />
+                        {formErrors.lastName && <small className="custom-error-message">{formErrors.lastName}</small>}
                     </div>
                     <div className="col-md-3">
                         <MDBInput
@@ -142,9 +208,10 @@ const ManageMatchingClaims = () => {
                             value={formData.dateOfBirth}
                             onChange={handleChange}
                             floating
-                            className="custom-border"
+                            className={getInputClassName('dateOfBirth')}
                             style={{ borderColor: 'blue', width: '100%' }}
                         />
+                        {formErrors.dateOfBirth && <small className="custom-error-message">{formErrors.dateOfBirth}</small>}
                     </div>
                 </div>
                 <div className="row mt-4">
@@ -223,12 +290,88 @@ const ManageMatchingClaims = () => {
                         </button>
                     </div>
                     <div className="mx-1">
-                        <Link to="/wc1">
-                            <button className="btn btn-lg custom-btn">
-                                <i className="pi pi-folder-open" style={{ fontSize: '1rem' }}></i> New Claim
-                            </button>
-                        </Link>
+                        {/* <Link to="/wc1"> */}
+                        <button className="btn btn-lg custom-btn" onClick={handleNewClaim}>
+                            <i className="pi pi-folder-open" style={{ fontSize: '1rem' }}></i> New Claim
+                        </button>
+                        {/* </Link> */}
                     </div>
+                    {confirmationVisible && (
+                        <div
+                            className="custom-modal-overlay"
+                            style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                zIndex: 9999,
+                            }}
+                            onClick={handleCancel}
+                        >
+                            <div
+                                className="custom-modal-content"
+                                style={{
+                                    backgroundColor: "white",
+                                    padding: "3px",
+                                    width: "50vw",
+                                    borderRadius: "0px",
+                                    position: "relative",
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div
+                                    style={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        backgroundColor: "#0A3161",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        fontSize: "18px",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    <span>
+                                        <i className="pi pi-exclamation-triangle" style={{ marginRight: "10px" }}></i>
+                                        Are you sure you want to create a new claim? The information below cannot be edited once you start filling the form.
+                                    </span>
+                                    <button
+                                        onClick={handleCancel}
+                                        style={{
+                                            background: "transparent",
+                                            border: "none",
+                                            color: "white",
+                                            fontSize: "1.0rem",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        <i className="pi pi-times"></i>
+                                    </button>
+                                </div>
+
+                                <div className="d-flex mb-3">
+                                    <div style={{ marginRight: "20%" }}><strong>Employee First Name:</strong> {formDetails.firstName}</div>
+                                    <div><strong>Employee Last Name:</strong> {formDetails.lastName}</div>
+                                </div>
+
+                                <div className="d-flex mb-3">
+                                    <div style={{ marginRight: "23%" }}><strong>Date of Birth:</strong> {formDetails.dateOfBirth}</div>
+                                    <div><strong>Date of Injury:</strong> {formDetails.dateOfInjury}</div>
+                                </div>
+
+                                <div className="d-flex justify-content-end mt-3">
+                                    <Button label="Cancel" icon="pi pi-times" onClick={handleCancel} className="btn btn-md custom-btn" style={{ marginRight: '5px' }} />
+                                    <Button label="OK" icon="pi pi-check" onClick={handleConfirm} className="btn btn-md custom-btn" autoFocus />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
