@@ -17,7 +17,7 @@ const CLAIM_URL = "http://localhost:9092/wc1";
 
 class BodyPartTypeService {
     getAllBodyPartTypes() {
-        return axios.get(CLAIM_URL + "/getAllBodyPartTypesDescription", {
+        return axios.get(CLAIM_URL + "/getAllBodyPartTypes", {
           headers: authHeader(),
         });
       }
