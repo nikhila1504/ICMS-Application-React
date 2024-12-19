@@ -108,17 +108,13 @@ const ManageMatchingClaims = () => {
     const handleNewClaim = () => {
         setErrorBannerVisible(false);
         if (!formData.dateOfInjury || !formData.firstName || !formData.lastName || !formData.dateOfBirth) {
-            // Don't proceed if fields are empty
             return;
         }
-
-        // Show the confirmation modal
         setFormDetails(formData);
         setConfirmationVisible(true);
     };
     const handleConfirm = () => {
         const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
-
         if (posts.length === 0) {
             navigate('/wc1');
         } else {
@@ -126,7 +122,6 @@ const ManageMatchingClaims = () => {
                 const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
                 return normalizedPostDOB === normalizedFormDOB;
             });
-
             if (dobExists) {
                 setConfirmationVisible(false);
                 setErrorBannerVisible(true);
