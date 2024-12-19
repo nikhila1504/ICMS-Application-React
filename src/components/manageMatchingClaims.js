@@ -108,46 +108,33 @@ const ManageMatchingClaims = () => {
     const handleNewClaim = () => {
         setErrorBannerVisible(false);
         if (!formData.dateOfInjury || !formData.firstName || !formData.lastName || !formData.dateOfBirth) {
-            //setErrorBannerVisible(true);
+            // Don't proceed if fields are empty
             return;
         }
+        
+        // Show the confirmation modal
+        setFormDetails(formData);
         setConfirmationVisible(true);
-        // const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
-        // if (posts.length === 0) {
-        //     setFormDetails(formData);
-        //     setConfirmationVisible(true);
-        //     return; 
-        // }
-        // const dobExists = posts.some(post => {
-        //     const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
-        //     return normalizedPostDOB === normalizedFormDOB;
-        // });
-        // if (dobExists) {
-        //     setFormDetails(formData);
-        //     setConfirmationVisible(true);
-        // } else {
-        //     setErrorBannerVisible(true);
-        // }
     };
     const handleConfirm = () => {
         const normalizedFormDOB = normalizeDate(formData.dateOfBirth);
+
         if (posts.length === 0) {
-            setFormDetails(formData);
-            //setConfirmationVisible(true);
             navigate('/wc1');
-            return; 
+        } else {
+            const dobExists = posts.some(post => {
+                const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
+                return normalizedPostDOB === normalizedFormDOB;
+            });
+
+            if (dobExists) {
+                navigate('/wc1');
+            } else {
+                setConfirmationVisible(false);
+                setErrorBannerVisible(true);
+            }
         }
-        const dobExists = posts.some(post => {
-            const normalizedPostDOB = normalizeDate(post.claimant.dateOfBirth);
-            return normalizedPostDOB === normalizedFormDOB;
-        });
-        if (dobExists) {
-            setFormDetails(formData);
-            navigate('/wc1');
-        } else{
-            setConfirmationVisible(false);
-            setErrorBannerVisible(true);
-        }
+        setConfirmationVisible(false);
     };
     const handleCancel = () => {
         setConfirmationVisible(false);
@@ -267,7 +254,7 @@ const ManageMatchingClaims = () => {
                         responsiveLayout="scroll"
                     >
                         <Column field="id" header="ID" sortable headerStyle={{ backgroundColor: '#0A3161', color: 'white', border: '1px solid black' }} style={{ border: '1px solid #0A3161', borderRadius: '1px', padding: '10px' }} />
-                        <Column field="dateOfInjury" header="Date Of Injury" sortable headerStyle={{ backgroundColor: '#0A3161', color: 'white', border: '1px solid black' }} style={{ border: '1px solid #0A3161', borderRadius: '1px', padding: '10px' }} />
+                        <Column field="dateOfInjury" header="Date Of Injury" sortable body={(rowData) => formatDate(rowData.dateOfInjury)} headerStyle={{ backgroundColor: '#0A3161', color: 'white', border: '1px solid black' }} style={{ border: '1px solid #0A3161', borderRadius: '1px', padding: '10px' }} />
                         <Column field="claimant.fullName" header="Employee Name" sortable headerStyle={{ backgroundColor: '#0A3161', color: 'white', border: '1px solid black' }} style={{ border: '1px solid #0A3161', borderRadius: '1px', padding: '10px' }} />
                         <Column field="claimant.dateOfBirth" header="Date Of Birth" sortable body={(rowData) => formatDate(rowData.claimant.dateOfBirth)} headerStyle={{ backgroundColor: '#0A3161', color: 'white', border: '1px solid black' }} style={{ border: '1px solid #0A3161', borderRadius: '1px', padding: '10px' }} />
                         <Column
